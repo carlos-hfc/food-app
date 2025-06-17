@@ -1,0 +1,13 @@
+services:
+  postgres:
+    container_name: food-app-pg
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: charlos
+      POSTGRES_DB: food-app
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/pg:/data/postgres
