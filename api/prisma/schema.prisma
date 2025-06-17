@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  phone    String @unique
+  role     Role
+
+  addresses Address[]
+  orders    Order[]
+  favorites Favorite[]
+
+  restaurant Restaurant?
+
+  @@map("users")
+}
+
+model Address {
+  id       String  @id @default(uuid())
+  zipCode  String
+  address  String
+  number   Int?
+  district String
+  city     String
+  uf       String  @db.Char(2)
+  alias    String?
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
+
+  orders Order[]
+
+  @@map("addresses")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+
+  categoryRestaurants CategoryRestaurant[]
+
+  @@map("categories")
+}
+
+model Restaurant {
+  id           String  @id @default(uuid())
+  name         String
+  phone        String  @unique
+  tax          Decimal @db.Money
+  deliveryTime Int
+  image        String?
+
+  admin   User   @relation(fields: [adminId], references: [id])
+  adminId String @unique
+
+  hours               Hour[]
+  categoryRestaurants CategoryRestaurant[]
+  products            Product[]
+  orders              Order[]
+  favorites           Favorite[]
+
+  @@map("restaurants")
+}
+
+model Hour {
+  id       String  @id @default(uuid())
+  weekday  String
+  openedAt Int
+  closedAt Int
+  open     Boolean @default(true)
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  @@map("hours")
+}
+
+model CategoryRestaurant {
+  id String @id @default(uuid())
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  @@map("categoryRestaurants")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String  @db.Text
+  price       Decimal @db.Money
+  available   Boolean @default(true)
+  image       String
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  ROUTING
+  DELIVERED
+  CANCELED
+}
+
+enum PaymentMethod {
+  CARD
+  CASH
+  PIX
+}
+
+model Order {
+  id         String        @id @default(uuid())
+  date       DateTime
+  status     OrderStatus   @default(PENDING)
+  payment    PaymentMethod
+  total      Decimal       @db.Money
+  grade      Int?
+  comment    String?       @db.Text
+  ratingDate DateTime?
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
+
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId String
+
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String  @id @default(uuid())
+  quantity Int
+  price    Decimal @db.Money
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("orderItems")
+}
+
+model Favorite {
+  id String @id @default(uuid())
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  @@map("favorites")
+}
