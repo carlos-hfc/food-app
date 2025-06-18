@@ -36,7 +36,7 @@ export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
 
   if (error instanceof PrismaClientKnownRequestError) {
     return reply.status(400).send({
-      message: "Prisma error",
+      message: error.code === "P2002" ? "Constraint error" : "Prisma error",
       statusCode: 400,
       error,
     })
