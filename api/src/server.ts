@@ -13,6 +13,10 @@ import {
 
 import { env } from "./env"
 import { errorHandler } from "./error-handler"
+import { createAddress } from "./routes/address/create-address"
+import { deleteAddress } from "./routes/address/delete-address"
+import { editAddress } from "./routes/address/edit-address"
+import { listAddress } from "./routes/address/list-address"
 import { listCategories } from "./routes/category/list-categories"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
@@ -21,6 +25,7 @@ import { registerRestaurant } from "./routes/restaurant/register-restaurant"
 import { authenticate } from "./routes/session/authenticate"
 import { registerAdmin } from "./routes/session/register-admin"
 import { registerClient } from "./routes/session/register-client"
+import { editProfile } from "./routes/user/edit-profile"
 import { getProfile } from "./routes/user/get-profile"
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
@@ -52,5 +57,11 @@ app.register(editRestaurant)
 app.register(listCategories)
 
 app.register(getProfile)
+app.register(editProfile)
+
+app.register(createAddress)
+app.register(listAddress)
+app.register(editAddress)
+app.register(deleteAddress)
 
 app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
