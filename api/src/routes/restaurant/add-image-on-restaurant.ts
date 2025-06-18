@@ -23,14 +23,14 @@ export const addImageOnRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const userId = await request.getCurrentUserId()
+      const adminId = await request.getCurrentUserId()
 
       const { restaurantId } = request.params
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
           id: restaurantId,
-          adminId: userId,
+          adminId,
         },
       })
 

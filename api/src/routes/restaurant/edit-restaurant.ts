@@ -21,7 +21,7 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
           phone: z.string().optional(),
           tax: z.number().optional(),
           deliveryTime: z.number().optional(),
-          categories: z.array(z.string().uuid()).optional(),
+          categoryId: z.string().uuid().optional(),
           hours: z
             .array(
               z.object({
@@ -39,13 +39,13 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const userId = await request.getCurrentUserId()
+      const adminId = await request.getCurrentUserId()
       const { restaurantId } = request.params
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
           id: restaurantId,
-          adminId: userId,
+          adminId,
         },
       })
 
@@ -53,7 +53,7 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Restaurant not found")
       }
 
-      const { deliveryTime, name, phone, tax, categories, hours } = request.body
+      const { deliveryTime, name, phone, tax, categoryId, hours } = request.body
 
       await prisma.restaurant.update({
         where: {
@@ -64,25 +64,9 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
           phone,
           tax,
           deliveryTime,
+          categoryId,
         },
       })
-
-      if (categories) {
-        await prisma.categoryRestaurant.deleteMany({
-          where: {
-            categoryId: {
-              in: categories,
-            },
-          },
-        })
-
-        await prisma.categoryRestaurant.createMany({
-          data: categories.map(categoryId => ({
-            categoryId,
-            restaurantId,
-          })),
-        })
-      }
 
       if (hours) {
         await Promise.all(

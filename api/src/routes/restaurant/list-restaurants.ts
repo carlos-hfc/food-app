@@ -30,12 +30,10 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
                     restaurantId: z.string().uuid(),
                   }),
                 ),
-                categories: z.array(
-                  z.object({
-                    id: z.string().uuid(),
-                    name: z.string(),
-                  }),
-                ),
+                category: z.object({
+                  id: z.string().uuid(),
+                  name: z.string(),
+                }),
               }),
             ),
           }),
@@ -48,11 +46,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           hours: {
             orderBy: [{ weekday: "asc" }],
           },
-          categoryRestaurants: {
-            include: {
-              category: true,
-            },
-          },
+          category: true,
         },
       })
 
@@ -66,10 +60,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           deliveryTime: item.deliveryTime,
           image: item.image,
           hours: item.hours,
-          categories: item.categoryRestaurants.map(category => ({
-            id: category.category.id,
-            name: category.category.name,
-          })),
+          category: item.category,
         })),
       }
     },

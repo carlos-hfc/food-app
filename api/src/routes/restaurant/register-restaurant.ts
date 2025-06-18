@@ -17,7 +17,7 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           phone: z.string(),
           tax: z.number(),
           deliveryTime: z.number(),
-          categories: z.array(z.string().uuid()),
+          categoryId: z.string().uuid(),
           hours: z.array(
             z.object({
               weekday: z.string(),
@@ -33,9 +33,9 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const userId = await request.getCurrentUserId()
+      const adminId = await request.getCurrentUserId()
 
-      const { categories, deliveryTime, hours, name, phone, tax } = request.body
+      const { categoryId, deliveryTime, hours, name, phone, tax } = request.body
 
       const operationHours = hours.flatMap(item => {
         const weekday = item.weekday.split(",")
@@ -54,14 +54,8 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           name,
           phone,
           tax,
-          adminId: userId,
-          categoryRestaurants: {
-            createMany: {
-              data: categories.map(item => ({
-                categoryId: item,
-              })),
-            },
-          },
+          adminId,
+          categoryId,
           hours: {
             createMany: {
               data: operationHours,
