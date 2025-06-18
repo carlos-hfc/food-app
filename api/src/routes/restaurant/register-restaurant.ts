@@ -41,10 +41,6 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
       const operationHours = hours.flatMap(item => {
         const weekday = item.weekday.split(",")
 
-        if (weekday.length < 7) {
-          throw new ClientError("Invalid weekdays")
-        }
-
         return weekday.map(week => ({
           weekday: Number(week),
           openedAt: convertHoursToMinutes(item.openedAt),
@@ -52,6 +48,10 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           open: item.open ?? true,
         }))
       })
+
+      if (operationHours.length < 7) {
+        throw new ClientError("Invalid weekdays")
+      }
 
       await prisma.restaurant.create({
         data: {
