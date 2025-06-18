@@ -21,6 +21,10 @@ import { listCategories } from "./routes/category/list-categories"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
 import { listFavorites } from "./routes/favorite/list-favorites"
 import { saveFavorite } from "./routes/favorite/save-favorite"
+import { addImageOnProduct } from "./routes/product/add-image-on-product"
+import { editProduct } from "./routes/product/edit-product"
+import { listProducts } from "./routes/product/list-products"
+import { registerProduct } from "./routes/product/register-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
@@ -70,5 +74,10 @@ app.register(deleteAddress)
 app.register(saveFavorite)
 app.register(listFavorites)
 app.register(deleteFavorite)
+
+app.register(registerProduct)
+app.register(listProducts)
+app.register(addImageOnProduct)
+app.register(editProduct)
 
 app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
