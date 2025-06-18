@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify"
 import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod"
+import { PrismaClientKnownRequestError } from "generated/prisma/runtime/library"
 import { ZodError } from "zod"
 
 import { ClientError } from "./errors/client-error"
@@ -33,7 +34,13 @@ export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
     })
   }
 
-  console.log(error)
+  if (error instanceof PrismaClientKnownRequestError) {
+    return reply.status(400).send({
+      message: "Prisma error",
+      statusCode: 400,
+      error,
+    })
+  }
 
   return reply.status(500).send({
     message: "Internal server error",

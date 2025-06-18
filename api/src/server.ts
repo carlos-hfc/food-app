@@ -18,6 +18,9 @@ import { deleteAddress } from "./routes/address/delete-address"
 import { editAddress } from "./routes/address/edit-address"
 import { listAddress } from "./routes/address/list-address"
 import { listCategories } from "./routes/category/list-categories"
+import { deleteFavorite } from "./routes/favorite/delete-favorite"
+import { listFavorites } from "./routes/favorite/list-favorites"
+import { saveFavorite } from "./routes/favorite/save-favorite"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
@@ -63,5 +66,9 @@ app.register(createAddress)
 app.register(listAddress)
 app.register(editAddress)
 app.register(deleteAddress)
+
+app.register(saveFavorite)
+app.register(listFavorites)
+app.register(deleteFavorite)
 
 app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
