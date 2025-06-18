@@ -58,7 +58,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
               hours: {
                 where: {
                   weekday: {
-                    equals: new Date().getDay().toString(),
+                    equals: new TZDate().getDay(),
                   },
                 },
                 take: 1,

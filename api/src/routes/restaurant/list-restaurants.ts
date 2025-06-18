@@ -23,7 +23,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
                 hours: z.array(
                   z.object({
                     id: z.string().uuid(),
-                    weekday: z.string(),
+                    weekday: z.number(),
                     openedAt: z.number(),
                     closedAt: z.number(),
                     open: z.boolean(),

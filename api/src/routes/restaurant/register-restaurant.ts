@@ -1,6 +1,7 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
+import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -40,8 +41,12 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
       const operationHours = hours.flatMap(item => {
         const weekday = item.weekday.split(",")
 
+        if (weekday.length < 7) {
+          throw new ClientError("Invalid weekdays")
+        }
+
         return weekday.map(week => ({
-          weekday: week,
+          weekday: Number(week),
           openedAt: convertHoursToMinutes(item.openedAt),
           closedAt: convertHoursToMinutes(item.closedAt),
           open: item.open ?? true,

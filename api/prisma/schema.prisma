@@ -82,7 +82,7 @@ model Restaurant {
 
 model Hour {
   id       String  @id @default(uuid())
-  weekday  String
+  weekday  Int
   openedAt Int
   closedAt Int
   open     Boolean @default(true)
