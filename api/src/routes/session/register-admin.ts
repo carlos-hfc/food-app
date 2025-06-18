@@ -7,6 +7,7 @@ import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
+import { PASSWORD_REGEX } from "@/utils/constants"
 
 export const registerAdmin: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
@@ -16,12 +17,10 @@ export const registerAdmin: FastifyPluginAsyncZod = async app => {
       schema: {
         body: z.object({
           email: z.string().email(),
-          password: z
-            .string()
-            .refine(value => /[A-Za-z0-9!@#$%^&*]{8,}/.test(value), {
-              message:
-                "Password must contain at least eight characters, an uppercase letter, a lowercase letter, a number and a special character",
-            }),
+          password: z.string().refine(value => PASSWORD_REGEX.test(value), {
+            message:
+              "Password must contain at least eight characters, an uppercase letter, a lowercase letter, a number and a special character",
+          }),
           name: z.string(),
           phone: z.string(),
         }),
