@@ -39,6 +39,7 @@ model Address {
   city     String
   uf       String  @db.Char(2)
   alias    String?
+  main     Boolean @default(false)
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String
