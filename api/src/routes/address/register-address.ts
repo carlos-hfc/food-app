@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 
-export const createAddress: FastifyPluginAsyncZod = async app => {
+export const registerAddress: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
     "/address",
     {

@@ -13,10 +13,10 @@ import {
 
 import { env } from "./env"
 import { errorHandler } from "./error-handler"
-import { createAddress } from "./routes/address/create-address"
 import { deleteAddress } from "./routes/address/delete-address"
 import { editAddress } from "./routes/address/edit-address"
 import { listAddress } from "./routes/address/list-address"
+import { registerAddress } from "./routes/address/register-address"
 import { listCategories } from "./routes/category/list-categories"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
 import { listFavorites } from "./routes/favorite/list-favorites"
@@ -62,7 +62,7 @@ app.register(listCategories)
 app.register(getProfile)
 app.register(editProfile)
 
-app.register(createAddress)
+app.register(registerAddress)
 app.register(listAddress)
 app.register(editAddress)
 app.register(deleteAddress)
