@@ -7,7 +7,6 @@ async function main() {
   await prisma.orderItem.deleteMany()
   await prisma.order.deleteMany()
   await prisma.product.deleteMany()
-  await prisma.categoryRestaurant.deleteMany()
   await prisma.category.deleteMany()
   await prisma.hour.deleteMany()
   await prisma.address.deleteMany()
@@ -41,6 +40,7 @@ async function main() {
       { name: "Chinesa" },
       { name: "Japonesa" },
       { name: "Mexicana" },
+      { name: "Lanches" },
     ],
   })
 }

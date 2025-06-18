@@ -53,7 +53,7 @@ model Category {
   id   String @id @default(uuid())
   name String
 
-  categoryRestaurants CategoryRestaurant[]
+  restaurants Restaurant[]
 
   @@map("categories")
 }
@@ -69,11 +69,13 @@ model Restaurant {
   admin   User   @relation(fields: [adminId], references: [id])
   adminId String @unique
 
-  hours               Hour[]
-  categoryRestaurants CategoryRestaurant[]
-  products            Product[]
-  orders              Order[]
-  favorites           Favorite[]
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  hours     Hour[]
+  products  Product[]
+  orders    Order[]
+  favorites Favorite[]
 
   @@map("restaurants")
 }
@@ -89,18 +91,6 @@ model Hour {
   restaurantId String
 
   @@map("hours")
-}
-
-model CategoryRestaurant {
-  id String @id @default(uuid())
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId String
-
-  @@map("categoryRestaurants")
 }
 
 model Product {
@@ -180,5 +170,6 @@ model Favorite {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
 
+  @@unique([clientId, restaurantId])
   @@map("favorites")
 }
