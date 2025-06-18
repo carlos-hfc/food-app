@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "orders" ALTER COLUMN "ratingDate" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "products" ALTER COLUMN "image" DROP NOT NULL;

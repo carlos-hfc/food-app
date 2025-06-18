@@ -99,7 +99,7 @@ model Product {
   description String  @db.Text
   price       Decimal @db.Money
   available   Boolean @default(true)
-  image       String
+  image       String?
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
@@ -131,7 +131,7 @@ model Order {
   total      Decimal       @db.Money
   grade      Int?
   comment    String?       @db.Text
-  ratingDate DateTime?
+  ratingDate DateTime?     @default(now())
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
