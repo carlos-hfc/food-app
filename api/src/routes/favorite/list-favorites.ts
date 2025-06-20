@@ -1,7 +1,7 @@
 import { tz, TZDate } from "@date-fns/tz"
 import { differenceInMinutes, startOfToday } from "date-fns"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { Hour, Prisma } from "generated/prisma"
+import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -60,6 +60,19 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
                   weekday: {
                     equals: new TZDate().getDay(),
                   },
+                  open: true,
+                  openedAt: {
+                    gt: differenceInMinutes(
+                      new TZDate(),
+                      startOfToday({ in: tz("-03:00") }),
+                    ),
+                  },
+                  closedAt: {
+                    lt: differenceInMinutes(
+                      new TZDate(),
+                      startOfToday({ in: tz("-03:00") }),
+                    ),
+                  },
                 },
                 take: 1,
               },
@@ -67,12 +80,6 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
           },
         },
       })
-
-      const isOpen = (hour: Hour) =>
-        differenceInMinutes(new TZDate(), startOfToday({ in: tz("-03:00") })) >
-          hour.openedAt &&
-        differenceInMinutes(new TZDate(), startOfToday({ in: tz("-03:00") })) <
-          hour.closedAt
 
       return {
         favorites: favorites.map(item => ({
@@ -86,7 +93,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
             deliveryTime: item.restaurant.deliveryTime,
             tax: item.restaurant.tax,
             category: item.restaurant.category,
-            isOpen: isOpen(item.restaurant.hours[0]),
+            isOpen: item.restaurant.hours.length > 0,
           },
         })),
       }
