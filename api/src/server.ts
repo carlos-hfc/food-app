@@ -23,6 +23,7 @@ import { listFavorites } from "./routes/favorite/list-favorites"
 import { saveFavorite } from "./routes/favorite/save-favorite"
 import { addImageOnProduct } from "./routes/product/add-image-on-product"
 import { editProduct } from "./routes/product/edit-product"
+import { listProducts } from "./routes/product/list-products"
 import { listProductsByRestaurant } from "./routes/product/list-products-by-restaurant"
 import { registerProduct } from "./routes/product/register-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
@@ -79,5 +80,6 @@ app.register(registerProduct)
 app.register(listProductsByRestaurant)
 app.register(addImageOnProduct)
 app.register(editProduct)
+app.register(listProducts)
 
 app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
