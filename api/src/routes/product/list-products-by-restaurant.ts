@@ -4,7 +4,7 @@ import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
 
-export const listProducts: FastifyPluginAsyncZod = async app => {
+export const listProductsByRestaurant: FastifyPluginAsyncZod = async app => {
   app.get(
     "/restaurant/:restaurantId/product",
     {
