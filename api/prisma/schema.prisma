@@ -125,13 +125,13 @@ enum PaymentMethod {
 
 model Order {
   id         String        @id @default(uuid())
-  date       DateTime
+  date       DateTime      @default(now())
   status     OrderStatus   @default(PENDING)
   payment    PaymentMethod
   total      Decimal       @db.Money
   grade      Int?
   comment    String?       @db.Text
-  ratingDate DateTime?     @default(now())
+  ratingDate DateTime?
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
