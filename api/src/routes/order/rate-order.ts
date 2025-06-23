@@ -1,5 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
+import { OrderStatus } from "generated/prisma"
 import { z } from "zod"
 
 import { ClientError } from "@/errors/client-error"
@@ -44,6 +45,10 @@ export const rateOrder: FastifyPluginAsyncZod = async app => {
 
       if (order.ratingDate) {
         throw new ClientError("Order already rated")
+      }
+
+      if (order.status === OrderStatus.CANCELED) {
+        throw new ClientError("Canceled order cannot be rated")
       }
 
       await prisma.order.update({
