@@ -56,20 +56,23 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
               tax: true,
               category: true,
               hours: {
+                orderBy: {
+                  weekday: "asc",
+                },
                 where: {
                   weekday: {
                     equals: new TZDate().getDay(),
                   },
                   open: true,
                   openedAt: {
-                    gt: differenceInMinutes(
-                      new TZDate(),
+                    lte: differenceInMinutes(
+                      new Date(),
                       startOfToday({ in: tz("-03:00") }),
                     ),
                   },
                   closedAt: {
-                    lt: differenceInMinutes(
-                      new TZDate(),
+                    gte: differenceInMinutes(
+                      new Date(),
                       startOfToday({ in: tz("-03:00") }),
                     ),
                   },
