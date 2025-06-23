@@ -50,24 +50,28 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         },
         include: {
           hours: {
+            orderBy: {
+              weekday: "asc",
+            },
             where: {
               weekday: {
                 equals: new TZDate().getDay(),
               },
               open: true,
               openedAt: {
-                gt: differenceInMinutes(
-                  new TZDate(),
+                lte: differenceInMinutes(
+                  new Date(),
                   startOfToday({ in: tz("-03:00") }),
                 ),
               },
               closedAt: {
-                lt: differenceInMinutes(
-                  new TZDate(),
+                gte: differenceInMinutes(
+                  new Date(),
                   startOfToday({ in: tz("-03:00") }),
                 ),
               },
             },
+            take: 1,
           },
         },
       })
@@ -92,28 +96,24 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         )
       }
 
-      const uniqueProducts = new Set()
-      for (const product of products) {
-        if (uniqueProducts.has(product.id)) {
-          throw new ClientError(`Product ${product.id} is duplicated`)
-        }
-
-        uniqueProducts.add(product.id)
-      }
+      const uniqueProducts = products.filter(
+        (product, i, self) =>
+          i === self.findIndex(item => item.id === product.id),
+      )
 
       const restaurantProducts = await prisma.product.findMany({
         where: {
           id: {
-            in: products.map(({ id }) => id),
+            in: uniqueProducts.map(({ id }) => id),
           },
           restaurantId,
           available: true,
         },
       })
 
-      for (let index = 0; index < products.length; index++) {
-        if (restaurantProducts.length !== products.length) {
-          throw new ClientError(`Product ${products[index].id} not found`)
+      for (let index = 0; index < uniqueProducts.length; index++) {
+        if (restaurantProducts.length !== uniqueProducts.length) {
+          throw new ClientError(`Product ${uniqueProducts[index].id} not found`)
         }
       }
 
@@ -127,7 +127,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
             total: 0,
             orderItems: {
               createMany: {
-                data: products.map(product => ({
+                data: uniqueProducts.map(product => ({
                   price:
                     restaurantProducts.find(item => item.id === product.id)
                       ?.price ?? 0,
