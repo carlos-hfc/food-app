@@ -32,6 +32,7 @@ import { listProductsByRestaurant } from "./routes/product/list-products-by-rest
 import { registerProduct } from "./routes/product/register-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
+import { getInfoRestaurant } from "./routes/restaurant/get-info-restaurant"
 import { getRestaurant } from "./routes/restaurant/get-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
@@ -67,6 +68,7 @@ app.register(addImageOnRestaurant)
 app.register(listRestaurants)
 app.register(editRestaurant)
 app.register(getRestaurant)
+app.register(getInfoRestaurant)
 
 app.register(listCategories)
 
