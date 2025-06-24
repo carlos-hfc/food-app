@@ -21,6 +21,11 @@ import { listCategories } from "./routes/category/list-categories"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
 import { listFavorites } from "./routes/favorite/list-favorites"
 import { saveFavorite } from "./routes/favorite/save-favorite"
+import { getDailyReceiptInPeriod } from "./routes/metrics/get-daily-receipt-in-period"
+import { getMonthCanceledOrdersAmount } from "./routes/metrics/get-month-canceled-orders-amount"
+import { getMonthOrdersAmount } from "./routes/metrics/get-month-orders-amount"
+import { getMonthReceipt } from "./routes/metrics/get-month-receipt"
+import { getPopularProducts } from "./routes/metrics/get-popular-products"
 import { changeOrderStatus } from "./routes/order/change-order-status"
 import { createOrder } from "./routes/order/create-order"
 import { getOrder } from "./routes/order/get-order"
@@ -94,5 +99,11 @@ app.register(createOrder)
 app.register(getOrder)
 app.register(changeOrderStatus)
 app.register(rateOrder)
+
+app.register(getPopularProducts)
+app.register(getMonthOrdersAmount)
+app.register(getMonthCanceledOrdersAmount)
+app.register(getDailyReceiptInPeriod)
+app.register(getMonthReceipt)
 
 app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
