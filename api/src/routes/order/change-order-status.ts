@@ -5,13 +5,11 @@ import { z } from "zod"
 import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
-import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
     "/order/:orderId/status",
     {
-      preHandler: [verifyUserRole("ADMIN")],
       schema: {
         params: z.object({
           orderId: z.string().uuid(),
