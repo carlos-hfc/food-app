@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 
-import { faker } from "@faker-js/faker"
+import { fakerPT_BR as faker } from "@faker-js/faker"
 import { hash } from "bcryptjs"
 import { addDays } from "date-fns"
 import { OrderStatus, PaymentMethod, Prisma } from "generated/prisma"
@@ -32,21 +32,21 @@ async function main() {
         email: "carlos@email.com",
         name: "Carlos",
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "ADMIN",
       },
       {
         email: faker.internet.email().toLowerCase(),
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "ADMIN",
       },
       {
         email: faker.internet.email().toLowerCase(),
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "ADMIN",
       },
     ],
@@ -58,28 +58,28 @@ async function main() {
         email: "filled@email.com",
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: faker.internet.email().toLowerCase(),
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: faker.internet.email().toLowerCase(),
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: "vazio@email.com",
         name: faker.person.firstName(),
         password,
-        phone: faker.phone.number(),
+        phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
     ],
@@ -96,7 +96,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client1.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
         main: true,
       },
@@ -105,7 +105,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client1.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
       },
       {
@@ -113,7 +113,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client2.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
         main: true,
       },
@@ -122,7 +122,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client2.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
       },
       {
@@ -130,7 +130,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client3.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
         main: true,
       },
@@ -139,7 +139,7 @@ async function main() {
         city: faker.location.city(),
         uf: faker.location.state({ abbreviated: true }),
         clientId: client3.id,
-        district: faker.location.country(),
+        district: faker.location.county(),
         zipCode: faker.location.zipCode(),
       },
     ],
@@ -154,7 +154,7 @@ async function main() {
           deliveryTime: faker.number.int({ min: 30, max: 90 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
-          phone: faker.phone.number(),
+          phone: faker.phone.number({ style: "international" }),
         },
         {
           adminId: admin2.id,
@@ -162,7 +162,7 @@ async function main() {
           deliveryTime: faker.number.int({ min: 30, max: 90 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
-          phone: faker.phone.number(),
+          phone: faker.phone.number({ style: "international" }),
         },
         {
           adminId: admin3.id,
@@ -170,7 +170,7 @@ async function main() {
           deliveryTime: faker.number.int({ min: 30, max: 90 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
-          phone: faker.phone.number(),
+          phone: faker.phone.number({ style: "international" }),
         },
       ],
     })
