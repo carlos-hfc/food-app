@@ -29,6 +29,7 @@ import { getPopularProducts } from "./routes/metrics/get-popular-products"
 import { changeOrderStatus } from "./routes/order/change-order-status"
 import { createOrder } from "./routes/order/create-order"
 import { getOrder } from "./routes/order/get-order"
+import { listOrders } from "./routes/order/list-orders"
 import { myOrders } from "./routes/order/my-orders"
 import { rateOrder } from "./routes/order/rate-order"
 import { addImageOnProduct } from "./routes/product/add-image-on-product"
@@ -101,6 +102,7 @@ app.register(getOrder)
 app.register(changeOrderStatus)
 app.register(rateOrder)
 app.register(myOrders)
+app.register(listOrders)
 
 app.register(getPopularProducts)
 app.register(getMonthOrdersAmount)
