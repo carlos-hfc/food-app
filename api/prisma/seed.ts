@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto"
 import { fakerPT_BR as faker } from "@faker-js/faker"
 import { hash } from "bcryptjs"
 import { addDays } from "date-fns"
-import { OrderStatus, PaymentMethod, Prisma } from "generated/prisma"
+import { OrderStatus, PaymentMethod, Prisma, Product } from "generated/prisma"
 
 import { prisma } from "@/lib/prisma"
 
@@ -203,255 +203,61 @@ async function main() {
     })
   }
 
-  const products1 = await prisma.product.createManyAndReturn({
-    data: [
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant1.id,
-        available: true,
-      },
-    ],
-  })
+  const products1: Product[] = []
+  const products2: Product[] = []
+  const products3: Product[] = []
 
-  const products2 = await prisma.product.createManyAndReturn({
-    data: [
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant2.id,
-        available: true,
-      },
-    ],
-  })
-
-  const products3 = await prisma.product.createManyAndReturn({
-    data: [
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-      {
-        description: faker.commerce.productDescription(),
-        name: faker.commerce.productName(),
-        price: faker.commerce.price({
-          min: 20,
-          max: 40,
-          dec: 1,
-        }),
-        restaurantId: restaurant3.id,
-        available: true,
-      },
-    ],
-  })
+  for (let index = 0; index < 30; index++) {
+    products1.push(
+      await prisma.product.create({
+        data: {
+          description: faker.commerce.productDescription(),
+          name: faker.commerce.productName(),
+          price: faker.commerce.price({
+            min: 20,
+            max: 40,
+            dec: 1,
+          }),
+          restaurantId: restaurant1.id,
+          available: true,
+        },
+      }),
+    )
+    products2.push(
+      await prisma.product.create({
+        data: {
+          description: faker.commerce.productDescription(),
+          name: faker.commerce.productName(),
+          price: faker.commerce.price({
+            min: 20,
+            max: 40,
+            dec: 1,
+          }),
+          restaurantId: restaurant2.id,
+          available: true,
+        },
+      }),
+    )
+    products3.push(
+      await prisma.product.create({
+        data: {
+          description: faker.commerce.productDescription(),
+          name: faker.commerce.productName(),
+          price: faker.commerce.price({
+            min: 20,
+            max: 40,
+            dec: 1,
+          }),
+          restaurantId: restaurant3.id,
+          available: true,
+        },
+      }),
+    )
+  }
 
   const orders: Prisma.OrderUncheckedCreateInput[] = []
   const orderItems: Prisma.OrderItemUncheckedCreateInput[] = []
-  for (let index = 0; index < 50; index++) {
+  for (let index = 0; index < 300; index++) {
     const orderId = randomUUID()
 
     const orderProducts1 = faker.helpers.arrayElements(products1, {
@@ -507,7 +313,7 @@ async function main() {
     })
   }
 
-  for (let index = 0; index < 50; index++) {
+  for (let index = 0; index < 300; index++) {
     const orderId = randomUUID()
 
     const orderProducts2 = faker.helpers.arrayElements(products2, {
@@ -563,7 +369,7 @@ async function main() {
     })
   }
 
-  for (let index = 0; index < 50; index++) {
+  for (let index = 0; index < 300; index++) {
     const orderId = randomUUID()
 
     const orderProducts3 = faker.helpers.arrayElements(products3, {
