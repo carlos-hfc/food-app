@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
 import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
+import { PER_PAGE } from "@/utils/constants"
 import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 export const listRestaurants: FastifyPluginAsyncZod = async app => {
@@ -73,8 +74,8 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
             lte: deliveryTime,
           },
         },
-        take: 10,
-        skip: pageIndex * 10,
+        take: PER_PAGE,
+        skip: pageIndex * PER_PAGE,
       })
 
       const totalCount = await prisma.restaurant.count({
@@ -107,7 +108,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
         meta: {
           totalCount,
           pageIndex,
-          perPage: 10,
+          perPage: PER_PAGE,
         },
       }
     },
