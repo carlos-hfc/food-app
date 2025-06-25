@@ -15,7 +15,7 @@ export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
           orderId: z.string().uuid(),
         }),
         body: z.object({
-          status: z.nativeEnum(OrderStatus),
+          status: z.string().toUpperCase().pipe(z.nativeEnum(OrderStatus)),
         }),
         response: {
           200: z.null(),

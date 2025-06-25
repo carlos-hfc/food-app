@@ -20,7 +20,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         }),
         body: z.object({
           addressId: z.string().uuid(),
-          payment: z.nativeEnum(PaymentMethod),
+          payment: z.string().toUpperCase().pipe(z.nativeEnum(PaymentMethod)),
           products: z
             .array(
               z.object({
