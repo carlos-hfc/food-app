@@ -1,5 +1,4 @@
-import { tz, TZDate } from "@date-fns/tz"
-import { differenceInMinutes, startOfToday } from "date-fns"
+import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
@@ -7,6 +6,8 @@ import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
+import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
+import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 export const listFavorites: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
@@ -32,6 +33,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
                     name: z.string(),
                   }),
                   isOpen: z.boolean(),
+                  openingAt: z.string().optional(),
                 }),
               }),
             ),
@@ -63,19 +65,6 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
                   weekday: {
                     equals: new TZDate().getDay(),
                   },
-                  open: true,
-                  openedAt: {
-                    lte: differenceInMinutes(
-                      new Date(),
-                      startOfToday({ in: tz("-03:00") }),
-                    ),
-                  },
-                  closedAt: {
-                    gte: differenceInMinutes(
-                      new Date(),
-                      startOfToday({ in: tz("-03:00") }),
-                    ),
-                  },
                 },
                 take: 1,
               },
@@ -86,17 +75,15 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
 
       return {
         favorites: favorites.map(item => ({
-          id: item.id,
-          clientId: item.clientId,
-          restaurantId: item.restaurantId,
+          ...item,
           restaurant: {
-            id: item.restaurant.id,
-            name: item.restaurant.name,
-            image: item.restaurant.image,
-            deliveryTime: item.restaurant.deliveryTime,
-            tax: item.restaurant.tax,
-            category: item.restaurant.category,
-            isOpen: item.restaurant.hours.length > 0,
+            ...item.restaurant,
+            isOpen: restaurantIsOpen(item.restaurant.hours[0]),
+            openingAt:
+              item.restaurant.hours[0].open &&
+              !restaurantIsOpen(item.restaurant.hours[0])
+                ? convertMinutesToHours(item.restaurant.hours[0].openedAt)
+                : undefined,
           },
         })),
       }

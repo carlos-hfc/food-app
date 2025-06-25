@@ -1,10 +1,10 @@
 import { TZDate } from "@date-fns/tz"
-import { differenceInMinutes } from "date-fns"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
 import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
+import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 export const getRestaurant: FastifyPluginAsyncZod = async app => {
@@ -36,7 +36,7 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
                 avg: z.string().nullable(),
                 count: z.number(),
               }),
-              isOpen: z.oboolean(),
+              isOpen: z.boolean(),
               openingAt: z.string().optional(),
             }),
           }),
@@ -73,9 +73,7 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
               weekday: "asc",
             },
             where: {
-              weekday: {
-                equals: new TZDate().getDay(),
-              },
+              weekday: new TZDate().getDay(),
             },
             take: 1,
           },
@@ -98,25 +96,19 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Restaurant not found")
       }
 
-      const isOpen =
-        restaurant.hours[0].open &&
-        differenceInMinutes(new TZDate(), restaurant.hours[0].openedAt) < 0
-
       return {
         restaurant: {
           ...restaurant,
           tax: restaurant.tax.toNumber(),
           products: restaurant.products.map(item => ({
-            id: item.id,
-            name: item.name,
-            description: item.description,
-            image: item.image,
+            ...item,
             price: item.price.toNumber(),
           })),
-          isOpen,
-          openingAt: !isOpen
-            ? convertMinutesToHours(restaurant.hours[0].openedAt)
-            : undefined,
+          isOpen: restaurantIsOpen(restaurant.hours[0]),
+          openingAt:
+            restaurant.hours[0].open && !restaurantIsOpen(restaurant.hours[0])
+              ? convertMinutesToHours(restaurant.hours[0].openedAt)
+              : undefined,
           grade: {
             avg: grade._avg.grade?.toFixed(2) ?? null,
             count: grade._count.grade,
