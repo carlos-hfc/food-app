@@ -1,5 +1,4 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -20,7 +19,7 @@ export const listProductsByRestaurant: FastifyPluginAsyncZod = async app => {
                 restaurantId: z.string(),
                 name: z.string(),
                 description: z.string(),
-                price: z.custom<Prisma.Decimal>(),
+                price: z.number(),
                 available: z.boolean(),
                 image: z.string().nullable(),
               }),
@@ -39,7 +38,12 @@ export const listProductsByRestaurant: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return { products }
+      return {
+        products: products.map(item => ({
+          ...item,
+          price: item.price.toNumber(),
+        })),
+      }
     },
   )
 }

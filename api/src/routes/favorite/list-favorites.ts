@@ -1,6 +1,5 @@
 import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -25,7 +24,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
                 restaurant: z.object({
                   id: z.string().uuid(),
                   name: z.string(),
-                  tax: z.custom<Prisma.Decimal>(),
+                  tax: z.number(),
                   deliveryTime: z.number(),
                   image: z.string().nullable(),
                   category: z.object({
@@ -78,6 +77,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
           ...item,
           restaurant: {
             ...item.restaurant,
+            tax: item.restaurant.tax.toNumber(),
             isOpen: restaurantIsOpen(item.restaurant.hours[0]),
             openingAt:
               item.restaurant.hours[0].open &&
