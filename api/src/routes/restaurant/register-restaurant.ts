@@ -1,20 +1,26 @@
+import { hash } from "bcryptjs"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
+import { Role } from "generated/prisma"
 import { z } from "zod"
 
 import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/middlewares/auth"
-import { verifyUserRole } from "@/middlewares/verify-user-role"
+import { PASSWORD_REGEX } from "@/utils/constants"
 import { convertHoursToMinutes } from "@/utils/convert-hours-to-minutes"
 
 export const registerRestaurant: FastifyPluginAsyncZod = async app => {
-  app.register(auth).post(
+  app.post(
     "/restaurant",
     {
-      preHandler: [verifyUserRole("ADMIN")],
       schema: {
         body: z.object({
-          name: z.string(),
+          managerName: z.string(),
+          restaurantName: z.string(),
+          email: z.string().email(),
+          password: z.string().refine(value => PASSWORD_REGEX.test(value), {
+            message:
+              "Password must contain at least eight characters, an uppercase letter, a lowercase letter, a number and a special character",
+          }),
           phone: z.string(),
           tax: z.number(),
           deliveryTime: z.number(),
@@ -34,9 +40,17 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
-
-      const { categoryId, deliveryTime, hours, name, phone, tax } = request.body
+      const {
+        categoryId,
+        deliveryTime,
+        hours,
+        phone,
+        tax,
+        email,
+        managerName,
+        password,
+        restaurantName,
+      } = request.body
 
       const operationHours = hours.flatMap(item => {
         const weekday = item.weekday.split(",")
@@ -53,17 +67,25 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Invalid weekdays")
       }
 
-      await prisma.restaurant.create({
+      await prisma.user.create({
         data: {
-          deliveryTime,
-          name,
+          email,
+          name: managerName,
+          password: await hash(password, 10),
           phone,
-          tax,
-          adminId,
-          categoryId,
-          hours: {
-            createMany: {
-              data: operationHours,
+          role: Role.ADMIN,
+          restaurant: {
+            create: {
+              deliveryTime,
+              name: restaurantName,
+              phone,
+              tax,
+              categoryId,
+              hours: {
+                createMany: {
+                  data: operationHours,
+                },
+              },
             },
           },
         },

@@ -44,7 +44,6 @@ import { getRestaurant } from "./routes/restaurant/get-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
 import { authenticate } from "./routes/session/authenticate"
-import { registerAdmin } from "./routes/session/register-admin"
 import { registerClient } from "./routes/session/register-client"
 import { editProfile } from "./routes/user/edit-profile"
 import { getProfile } from "./routes/user/get-profile"
@@ -68,7 +67,6 @@ app.register(fastifyStatic, {
 
 app.register(registerClient)
 app.register(authenticate)
-app.register(registerAdmin)
 
 app.register(registerRestaurant)
 app.register(addImageOnRestaurant)
