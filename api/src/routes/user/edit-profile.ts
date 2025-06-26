@@ -17,7 +17,6 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
             name: z.string().optional(),
             email: z.string().email().optional(),
             phone: z.string().optional(),
-            oldPassword: z.string().optional(),
             password: z
               .string()
               .min(8)
@@ -32,6 +31,9 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
             message: "Password and confirm password don't match",
             path: ["confirmPassword"],
           }),
+        response: {
+          200: z.null(),
+        },
       },
     },
     async (request, reply) => {
@@ -47,11 +49,11 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
         throw new ClientError("User not found")
       }
 
-      const { name, password, phone, email, oldPassword } = request.body
+      const { name, password, phone, email } = request.body
 
-      if (oldPassword && !(await compare(oldPassword, user.password))) {
+      if (password && (await compare(password, user.password))) {
         throw new ClientError(
-          "New password cannot be equal to the old password",
+          "New password cannot be equal to the current password",
         )
       }
 
