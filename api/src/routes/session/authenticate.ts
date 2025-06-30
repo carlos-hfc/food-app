@@ -15,9 +15,7 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
           password: z.string().min(8),
         }),
         response: {
-          200: z.object({
-            token: z.string(),
-          }),
+          200: z.null(),
         },
       },
     },
@@ -52,7 +50,15 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
         },
       )
 
-      return reply.status(200).send({ token })
+      return reply
+        .setCookie("token", token, {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: true,
+        })
+        .status(200)
+        .send()
     },
   )
 }

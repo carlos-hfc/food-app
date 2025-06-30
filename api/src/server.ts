@@ -1,5 +1,6 @@
 import { resolve } from "node:path"
 
+import fastifyCookie from "@fastify/cookie"
 import fastifyCors from "@fastify/cors"
 import fastifyJwt from "@fastify/jwt"
 import fastifyMultipart from "@fastify/multipart"
@@ -45,6 +46,7 @@ import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
 import { authenticate } from "./routes/session/authenticate"
 import { registerClient } from "./routes/session/register-client"
+import { signOut } from "./routes/session/sign-out"
 import { editProfile } from "./routes/user/edit-profile"
 import { getProfile } from "./routes/user/get-profile"
 
@@ -57,7 +59,15 @@ app.setErrorHandler(errorHandler)
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
+  cookie: {
+    cookieName: "token",
+    signed: false,
+  },
+  sign: {
+    expiresIn: "7d",
+  },
 })
+app.register(fastifyCookie)
 app.register(fastifyCors)
 app.register(fastifyMultipart)
 app.register(fastifyStatic, {
@@ -67,6 +77,7 @@ app.register(fastifyStatic, {
 
 app.register(registerClient)
 app.register(authenticate)
+app.register(signOut)
 
 app.register(registerRestaurant)
 app.register(addImageOnRestaurant)
