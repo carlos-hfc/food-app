@@ -17,19 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PASSWORD_REGEX } from "@/constants"
+import { PASSWORD_REGEX, WEEKDAYS } from "@/constants"
 import { getCategories } from "@/http/get-categories"
 import { signUp } from "@/http/sign-up"
-
-const weekdays = [
-  "Domingo",
-  "Segunda",
-  "Terça",
-  "Quarta",
-  "Quinta",
-  "Sexta",
-  "Sábado",
-]
 
 const signUpForm = z.object({
   managerName: z.string(),
@@ -65,6 +55,7 @@ export function SignUp() {
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
+    staleTime: Infinity,
   })
 
   const { mutateAsync: signUpFn } = useMutation({
@@ -267,10 +258,10 @@ export function SignUp() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="categoryId">Horário de funcionamento</Label>
+            <Label htmlFor="hours">Horário de funcionamento</Label>
 
             <div className="flex flex-wrap justify-between gap-2">
-              {weekdays.map((item, i) => (
+              {WEEKDAYS.map((item, i) => (
                 <Controller
                   key={i}
                   name="hours"
