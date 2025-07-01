@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router"
 
 import { AppLayout } from "./_layouts/app"
 import { AuthLayout } from "./_layouts/auth"
+import { Orders } from "./app/orders/orders"
 import { SignIn } from "./auth/sign-in"
 import { SignUp } from "./auth/sign-up"
 import { Error } from "./error"
@@ -12,6 +13,12 @@ export const router = createBrowserRouter([
     path: "/",
     element: <AppLayout />,
     errorElement: <Error />,
+    children: [
+      {
+        path: "/orders",
+        element: <Orders />,
+      },
+    ],
   },
   {
     path: "/",
