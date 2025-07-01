@@ -1,19 +1,28 @@
 import { ArrowRightIcon, SearchIcon, XIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { TableCell, TableRow } from "@/components/ui/table"
+
+import { OrderDetails } from "./order-details"
 
 export function OrderTableRow() {
   return (
     <TableRow>
       <TableCell>
-        <Button
-          variant={"outline"}
-          size={"xs"}
-          aria-label="Detalhes do pedido"
-        >
-          <SearchIcon className="size-3" />
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant={"outline"}
+              size={"xs"}
+              aria-label="Detalhes do pedido"
+            >
+              <SearchIcon className="size-3" />
+            </Button>
+          </DialogTrigger>
+
+          <OrderDetails />
+        </Dialog>
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">
         089fda089fda
