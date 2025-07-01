@@ -41,6 +41,7 @@ import { registerProduct } from "./routes/product/register-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { getInfoRestaurant } from "./routes/restaurant/get-info-restaurant"
+import { getManagedRestaurant } from "./routes/restaurant/get-managed-restaurant"
 import { getRestaurant } from "./routes/restaurant/get-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
@@ -67,8 +68,11 @@ app.register(fastifyJwt, {
     expiresIn: "7d",
   },
 })
+app.register(fastifyCors, {
+  origin: "http://localhost:3000",
+  credentials: true,
+})
 app.register(fastifyCookie)
-app.register(fastifyCors)
 app.register(fastifyMultipart)
 app.register(fastifyStatic, {
   root: resolve(__dirname, "..", "uploads"),
@@ -85,6 +89,7 @@ app.register(listRestaurants)
 app.register(editRestaurant)
 app.register(getRestaurant)
 app.register(getInfoRestaurant)
+app.register(getManagedRestaurant)
 
 app.register(listCategories)
 
@@ -119,4 +124,6 @@ app.register(getMonthCanceledOrdersAmount)
 app.register(getDailyReceiptInPeriod)
 app.register(getMonthReceipt)
 
-app.listen({ port: env.PORT }).then(() => console.log("HTTP Server running"))
+app
+  .listen({ port: env.PORT, host: "0.0.0.0" })
+  .then(() => console.log("HTTP Server running"))
