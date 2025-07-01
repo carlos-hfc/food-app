@@ -71,6 +71,7 @@ app.register(fastifyJwt, {
 app.register(fastifyCors, {
   origin: "http://localhost:3000",
   credentials: true,
+  methods: ["GET", "PATCH", "POST", "PUT", "DELETE"],
 })
 app.register(fastifyCookie)
 app.register(fastifyMultipart)
