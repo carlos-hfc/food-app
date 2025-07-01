@@ -12,11 +12,10 @@ export const getProfile: FastifyPluginAsyncZod = async app => {
       schema: {
         response: {
           200: z.object({
-            user: z.object({
-              id: z.string().uuid(),
-              name: z.string(),
-              phone: z.string(),
-            }),
+            id: z.string().uuid(),
+            name: z.string(),
+            email: z.string().email(),
+            phone: z.string(),
           }),
         },
       },
@@ -31,6 +30,7 @@ export const getProfile: FastifyPluginAsyncZod = async app => {
         select: {
           id: true,
           name: true,
+          email: true,
           phone: true,
         },
       })
@@ -39,7 +39,7 @@ export const getProfile: FastifyPluginAsyncZod = async app => {
         throw new ClientError("User not found")
       }
 
-      return { user }
+      return user
     },
   )
 }
