@@ -65,7 +65,6 @@ export function SignUp() {
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
-    refetchOnWindowFocus: false,
   })
 
   const { mutateAsync: signUpFn } = useMutation({
