@@ -1,6 +1,6 @@
 import clsx from "clsx"
 
-export type OrderStatus =
+export type OrderStatusType =
   | "PENDING"
   | "PREPARING"
   | "ROUTING"
@@ -8,10 +8,10 @@ export type OrderStatus =
   | "CANCELED"
 
 interface OrderStatusProps {
-  status: OrderStatus
+  status: OrderStatusType
 }
 
-const orderStatusMap: Record<OrderStatus, string> = {
+const orderStatusMap: Record<OrderStatusType, string> = {
   CANCELED: "Cancelado",
   PREPARING: "Em preparo",
   PENDING: "Pendente",
