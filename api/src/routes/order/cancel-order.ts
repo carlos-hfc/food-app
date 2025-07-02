@@ -6,19 +6,16 @@ import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 
-export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
+export const cancelOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/order/:orderId/status",
+    "/order/:orderId/cancel",
     {
       schema: {
         params: z.object({
           orderId: z.string().uuid(),
         }),
-        body: z.object({
-          status: z.string().toUpperCase().pipe(z.nativeEnum(OrderStatus)),
-        }),
         response: {
-          200: z.null(),
+          204: z.null(),
         },
       },
     },
@@ -26,7 +23,6 @@ export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
       const adminId = await request.getCurrentUserId()
 
       const { orderId } = request.params
-      const { status } = request.body
 
       const order = await prisma.order.findUnique({
         where: {
@@ -43,7 +39,8 @@ export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
 
       if (
         order.status === OrderStatus.CANCELED ||
-        order.status === OrderStatus.DELIVERED
+        order.status === OrderStatus.DELIVERED ||
+        order.status === OrderStatus.ROUTING
       ) {
         throw new ClientError("Not allowed")
       }
@@ -53,11 +50,11 @@ export const changeOrderStatus: FastifyPluginAsyncZod = async app => {
           id: orderId,
         },
         data: {
-          status,
+          status: OrderStatus.CANCELED,
         },
       })
 
-      return reply.send()
+      return reply.status(204).send()
     },
   )
 }
