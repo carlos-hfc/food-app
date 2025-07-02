@@ -273,7 +273,7 @@ export function SignUp() {
                     >
                       <Checkbox
                         id="hours"
-                        className="absolute size-full data-[state=checked]:bg-muted-foreground!"
+                        className="absolute size-full"
                         checked={field.value?.includes(i)}
                         onCheckedChange={checked => {
                           return checked

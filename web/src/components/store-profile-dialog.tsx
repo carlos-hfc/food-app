@@ -85,7 +85,7 @@ export function StoreProfileDialog() {
       const cached = queryClient.getQueryData(["managed-restaurant"])
 
       if (cached) {
-        const x = queryClient.setQueryData(["managed-restaurant"], {
+        queryClient.setQueryData(["managed-restaurant"], {
           ...cached,
           ...variables,
           hours: variables.hours.map(item => ({
@@ -93,8 +93,6 @@ export function StoreProfileDialog() {
             id: item.hourId,
           })),
         })
-
-        console.log(x)
       }
     },
   })
@@ -224,7 +222,7 @@ export function StoreProfileDialog() {
                     >
                       <Checkbox
                         id="hours"
-                        className="absolute size-full data-[state=checked]:bg-muted-foreground!"
+                        className="absolute size-full"
                         checked={field.value?.includes(i)}
                         onCheckedChange={checked => {
                           return checked
