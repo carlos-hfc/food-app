@@ -87,6 +87,9 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
         },
         take: PER_PAGE,
         skip: pageIndex * PER_PAGE,
+        orderBy: {
+          date: "desc",
+        },
       })
 
       return {
