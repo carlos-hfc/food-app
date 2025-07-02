@@ -13,7 +13,7 @@ export function OrderTableFilters() {
       <span className="text-sm font-semibold">Filtros</span>
 
       <Select>
-        <SelectTrigger className="h-8 w-[180px]">
+        <SelectTrigger className="h-8 w-48">
           <SelectValue />
         </SelectTrigger>
 
@@ -28,7 +28,7 @@ export function OrderTableFilters() {
       </Select>
 
       <Select>
-        <SelectTrigger className="h-8 w-[180px]">
+        <SelectTrigger className="h-8 w-52">
           <SelectValue />
         </SelectTrigger>
 

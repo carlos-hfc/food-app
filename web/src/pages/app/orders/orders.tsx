@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query"
+
 import { Pagination } from "@/components/pagination"
 import {
   Table,
@@ -6,11 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getOrders } from "@/http/get-orders"
 
 import { OrderTableFilters } from "./order-table-filters"
 import { OrderTableRow } from "./order-table-row"
 
 export function Orders() {
+  const { data: result } = useQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+  })
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-3xl font-bold tracking-tight">Pedidos</h1>
@@ -23,7 +31,7 @@ export function Orders() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-16" />
-                <TableHead className="w-36">Identificador</TableHead>
+                <TableHead className="w-72">Identificador</TableHead>
                 <TableHead className="w-36">Realizado há</TableHead>
                 <TableHead className="w-16">Pagamento</TableHead>
                 <TableHead className="w-44">Status</TableHead>
@@ -35,8 +43,11 @@ export function Orders() {
             </TableHeader>
 
             <TableBody>
-              {Array.from({ length: 10 }).map((_, i) => (
-                <OrderTableRow key={i} />
+              {result?.orders.map(order => (
+                <OrderTableRow
+                  key={order.id}
+                  order={order}
+                />
               ))}
             </TableBody>
           </Table>
