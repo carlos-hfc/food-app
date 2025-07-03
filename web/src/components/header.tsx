@@ -1,4 +1,9 @@
-import { HamburgerIcon, HomeIcon, UtensilsCrossedIcon } from "lucide-react"
+import {
+  HamburgerIcon,
+  HomeIcon,
+  PizzaIcon,
+  UtensilsCrossedIcon,
+} from "lucide-react"
 
 import { AccountMenu } from "./account-menu"
 import { NavLink } from "./nav-link"
@@ -24,6 +29,10 @@ export function Header() {
           <NavLink to="/orders">
             <UtensilsCrossedIcon className="size-4" />
             Pedidos
+          </NavLink>
+          <NavLink to="/products">
+            <PizzaIcon className="size-4" />
+            Produtos
           </NavLink>
         </nav>
 
