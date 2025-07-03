@@ -5,6 +5,7 @@ import { ArrowRightIcon, SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 
 import { OrderStatus, OrderStatusType } from "@/components/order-status"
+import { PaymentMethod } from "@/components/payment-method"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { TableCell, TableRow } from "@/components/ui/table"
@@ -119,7 +120,9 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           addSuffix: true,
         })}
       </TableCell>
-      <TableCell className="font-medium">{order.payment}</TableCell>
+      <TableCell>
+        <PaymentMethod paymentMethod={order.payment} />
+      </TableCell>
       <TableCell>
         <OrderStatus status={order.status} />
       </TableCell>
