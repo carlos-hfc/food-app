@@ -25,7 +25,10 @@ export function MonthRevenueCard() {
         {monthRevenue ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
-              {monthRevenue.receipt.toLocaleString("pt-BR")}
+              {monthRevenue.receipt.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
             </span>
             <p className="text-sm text-muted-foreground">
               {monthRevenue.diffFromLastMonth >= 0 ? (
