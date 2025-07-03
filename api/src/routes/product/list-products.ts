@@ -37,7 +37,8 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
             adminId,
           },
         },
-      })``
+      })
+
       return {
         products: products.map(item => ({
           ...item,
