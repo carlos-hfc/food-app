@@ -56,28 +56,28 @@ async function main() {
     data: [
       {
         email: "filled@email.com",
-        name: faker.person.firstName(),
+        name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: faker.internet.email().toLowerCase(),
-        name: faker.person.firstName(),
+        name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: faker.internet.email().toLowerCase(),
-        name: faker.person.firstName(),
+        name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
         email: "vazio@email.com",
-        name: faker.person.firstName(),
+        name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
