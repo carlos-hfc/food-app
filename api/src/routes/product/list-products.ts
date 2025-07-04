@@ -16,12 +16,9 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
             products: z.array(
               z.object({
                 id: z.string(),
-                restaurantId: z.string(),
                 name: z.string(),
-                description: z.string(),
                 price: z.number(),
                 available: z.boolean(),
-                image: z.string().nullable(),
               }),
             ),
           }),
@@ -36,6 +33,12 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
           restaurant: {
             adminId,
           },
+        },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          available: true,
         },
       })
 

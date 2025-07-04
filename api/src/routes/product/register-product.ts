@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const registerProduct: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
-    "/restaurant/:restaurantId/product",
+    "/product",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
@@ -18,9 +18,6 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
           price: z.number(),
           available: z.boolean().optional().default(true),
         }),
-        params: z.object({
-          restaurantId: z.string().uuid(),
-        }),
         response: {
           201: z.null(),
         },
@@ -28,11 +25,9 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
     },
     async (request, reply) => {
       const adminId = await request.getCurrentUserId()
-      const { restaurantId } = request.params
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
-          id: restaurantId,
           adminId,
         },
       })
@@ -49,7 +44,7 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
           name,
           price,
           available,
-          restaurantId,
+          restaurantId: restaurant.id,
         },
       })
 
