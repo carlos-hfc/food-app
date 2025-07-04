@@ -32,6 +32,7 @@ import { cancelOrder } from "./routes/order/cancel-order"
 import { createOrder } from "./routes/order/create-order"
 import { deliverOrder } from "./routes/order/deliver-order"
 import { dispatchOrder } from "./routes/order/dispatch-order"
+import { getEvaluations } from "./routes/order/get-evaluations"
 import { getOrder } from "./routes/order/get-order"
 import { listOrders } from "./routes/order/list-orders"
 import { myOrders } from "./routes/order/my-orders"
@@ -124,6 +125,7 @@ app.register(approveOrder)
 app.register(dispatchOrder)
 app.register(deliverOrder)
 app.register(cancelOrder)
+app.register(getEvaluations)
 
 app.register(getPopularProducts)
 app.register(getMonthOrdersAmount)
