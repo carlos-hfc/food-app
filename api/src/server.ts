@@ -39,7 +39,6 @@ import { rateOrder } from "./routes/order/rate-order"
 import { addImageOnProduct } from "./routes/product/add-image-on-product"
 import { editProduct } from "./routes/product/edit-product"
 import { listProducts } from "./routes/product/list-products"
-import { listProductsByRestaurant } from "./routes/product/list-products-by-restaurant"
 import { registerProduct } from "./routes/product/register-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
@@ -48,6 +47,7 @@ import { getManagedRestaurant } from "./routes/restaurant/get-managed-restaurant
 import { getRestaurant } from "./routes/restaurant/get-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
+import { viewMenu } from "./routes/restaurant/view-menu"
 import { authenticate } from "./routes/session/authenticate"
 import { registerClient } from "./routes/session/register-client"
 import { signOut } from "./routes/session/sign-out"
@@ -94,6 +94,7 @@ app.register(editRestaurant)
 app.register(getRestaurant)
 app.register(getInfoRestaurant)
 app.register(getManagedRestaurant)
+app.register(viewMenu)
 
 app.register(listCategories)
 
@@ -110,7 +111,6 @@ app.register(listFavorites)
 app.register(deleteFavorite)
 
 app.register(registerProduct)
-app.register(listProductsByRestaurant)
 app.register(addImageOnProduct)
 app.register(editProduct)
 app.register(listProducts)
