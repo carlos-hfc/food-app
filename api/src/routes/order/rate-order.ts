@@ -27,7 +27,7 @@ export const rateOrder: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const { orderId } = request.params
       const { grade, comment } = request.body

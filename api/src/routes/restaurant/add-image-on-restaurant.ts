@@ -10,7 +10,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const addImageOnRestaurant: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/restaurant/:restaurantId/image",
+    "/restaurant/image",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
@@ -23,20 +23,7 @@ export const addImageOnRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
-
-      const { restaurantId } = request.params
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          id: restaurantId,
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const file = await request.file()
 

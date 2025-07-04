@@ -4,12 +4,14 @@ import { z } from "zod"
 import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
+import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
     "/managed-restaurant",
     {
+      preHandler: [verifyUserRole("ADMIN")],
       schema: {
         response: {
           200: z.object({
@@ -33,15 +35,11 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
-
-      if (!adminId) {
-        throw new ClientError("User not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
-          adminId,
+          id: restaurantId,
         },
         select: {
           id: true,

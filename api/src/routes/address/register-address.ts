@@ -27,7 +27,7 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const { zipCode, address, number, district, city, uf, alias } =
         request.body

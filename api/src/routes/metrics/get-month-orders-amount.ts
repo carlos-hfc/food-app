@@ -3,7 +3,6 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -28,33 +27,23 @@ export const getMonthOrdersAmount: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const today = startOfToday()
       const endOfCurrentMonth = endOfMonth(today)
 
       const orderPerMonth = await prisma.$queryRaw<Query[]>(Prisma.sql`
-      select 
-        count(o.id)::int amount,
-        to_char(o.date, 'YYYY-MM') "month"
-      from orders o
-      where o."restaurantId" = ${restaurant.id}
-        and o.date <= ${endOfCurrentMonth}
-      group by "month"
-      having count(o.id) > 1
-      order by "month" desc
-      limit 2  
-    `)
+        select 
+          count(o.id)::int amount,
+          to_char(o.date, 'YYYY-MM') "month"
+        from orders o
+        where o."restaurantId" = ${restaurantId}
+          and o.date <= ${endOfCurrentMonth}
+        group by "month"
+        having count(o.id) > 1
+        order by "month" desc
+        limit 2  
+      `)
 
       const currentMonthWithYear = format(endOfCurrentMonth, "yyyy-MM")
       const lastMonthWithYear = format(

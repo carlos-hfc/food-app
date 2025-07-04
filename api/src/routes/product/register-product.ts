@@ -1,7 +1,6 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -24,17 +23,7 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const { available, description, name, price } = request.body
 
@@ -44,7 +33,7 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
           name,
           price,
           available,
-          restaurantId: restaurant.id,
+          restaurantId,
         },
       })
 

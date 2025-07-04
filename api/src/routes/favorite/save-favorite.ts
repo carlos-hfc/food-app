@@ -20,8 +20,7 @@ export const saveFavorite: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
-
+      const { id: clientId } = await request.getCurrentUser()
       const { restaurantId } = request.body
 
       await prisma.favorite.create({

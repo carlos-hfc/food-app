@@ -20,7 +20,7 @@ export const deleteFavorite: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const { favoriteId } = request.params
 

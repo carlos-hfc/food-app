@@ -32,7 +32,7 @@ export const listAddress: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const addresses = await prisma.address.findMany({
         where: {

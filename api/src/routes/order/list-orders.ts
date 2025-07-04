@@ -51,14 +51,12 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
+      const restaurantId = await request.getManagedRestaurantId()
       const { pageIndex, status, payment } = request.query
 
       const totalCount = await prisma.order.count({
         where: {
-          restaurant: {
-            adminId,
-          },
+          restaurantId,
           status,
           payment,
         },
@@ -66,9 +64,7 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
 
       const orders = await prisma.order.findMany({
         where: {
-          restaurant: {
-            adminId,
-          },
+          restaurantId,
           status,
           payment,
         },

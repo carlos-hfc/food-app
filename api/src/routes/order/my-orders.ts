@@ -35,7 +35,7 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const orders = await prisma.order.findMany({
         where: {

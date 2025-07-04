@@ -2,7 +2,6 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -29,17 +28,7 @@ export const getPopularProducts: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const popularProducts = await prisma.$queryRaw<Query[]>(Prisma.sql`
         select 
@@ -48,7 +37,7 @@ export const getPopularProducts: FastifyPluginAsyncZod = async app => {
         from "orderItems" oi
         left join orders o on o.id = oi."orderId"
         left join products p on p.id = oi."productId"
-        where o."restaurantId" = ${restaurant.id}
+        where o."restaurantId" = ${restaurantId}
         group by p.name
         order by amount desc
         limit 5

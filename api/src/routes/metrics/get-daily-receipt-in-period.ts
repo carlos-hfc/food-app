@@ -42,17 +42,7 @@ export const getDailyReceiptInPeriod: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const { from, to } = request.query
 
@@ -76,7 +66,7 @@ export const getDailyReceiptInPeriod: FastifyPluginAsyncZod = async app => {
           to_char(o.date, 'DD/MM') datetime,
           sum(o.total) receipt
         from orders o
-        where o."restaurantId" = ${restaurant.id}
+        where o."restaurantId" = ${restaurantId}
           and o.date::varchar >= ${startDate}
           and o.date::varchar <= ${endDate}
         group by datetime

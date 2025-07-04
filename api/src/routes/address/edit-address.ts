@@ -31,7 +31,7 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const { addressId } = request.params
 

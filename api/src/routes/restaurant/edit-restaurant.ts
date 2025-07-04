@@ -1,7 +1,6 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -9,7 +8,7 @@ import { convertHoursToMinutes } from "@/utils/convert-hours-to-minutes"
 
 export const editRestaurant: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/restaurant/:restaurantId",
+    "/restaurant",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
@@ -39,19 +38,7 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
-      const { restaurantId } = request.params
-
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          id: restaurantId,
-          adminId,
-        },
-      })
-
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
-      }
+      const restaurantId = await request.getManagedRestaurantId()
 
       const { deliveryTime, name, phone, tax, categoryId, hours } = request.body
 

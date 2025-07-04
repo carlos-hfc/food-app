@@ -41,7 +41,7 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const favorites = await prisma.favorite.findMany({
         where: {

@@ -39,7 +39,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const clientId = await request.getCurrentUserId()
+      const { id: clientId } = await request.getCurrentUser()
 
       const { restaurantId } = request.params
       const { addressId, products, payment } = request.body

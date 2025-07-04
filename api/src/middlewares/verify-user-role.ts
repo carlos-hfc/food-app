@@ -6,11 +6,11 @@ import { prisma } from "@/lib/prisma"
 
 export function verifyUserRole(roleToVerify: Role) {
   return async (request: FastifyRequest) => {
-    const userId = await request.getCurrentUserId()
+    const { id } = await request.getCurrentUser()
 
     const user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        id,
       },
     })
 

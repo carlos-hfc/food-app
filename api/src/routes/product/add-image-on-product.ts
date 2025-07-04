@@ -10,13 +10,12 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/restaurant/:restaurantId/product/:productId/image",
+    "/product/:productId/image",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
         params: z.object({
           productId: z.string().uuid(),
-          restaurantId: z.string().uuid(),
         }),
         response: {
           200: z.null(),
@@ -24,7 +23,8 @@ export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const { productId, restaurantId } = request.params
+      const restaurantId = await request.getManagedRestaurantId()
+      const { productId } = request.params
 
       const product = await prisma.product.findUnique({
         where: {

@@ -26,13 +26,11 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const adminId = await request.getCurrentUserId()
+      const restaurantId = await request.getManagedRestaurantId()
 
       const products = await prisma.product.findMany({
         where: {
-          restaurant: {
-            adminId,
-          },
+          restaurantId,
         },
         select: {
           id: true,

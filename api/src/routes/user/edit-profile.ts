@@ -37,11 +37,11 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const userId = await request.getCurrentUserId()
+      const { id } = await request.getCurrentUser()
 
       const user = await prisma.user.findUnique({
         where: {
-          id: userId,
+          id,
         },
       })
 

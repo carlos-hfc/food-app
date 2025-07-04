@@ -20,16 +20,14 @@ export const cancelOrder: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
+      const restaurantId = await request.getManagedRestaurantId()
 
       const { orderId } = request.params
 
       const order = await prisma.order.findUnique({
         where: {
           id: orderId,
-          restaurant: {
-            adminId,
-          },
+          restaurantId,
         },
       })
 

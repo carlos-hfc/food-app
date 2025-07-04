@@ -27,15 +27,13 @@ export const editProduct: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const adminId = await request.getCurrentUserId()
+      const restaurantId = await request.getManagedRestaurantId()
       const { productId } = request.params
 
       const product = await prisma.product.findUnique({
         where: {
           id: productId,
-          restaurant: {
-            adminId,
-          },
+          restaurantId,
         },
       })
 
