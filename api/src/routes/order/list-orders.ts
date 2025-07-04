@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { OrderStatus, PaymentMethod } from "generated/prisma"
+import { OrderStatus, PaymentMethod, Prisma } from "generated/prisma"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -54,20 +54,18 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
       const restaurantId = await request.getManagedRestaurantId()
       const { pageIndex, status, payment } = request.query
 
+      const where: Prisma.OrderWhereInput = {
+        restaurantId,
+        status,
+        payment,
+      }
+
       const totalCount = await prisma.order.count({
-        where: {
-          restaurantId,
-          status,
-          payment,
-        },
+        where,
       })
 
       const orders = await prisma.order.findMany({
-        where: {
-          restaurantId,
-          status,
-          payment,
-        },
+        where,
         select: {
           id: true,
           date: true,

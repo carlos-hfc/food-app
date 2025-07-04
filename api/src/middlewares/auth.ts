@@ -41,7 +41,7 @@ export const auth = fastifyPlugin(async app => {
     }
 
     request.getManagedRestaurantId = async () => {
-      const restaurantId = await request.getManagedRestaurantId()
+      const { restaurantId } = await request.getCurrentUser()
 
       if (!restaurantId) {
         throw new ClientError("User is not a restaurant manager")

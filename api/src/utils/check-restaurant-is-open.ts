@@ -1,12 +1,19 @@
 import { tz, TZDate } from "@date-fns/tz"
 import { differenceInMinutes, startOfToday } from "date-fns"
-import { Hour } from "generated/prisma"
 
-export function restaurantIsOpen(hour: Hour) {
+interface RestaurantIsOpenParams {
+  openedAt: number
+  closedAt: number
+}
+
+export function restaurantIsOpen({
+  closedAt,
+  openedAt,
+}: RestaurantIsOpenParams) {
   return (
     differenceInMinutes(new TZDate(), startOfToday({ in: tz("-03:00") })) >
-      hour.openedAt &&
+      openedAt &&
     differenceInMinutes(new TZDate(), startOfToday({ in: tz("-03:00") })) <
-      hour.closedAt
+      closedAt
   )
 }

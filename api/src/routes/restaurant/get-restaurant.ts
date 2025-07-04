@@ -17,28 +17,17 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
         }),
         response: {
           200: z.object({
-            restaurant: z.object({
-              id: z.string().uuid(),
-              name: z.string(),
-              tax: z.number(),
-              deliveryTime: z.number(),
-              image: z.string().nullable(),
-              products: z.array(
-                z.object({
-                  id: z.string().uuid(),
-                  name: z.string(),
-                  description: z.string(),
-                  price: z.number(),
-                  image: z.string().nullable(),
-                }),
-              ),
-              grade: z.object({
-                avg: z.string().nullable(),
-                count: z.number(),
-              }),
-              isOpen: z.boolean(),
-              openingAt: z.string().optional(),
+            id: z.string().uuid(),
+            name: z.string(),
+            tax: z.number(),
+            deliveryTime: z.number(),
+            image: z.string().nullable(),
+            grade: z.object({
+              avg: z.string().nullable(),
+              count: z.number(),
             }),
+            isOpen: z.boolean(),
+            openingAt: z.string().optional(),
           }),
         },
       },
@@ -56,18 +45,6 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
           image: true,
           deliveryTime: true,
           tax: true,
-          products: {
-            where: {
-              available: true,
-            },
-            select: {
-              description: true,
-              id: true,
-              name: true,
-              image: true,
-              price: true,
-            },
-          },
           hours: {
             orderBy: {
               weekday: "asc",
@@ -97,22 +74,16 @@ export const getRestaurant: FastifyPluginAsyncZod = async app => {
       }
 
       return {
-        restaurant: {
-          ...restaurant,
-          tax: restaurant.tax.toNumber(),
-          products: restaurant.products.map(item => ({
-            ...item,
-            price: item.price.toNumber(),
-          })),
-          isOpen: restaurantIsOpen(restaurant.hours[0]),
-          openingAt:
-            restaurant.hours[0].open && !restaurantIsOpen(restaurant.hours[0])
-              ? convertMinutesToHours(restaurant.hours[0].openedAt)
-              : undefined,
-          grade: {
-            avg: grade._avg.grade?.toFixed(2) ?? null,
-            count: grade._count.grade,
-          },
+        ...restaurant,
+        tax: restaurant.tax.toNumber(),
+        isOpen: restaurantIsOpen(restaurant.hours[0]),
+        openingAt:
+          restaurant.hours[0].open && !restaurantIsOpen(restaurant.hours[0])
+            ? convertMinutesToHours(restaurant.hours[0].openedAt)
+            : undefined,
+        grade: {
+          avg: grade._avg.grade?.toFixed(2) ?? null,
+          count: grade._count.grade,
         },
       }
     },
