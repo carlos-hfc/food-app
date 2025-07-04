@@ -262,7 +262,7 @@ async function main() {
 
     const orderProducts1 = faker.helpers.arrayElements(products1, {
       min: 1,
-      max: 3,
+      max: 5,
     })
 
     let total = 0
@@ -270,7 +270,7 @@ async function main() {
     orderProducts1.forEach(product => {
       const quantity = faker.number.int({
         min: 1,
-        max: 3,
+        max: 5,
       })
 
       total += product.price.toNumber() * quantity
@@ -293,23 +293,13 @@ async function main() {
       id: orderId,
       clientId: client,
       restaurantId: restaurant1.id,
-      payment: faker.helpers.arrayElement([
-        PaymentMethod.CARD,
-        PaymentMethod.CASH,
-        PaymentMethod.PIX,
-      ]),
-      status: faker.helpers.arrayElement([
-        OrderStatus.CANCELED,
-        OrderStatus.DELIVERED,
-        OrderStatus.PENDING,
-        OrderStatus.PREPARING,
-        OrderStatus.ROUTING,
-      ]),
+      payment: faker.helpers.enumValue(PaymentMethod),
+      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant1.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 60 }),
+      date: faker.date.recent({ days: 90 }),
     })
   }
 
@@ -318,7 +308,7 @@ async function main() {
 
     const orderProducts2 = faker.helpers.arrayElements(products2, {
       min: 1,
-      max: 3,
+      max: 5,
     })
 
     let total = 0
@@ -326,7 +316,7 @@ async function main() {
     orderProducts2.forEach(product => {
       const quantity = faker.number.int({
         min: 1,
-        max: 3,
+        max: 5,
       })
 
       total += product.price.toNumber() * quantity
@@ -349,23 +339,13 @@ async function main() {
       id: orderId,
       clientId: client,
       restaurantId: restaurant2.id,
-      payment: faker.helpers.arrayElement([
-        PaymentMethod.CARD,
-        PaymentMethod.CASH,
-        PaymentMethod.PIX,
-      ]),
-      status: faker.helpers.arrayElement([
-        OrderStatus.CANCELED,
-        OrderStatus.DELIVERED,
-        OrderStatus.PENDING,
-        OrderStatus.PREPARING,
-        OrderStatus.ROUTING,
-      ]),
+      payment: faker.helpers.enumValue(PaymentMethod),
+      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant2.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 60 }),
+      date: faker.date.recent({ days: 90 }),
     })
   }
 
@@ -374,7 +354,7 @@ async function main() {
 
     const orderProducts3 = faker.helpers.arrayElements(products3, {
       min: 1,
-      max: 3,
+      max: 5,
     })
 
     let total = 0
@@ -382,7 +362,7 @@ async function main() {
     orderProducts3.forEach(product => {
       const quantity = faker.number.int({
         min: 1,
-        max: 3,
+        max: 5,
       })
 
       total += product.price.toNumber() * quantity
@@ -405,23 +385,13 @@ async function main() {
       id: orderId,
       clientId: client,
       restaurantId: restaurant3.id,
-      payment: faker.helpers.arrayElement([
-        PaymentMethod.CARD,
-        PaymentMethod.CASH,
-        PaymentMethod.PIX,
-      ]),
-      status: faker.helpers.arrayElement([
-        OrderStatus.CANCELED,
-        OrderStatus.DELIVERED,
-        OrderStatus.PENDING,
-        OrderStatus.PREPARING,
-        OrderStatus.ROUTING,
-      ]),
+      payment: faker.helpers.enumValue(PaymentMethod),
+      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant3.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 60 }),
+      date: faker.date.recent({ days: 90 }),
     })
   }
 
