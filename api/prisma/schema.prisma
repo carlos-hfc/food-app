@@ -27,6 +27,7 @@ model User {
 
   restaurant Restaurant?
 
+  @@unique([email, phone])
   @@map("users")
 }
 
@@ -100,6 +101,7 @@ model Product {
   price       Decimal @db.Money
   available   Boolean @default(true)
   image       String?
+  active      Boolean @default(true)
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
