@@ -16,7 +16,7 @@ import { getProducts } from "@/http/get-products"
 import { ProductTableSkeleton } from "./product-table-skeleton"
 
 export function Products() {
-  const { data: result, isLoading: isLoadingProducts } = useQuery({
+  const { data: products, isLoading: isLoadingProducts } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
   })
@@ -40,7 +40,7 @@ export function Products() {
           <TableBody>
             {isLoadingProducts && <ProductTableSkeleton />}
 
-            {result?.products.map(product => (
+            {products?.map(product => (
               <TableRow key={product.id}>
                 <TableCell>
                   <Button

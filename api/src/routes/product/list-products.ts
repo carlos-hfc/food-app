@@ -12,16 +12,14 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
         response: {
-          200: z.object({
-            products: z.array(
-              z.object({
-                id: z.string(),
-                name: z.string(),
-                price: z.number(),
-                available: z.boolean(),
-              }),
-            ),
-          }),
+          200: z.array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              price: z.number(),
+              available: z.boolean(),
+            }),
+          ),
         },
       },
     },
@@ -40,12 +38,10 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return {
-        products: products.map(item => ({
-          ...item,
-          price: item.price.toNumber(),
-        })),
-      }
+      return products.map(item => ({
+        ...item,
+        price: item.price.toNumber(),
+      }))
     },
   )
 }
