@@ -15,28 +15,26 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
         response: {
-          200: z.object({
-            favorites: z.array(
-              z.object({
+          200: z.array(
+            z.object({
+              id: z.string().uuid(),
+              clientId: z.string().uuid(),
+              restaurantId: z.string().uuid(),
+              restaurant: z.object({
                 id: z.string().uuid(),
-                clientId: z.string().uuid(),
-                restaurantId: z.string().uuid(),
-                restaurant: z.object({
+                name: z.string(),
+                tax: z.number(),
+                deliveryTime: z.number(),
+                image: z.string().nullable(),
+                category: z.object({
                   id: z.string().uuid(),
                   name: z.string(),
-                  tax: z.number(),
-                  deliveryTime: z.number(),
-                  image: z.string().nullable(),
-                  category: z.object({
-                    id: z.string().uuid(),
-                    name: z.string(),
-                  }),
-                  isOpen: z.boolean(),
-                  openingAt: z.string().optional(),
                 }),
+                isOpen: z.boolean(),
+                openingAt: z.string().optional(),
               }),
-            ),
-          }),
+            }),
+          ),
         },
       },
     },
@@ -57,9 +55,6 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
               tax: true,
               category: true,
               hours: {
-                orderBy: {
-                  weekday: "asc",
-                },
                 where: {
                   weekday: {
                     equals: new TZDate().getDay(),
@@ -72,21 +67,19 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return {
-        favorites: favorites.map(item => ({
-          ...item,
-          restaurant: {
-            ...item.restaurant,
-            tax: item.restaurant.tax.toNumber(),
-            isOpen: restaurantIsOpen(item.restaurant.hours[0]),
-            openingAt:
-              item.restaurant.hours[0].open &&
-              !restaurantIsOpen(item.restaurant.hours[0])
-                ? convertMinutesToHours(item.restaurant.hours[0].openedAt)
-                : undefined,
-          },
-        })),
-      }
+      return favorites.map(item => ({
+        ...item,
+        restaurant: {
+          ...item.restaurant,
+          tax: item.restaurant.tax.toNumber(),
+          isOpen: restaurantIsOpen(item.restaurant.hours[0]),
+          openingAt:
+            item.restaurant.hours[0].open &&
+            !restaurantIsOpen(item.restaurant.hours[0])
+              ? convertMinutesToHours(item.restaurant.hours[0].openedAt)
+              : undefined,
+        },
+      }))
     },
   )
 }
