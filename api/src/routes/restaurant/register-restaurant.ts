@@ -52,6 +52,19 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
         restaurantName,
       } = request.body
 
+      const user = await prisma.user.findUnique({
+        where: {
+          email_phone: {
+            email,
+            phone,
+          },
+        },
+      })
+
+      if (user) {
+        throw new ClientError("Restaurant admin's already exists")
+      }
+
       const operationHours = hours.flatMap(item => {
         const weekday = item.weekday.split(",")
 
