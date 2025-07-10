@@ -25,10 +25,7 @@ interface OrderTableRowProps {
     status: "PENDING" | "PREPARING" | "ROUTING" | "DELIVERED" | "CANCELED"
     payment: "CARD" | "CASH" | "PIX"
     total: number
-    grade: number | null
-    client: {
-      name: string
-    }
+    customerName: string
   }
 }
 
@@ -126,7 +123,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell>
         <OrderStatus status={order.status} />
       </TableCell>
-      <TableCell className="font-medium">{order.client.name}</TableCell>
+      <TableCell className="font-medium">{order.customerName}</TableCell>
       <TableCell className="font-medium">
         {order.total.toLocaleString("pt-BR", {
           style: "currency",

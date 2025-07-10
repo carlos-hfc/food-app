@@ -13,10 +13,7 @@ export interface GetOrdersResponse {
     status: "PENDING" | "PREPARING" | "ROUTING" | "DELIVERED" | "CANCELED"
     payment: "CARD" | "CASH" | "PIX"
     total: number
-    grade: number | null
-    client: {
-      name: string
-    }
+    customerName: string
   }[]
   meta: {
     totalCount: number
