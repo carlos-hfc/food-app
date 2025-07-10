@@ -2,15 +2,15 @@ import { randomUUID } from "node:crypto"
 
 import { fakerPT_BR as faker } from "@faker-js/faker"
 import { hash } from "bcryptjs"
-import { addDays } from "date-fns"
+import { addHours } from "date-fns"
 import { OrderStatus, PaymentMethod, Prisma, Product } from "generated/prisma"
 
 import { prisma } from "@/lib/prisma"
 
 async function main() {
-  const tablenames = await prisma.$queryRaw<
-    Array<{ tablename: string }>
-  >`SELECT tablename FROM pg_tables WHERE schemaname='public'`
+  const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>(
+    Prisma.sql`SELECT tablename FROM pg_tables WHERE schemaname='public'`,
+  )
 
   const tables = tablenames
     .map(({ tablename }) => tablename)
@@ -26,31 +26,46 @@ async function main() {
 
   const password = await hash("12345678", 10)
 
-  const [admin1, admin2, admin3] = await prisma.user.createManyAndReturn({
-    data: [
-      {
-        email: "carlos@email.com",
-        name: "Carlos",
-        password,
-        phone: faker.phone.number({ style: "international" }),
-        role: "ADMIN",
-      },
-      {
-        email: faker.internet.email().toLowerCase(),
-        name: faker.person.firstName(),
-        password,
-        phone: faker.phone.number({ style: "international" }),
-        role: "ADMIN",
-      },
-      {
-        email: faker.internet.email().toLowerCase(),
-        name: faker.person.firstName(),
-        password,
-        phone: faker.phone.number({ style: "international" }),
-        role: "ADMIN",
-      },
-    ],
-  })
+  const [admin1, admin2, admin3, admin4, admin5] =
+    await prisma.user.createManyAndReturn({
+      data: [
+        {
+          email: "carlos@email.com",
+          name: "Carlos",
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+        {
+          email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
+          name: faker.person.fullName(),
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+        {
+          email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
+          name: faker.person.fullName(),
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+        {
+          email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
+          name: faker.person.fullName(),
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+        {
+          email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
+          name: faker.person.fullName(),
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+      ],
+    })
 
   const [client1, client2, client3] = await prisma.user.createManyAndReturn({
     data: [
@@ -62,14 +77,14 @@ async function main() {
         role: "CLIENT",
       },
       {
-        email: faker.internet.email().toLowerCase(),
+        email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
         name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
         role: "CLIENT",
       },
       {
-        email: faker.internet.email().toLowerCase(),
+        email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
         name: faker.person.fullName(),
         password,
         phone: faker.phone.number({ style: "international" }),
@@ -85,7 +100,7 @@ async function main() {
     ],
   })
 
-  const [br, pizza, lanches] = await prisma.category.createManyAndReturn({
+  const categories = await prisma.category.createManyAndReturn({
     data: [{ name: "Brasileira" }, { name: "Pizza" }, { name: "Lanches" }],
   })
 
@@ -145,29 +160,55 @@ async function main() {
     ],
   })
 
-  const [restaurant1, restaurant2, restaurant3] =
+  const [restaurant1, restaurant2, restaurant3, restaurant4, restaurant5] =
     await prisma.restaurant.createManyAndReturn({
       data: [
         {
           adminId: admin1.id,
-          categoryId: faker.helpers.arrayElement([pizza.id, br.id, lanches.id]),
-          deliveryTime: faker.number.int({ min: 30, max: 90 }),
+          categoryId: faker.helpers.arrayElement(
+            categories.map(({ id }) => id),
+          ),
+          deliveryTime: faker.number.int({ min: 30, max: 120 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
           phone: faker.phone.number({ style: "international" }),
         },
         {
           adminId: admin2.id,
-          categoryId: faker.helpers.arrayElement([pizza.id, br.id, lanches.id]),
-          deliveryTime: faker.number.int({ min: 30, max: 90 }),
+          categoryId: faker.helpers.arrayElement(
+            categories.map(({ id }) => id),
+          ),
+          deliveryTime: faker.number.int({ min: 30, max: 120 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
           phone: faker.phone.number({ style: "international" }),
         },
         {
           adminId: admin3.id,
-          categoryId: faker.helpers.arrayElement([pizza.id, br.id, lanches.id]),
-          deliveryTime: faker.number.int({ min: 30, max: 90 }),
+          categoryId: faker.helpers.arrayElement(
+            categories.map(({ id }) => id),
+          ),
+          deliveryTime: faker.number.int({ min: 30, max: 120 }),
+          tax: faker.number.int({ min: 0, max: 20 }),
+          name: faker.company.name(),
+          phone: faker.phone.number({ style: "international" }),
+        },
+        {
+          adminId: admin4.id,
+          categoryId: faker.helpers.arrayElement(
+            categories.map(({ id }) => id),
+          ),
+          deliveryTime: faker.number.int({ min: 30, max: 120 }),
+          tax: faker.number.int({ min: 0, max: 20 }),
+          name: faker.company.name(),
+          phone: faker.phone.number({ style: "international" }),
+        },
+        {
+          adminId: admin5.id,
+          categoryId: faker.helpers.arrayElement(
+            categories.map(({ id }) => id),
+          ),
+          deliveryTime: faker.number.int({ min: 30, max: 120 }),
           tax: faker.number.int({ min: 0, max: 20 }),
           name: faker.company.name(),
           phone: faker.phone.number({ style: "international" }),
@@ -175,28 +216,42 @@ async function main() {
       ],
     })
 
-  for (let index = 0; index < 7; index++) {
+  for (let weekday = 0; weekday < 7; weekday++) {
     await prisma.hour.createMany({
       data: [
         {
-          weekday: index,
+          weekday,
           openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 840, max: 1439 }),
+          closedAt: faker.number.int({ min: 1080, max: 1440 }),
           restaurantId: restaurant1.id,
           open: true,
         },
         {
-          weekday: index,
+          weekday,
           openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 840, max: 1439 }),
+          closedAt: faker.number.int({ min: 1080, max: 1440 }),
           restaurantId: restaurant2.id,
           open: true,
         },
         {
-          weekday: index,
+          weekday,
           openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 840, max: 1439 }),
+          closedAt: faker.number.int({ min: 1080, max: 1440 }),
           restaurantId: restaurant3.id,
+          open: true,
+        },
+        {
+          weekday,
+          openedAt: faker.number.int({ min: 540, max: 840 }),
+          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          restaurantId: restaurant4.id,
+          open: true,
+        },
+        {
+          weekday,
+          openedAt: faker.number.int({ min: 540, max: 840 }),
+          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          restaurantId: restaurant5.id,
           open: true,
         },
       ],
@@ -206,6 +261,8 @@ async function main() {
   const products1: Product[] = []
   const products2: Product[] = []
   const products3: Product[] = []
+  const products4: Product[] = []
+  const products5: Product[] = []
 
   for (let index = 0; index < 30; index++) {
     products1.push(
@@ -249,6 +306,36 @@ async function main() {
             dec: 1,
           }),
           restaurantId: restaurant3.id,
+          available: true,
+        },
+      }),
+    )
+    products4.push(
+      await prisma.product.create({
+        data: {
+          description: faker.commerce.productDescription(),
+          name: faker.commerce.productName(),
+          price: faker.commerce.price({
+            min: 20,
+            max: 40,
+            dec: 1,
+          }),
+          restaurantId: restaurant4.id,
+          available: true,
+        },
+      }),
+    )
+    products5.push(
+      await prisma.product.create({
+        data: {
+          description: faker.commerce.productDescription(),
+          name: faker.commerce.productName(),
+          price: faker.commerce.price({
+            min: 20,
+            max: 40,
+            dec: 1,
+          }),
+          restaurantId: restaurant5.id,
           available: true,
         },
       }),
@@ -395,15 +482,114 @@ async function main() {
     })
   }
 
+  for (let index = 0; index < 300; index++) {
+    const orderId = randomUUID()
+
+    const orderProducts4 = faker.helpers.arrayElements(products4, {
+      min: 1,
+      max: 5,
+    })
+
+    let total = 0
+
+    orderProducts4.forEach(product => {
+      const quantity = faker.number.int({
+        min: 1,
+        max: 5,
+      })
+
+      total += product.price.toNumber() * quantity
+
+      orderItems.push({
+        orderId,
+        productId: product.id,
+        price: product.price,
+        quantity,
+      })
+    })
+
+    const client = faker.helpers.arrayElement([
+      client1.id,
+      client2.id,
+      client3.id,
+    ])
+
+    orders.push({
+      id: orderId,
+      clientId: client,
+      restaurantId: restaurant4.id,
+      payment: faker.helpers.enumValue(PaymentMethod),
+      status: faker.helpers.enumValue(OrderStatus),
+      total: total + restaurant4.tax.toNumber(),
+      addressId: faker.helpers.arrayElement(
+        address.filter(item => item.clientId === client),
+      ).id,
+      date: faker.date.recent({ days: 90 }),
+    })
+  }
+
+  for (let index = 0; index < 300; index++) {
+    const orderId = randomUUID()
+
+    const orderProducts5 = faker.helpers.arrayElements(products5, {
+      min: 1,
+      max: 5,
+    })
+
+    let total = 0
+
+    orderProducts5.forEach(product => {
+      const quantity = faker.number.int({
+        min: 1,
+        max: 5,
+      })
+
+      total += product.price.toNumber() * quantity
+
+      orderItems.push({
+        orderId,
+        productId: product.id,
+        price: product.price,
+        quantity,
+      })
+    })
+
+    const client = faker.helpers.arrayElement([
+      client1.id,
+      client2.id,
+      client3.id,
+    ])
+
+    orders.push({
+      id: orderId,
+      clientId: client,
+      restaurantId: restaurant5.id,
+      payment: faker.helpers.enumValue(PaymentMethod),
+      status: faker.helpers.enumValue(OrderStatus),
+      total: total + restaurant5.tax.toNumber(),
+      addressId: faker.helpers.arrayElement(
+        address.filter(item => item.clientId === client),
+      ).id,
+      date: faker.date.recent({ days: 90 }),
+    })
+  }
+
   for (let index = 0; index < orders.length; index++) {
     const currentOrder = orders[index]
 
     if (currentOrder.status === OrderStatus.DELIVERED) {
       currentOrder.grade = faker.number.int({ min: 1, max: 5 })
-      currentOrder.ratingDate = addDays(currentOrder.date as string, 1)
+      currentOrder.ratingDate = faker.date.between({
+        from: addHours(currentOrder.date as string, 1),
+        to: faker.date.soon({
+          days: 2,
+          refDate: addHours(currentOrder.date as string, 1),
+        }),
+      })
+
       currentOrder.comment = faker.helpers.arrayElement([
         null,
-        faker.lorem.words({ min: 2, max: 10 }),
+        faker.lorem.paragraph({ min: 1, max: 4 }),
       ])
     }
   }
@@ -428,6 +614,8 @@ async function main() {
           restaurant1.id,
           restaurant2.id,
           restaurant3.id,
+          restaurant4.id,
+          restaurant5.id,
         ]),
       },
       {
@@ -440,6 +628,8 @@ async function main() {
           restaurant1.id,
           restaurant2.id,
           restaurant3.id,
+          restaurant4.id,
+          restaurant5.id,
         ]),
       },
       {
@@ -452,6 +642,36 @@ async function main() {
           restaurant1.id,
           restaurant2.id,
           restaurant3.id,
+          restaurant4.id,
+          restaurant5.id,
+        ]),
+      },
+      {
+        clientId: faker.helpers.arrayElement([
+          client1.id,
+          client2.id,
+          client3.id,
+        ]),
+        restaurantId: faker.helpers.arrayElement([
+          restaurant1.id,
+          restaurant2.id,
+          restaurant3.id,
+          restaurant4.id,
+          restaurant5.id,
+        ]),
+      },
+      {
+        clientId: faker.helpers.arrayElement([
+          client1.id,
+          client2.id,
+          client3.id,
+        ]),
+        restaurantId: faker.helpers.arrayElement([
+          restaurant1.id,
+          restaurant2.id,
+          restaurant3.id,
+          restaurant4.id,
+          restaurant5.id,
         ]),
       },
     ],
