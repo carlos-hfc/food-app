@@ -83,8 +83,8 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
             when 'PREPARING' then 2
             when 'ROUTING' then 3
             when 'DELIVERED' then 4
-            when 'CANCELED' then 99
-          end, date desc
+            when 'CANCELED' then 0
+          end desc, date desc
       `
 
       const orders = await prisma.$queryRaw<Query[]>(Prisma.sql`
