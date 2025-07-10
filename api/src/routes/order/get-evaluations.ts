@@ -7,6 +7,14 @@ import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { PER_PAGE } from "@/utils/constants"
 
+interface Query {
+  id: string
+  customerName: string
+  grade: number
+  comment: string | null
+  ratingDate: Date
+}
+
 export const getEvaluations: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
     "/evaluations",
@@ -27,7 +35,7 @@ export const getEvaluations: FastifyPluginAsyncZod = async app => {
             evaluations: z.array(
               z.object({
                 id: z.string().uuid(),
-                client: z.string(),
+                customerName: z.string(),
                 grade: z.number(),
                 comment: z.string().nullable(),
                 ratingDate: z.date(),
@@ -46,49 +54,44 @@ export const getEvaluations: FastifyPluginAsyncZod = async app => {
       const restaurantId = await request.getManagedRestaurantId()
       const { pageIndex, comment, grade } = request.query
 
-      const where: Prisma.OrderWhereInput = {
-        restaurantId,
-        grade: {
-          equals: grade,
-          not: null,
-        },
-        comment: comment ? { not: null } : comment === false ? null : {},
-      }
+      const search: Prisma.Sql[] = []
 
-      const totalCount = await prisma.order.count({
-        where,
-      })
+      search.push(
+        Prisma.sql`o."restaurantId" = ${restaurantId} and o.grade is not null`,
+      )
+      if (grade) search.push(Prisma.sql`o.grade = ${grade}`)
+      if (comment === true) search.push(Prisma.sql`o.comment is not null`)
+      if (comment === false) search.push(Prisma.sql`o.comment is null`)
 
-      const evaluations = await prisma.order.findMany({
-        where,
-        select: {
-          grade: true,
-          comment: true,
-          ratingDate: true,
-          id: true,
-          client: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        take: PER_PAGE,
-        skip: pageIndex * PER_PAGE,
-        orderBy: {
-          ratingDate: "desc",
-        },
-      })
+      const baseQuery = Prisma.sql`
+        select
+          o.id,
+          u.name "customerName",
+          o.grade,
+          o."ratingDate",
+          o.comment
+        from orders o
+        join users u on u.id = o."clientId"
+        where ${Prisma.join(search, " and ")}
+        order by o."ratingDate" desc
+      `
+
+      const [{ count }] = await prisma.$queryRaw<
+        Array<{ count: number }>
+      >(Prisma.sql`
+        with base as (${baseQuery})
+        select count(*)::int from base
+      `)
+
+      const evaluations = await prisma.$queryRaw<Query[]>(Prisma.sql`
+        ${baseQuery} limit ${PER_PAGE} offset ${pageIndex * PER_PAGE}
+      `)
 
       return {
-        evaluations: evaluations.map(item => ({
-          ...item,
-          client: item.client.name,
-          grade: item.grade!,
-          ratingDate: item.ratingDate!,
-        })),
+        evaluations,
         meta: {
           pageIndex,
-          totalCount,
+          totalCount: count,
           perPage: PER_PAGE,
         },
       }

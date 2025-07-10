@@ -7,6 +7,15 @@ import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { PER_PAGE } from "@/utils/constants"
 
+interface Query {
+  id: string
+  date: Date
+  status: OrderStatus
+  payment: PaymentMethod
+  total: string
+  customerName: string
+}
+
 export const listOrders: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
     "/order",
@@ -35,10 +44,7 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
                 payment: z.nativeEnum(PaymentMethod),
                 status: z.nativeEnum(OrderStatus),
                 total: z.number(),
-                grade: z.number().nullable(),
-                client: z.object({
-                  name: z.string(),
-                }),
+                customerName: z.string(),
               }),
             ),
             meta: z.object({
@@ -54,46 +60,51 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
       const restaurantId = await request.getManagedRestaurantId()
       const { pageIndex, status, payment } = request.query
 
-      const where: Prisma.OrderWhereInput = {
-        restaurantId,
-        status,
-        payment,
-      }
+      const search: Prisma.Sql[] = []
 
-      const totalCount = await prisma.order.count({
-        where,
-      })
+      search.push(Prisma.sql`o."restaurantId" = ${restaurantId}`)
+      if (status) search.push(Prisma.sql`o.status::varchar = ${status}`)
+      if (payment) search.push(Prisma.sql`o.payment::varchar = ${payment}`)
 
-      const orders = await prisma.order.findMany({
-        where,
-        select: {
-          id: true,
-          date: true,
-          status: true,
-          payment: true,
-          total: true,
-          grade: true,
-          client: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        take: PER_PAGE,
-        skip: pageIndex * PER_PAGE,
-        orderBy: {
-          date: "desc",
-        },
-      })
+      const baseQuery = Prisma.sql`
+        select
+          o.id,
+          o.date,
+          o.status,
+          o.payment,
+          o.total,
+          u.name "customerName"
+        from orders o
+        join users u on u.id = o."clientId"
+        where ${Prisma.join(search, " and ")}
+        order by
+          case o.status
+            when 'PENDING' then 1
+            when 'PREPARING' then 2
+            when 'ROUTING' then 3
+            when 'DELIVERED' then 4
+            when 'CANCELED' then 99
+          end, date desc
+      `
+
+      const orders = await prisma.$queryRaw<Query[]>(Prisma.sql`
+        ${baseQuery} limit ${PER_PAGE} offset ${pageIndex * PER_PAGE}
+      `)
+      const [{ count }] = await prisma.$queryRaw<
+        Array<{ count: number }>
+      >(Prisma.sql`
+        with base as (${baseQuery})
+        select count(*)::int from base
+      `)
 
       return {
         orders: orders.map(item => ({
           ...item,
-          total: item.total.toNumber(),
+          total: Number(item.total),
         })),
         meta: {
           pageIndex,
-          totalCount,
+          totalCount: count,
           perPage: PER_PAGE,
         },
       }
