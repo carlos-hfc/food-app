@@ -19,6 +19,7 @@ import { editAddress } from "./routes/address/edit-address"
 import { listAddress } from "./routes/address/list-address"
 import { registerAddress } from "./routes/address/register-address"
 import { listCategories } from "./routes/category/list-categories"
+import { getEvaluation } from "./routes/evaluations/get-evaluation"
 import { listEvaluations } from "./routes/evaluations/list-evaluations"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
 import { listFavorites } from "./routes/favorite/list-favorites"
@@ -133,6 +134,7 @@ app.register(deliverOrder)
 app.register(cancelOrder)
 
 app.register(listEvaluations)
+app.register(getEvaluation)
 
 app.register(getPopularProducts)
 app.register(getMonthOrdersAmount)
