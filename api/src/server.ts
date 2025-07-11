@@ -19,6 +19,7 @@ import { editAddress } from "./routes/address/edit-address"
 import { listAddress } from "./routes/address/list-address"
 import { registerAddress } from "./routes/address/register-address"
 import { listCategories } from "./routes/category/list-categories"
+import { getEvaluations } from "./routes/evaluations/get-evaluations"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
 import { listFavorites } from "./routes/favorite/list-favorites"
 import { saveFavorite } from "./routes/favorite/save-favorite"
@@ -32,15 +33,17 @@ import { cancelOrder } from "./routes/order/cancel-order"
 import { createOrder } from "./routes/order/create-order"
 import { deliverOrder } from "./routes/order/deliver-order"
 import { dispatchOrder } from "./routes/order/dispatch-order"
-import { getEvaluations } from "./routes/order/get-evaluations"
 import { getOrder } from "./routes/order/get-order"
 import { listOrders } from "./routes/order/list-orders"
 import { myOrders } from "./routes/order/my-orders"
 import { rateOrder } from "./routes/order/rate-order"
 import { addImageOnProduct } from "./routes/product/add-image-on-product"
 import { editProduct } from "./routes/product/edit-product"
+import { getProduct } from "./routes/product/get-product"
 import { listProducts } from "./routes/product/list-products"
 import { registerProduct } from "./routes/product/register-product"
+import { toggleActiveProduct } from "./routes/product/toggle-active-product"
+import { toggleAvailableProduct } from "./routes/product/toggle-available-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { getInfoRestaurant } from "./routes/restaurant/get-info-restaurant"
@@ -115,6 +118,9 @@ app.register(registerProduct)
 app.register(addImageOnProduct)
 app.register(editProduct)
 app.register(listProducts)
+app.register(getProduct)
+app.register(toggleAvailableProduct)
+app.register(toggleActiveProduct)
 
 app.register(createOrder)
 app.register(getOrder)
