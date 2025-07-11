@@ -6,26 +6,27 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 
-export const editProduct: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
+export const getProduct: FastifyPluginAsyncZod = async app => {
+  app.register(auth).get(
     "/product/:productId",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
-        body: z.object({
-          name: z.string().optional(),
-          description: z.string().optional(),
-          price: z.number().optional(),
-        }),
         params: z.object({
           productId: z.string().uuid(),
         }),
         response: {
-          200: z.null(),
+          200: z.object({
+            id: z.string().uuid(),
+            name: z.string(),
+            description: z.string(),
+            price: z.number(),
+            image: z.string().nullable(),
+          }),
         },
       },
     },
-    async (request, reply) => {
+    async request => {
       const restaurantId = await request.getManagedRestaurantId()
       const { productId } = request.params
 
@@ -40,20 +41,10 @@ export const editProduct: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Product not found")
       }
 
-      const { description, name, price } = request.body
-
-      await prisma.product.update({
-        where: {
-          id: productId,
-        },
-        data: {
-          description,
-          name,
-          price,
-        },
-      })
-
-      return reply.send()
+      return {
+        ...product,
+        price: product.price.toNumber(),
+      }
     },
   )
 }
