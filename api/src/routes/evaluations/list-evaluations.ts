@@ -15,7 +15,7 @@ interface Query {
   ratingDate: Date
 }
 
-export const getEvaluations: FastifyPluginAsyncZod = async app => {
+export const listEvaluations: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
     "/evaluations",
     {
