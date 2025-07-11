@@ -2,6 +2,7 @@ import {
   HamburgerIcon,
   HomeIcon,
   PizzaIcon,
+  StarIcon,
   UtensilsCrossedIcon,
 } from "lucide-react"
 
@@ -33,6 +34,10 @@ export function Header() {
           <NavLink to="/products">
             <PizzaIcon className="size-4" />
             Produtos
+          </NavLink>
+          <NavLink to="/evaluations">
+            <StarIcon className="size-4" />
+            Avaliações
           </NavLink>
         </nav>
 

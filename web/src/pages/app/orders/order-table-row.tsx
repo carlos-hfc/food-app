@@ -111,7 +111,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell className="font-mono text-xs font-medium">
         {order.id}
       </TableCell>
-      <TableCell className="text-muted-foreground">
+      <TableCell className="text-muted-foreground text-center">
         {formatDistanceToNow(new Date(order.date), {
           locale: ptBR,
           addSuffix: true,
