@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { PER_PAGE } from "@/utils/constants"
 
 interface Query {
-  id: string
+  orderId: string
   customerName: string
   grade: number
   comment: string | null
@@ -34,7 +34,7 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
           200: z.object({
             evaluations: z.array(
               z.object({
-                id: z.string().uuid(),
+                orderId: z.string().uuid(),
                 customerName: z.string(),
                 grade: z.number(),
                 comment: z.string().nullable(),
@@ -65,7 +65,7 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
 
       const baseQuery = Prisma.sql`
         select
-          o.id,
+          o.id "orderId",
           u.name "customerName",
           o.grade,
           o."ratingDate",
