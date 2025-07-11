@@ -27,7 +27,10 @@ export function ProductTableSkeleton() {
         <Skeleton className="h-4 w-36" />
       </TableCell>
       <TableCell>
-        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-4 w-40" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-4 w-40" />
       </TableCell>
     </TableRow>
   ))

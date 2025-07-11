@@ -1,14 +1,38 @@
 import { api } from "@/lib/axios"
 
-export type GetProductsResponse = Array<{
-  id: string
-  name: string
-  price: number
-  available: boolean
-}>
+export interface GetProductsRequest {
+  pageIndex?: number | null
+  active?: string | null
+  available?: string | null
+}
 
-export async function getProducts() {
-  const response = await api.get<GetProductsResponse>("/product")
+export interface GetProductsResponse {
+  products: {
+    id: string
+    name: string
+    price: number
+    available: boolean
+    active: boolean
+  }[]
+  meta: {
+    totalCount: number
+    pageIndex: number
+    perPage: number
+  }
+}
+
+export async function getProducts({
+  active,
+  available,
+  pageIndex,
+}: GetProductsRequest) {
+  const response = await api.get<GetProductsResponse>("/product", {
+    params: {
+      pageIndex: pageIndex ?? 0,
+      available: available === "all" ? null : available,
+      active: active === "all" ? null : active,
+    },
+  })
 
   return response.data
 }
