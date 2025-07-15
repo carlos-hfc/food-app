@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { SearchIcon } from "lucide-react"
 import { useState } from "react"
@@ -49,17 +49,20 @@ export function EvaluationTableRow({ evaluation }: EvaluationTableRowProps) {
         {evaluation.orderId}
       </TableCell>
       <TableCell className="font-medium">{evaluation.customerName}</TableCell>
-      <TableCell className="font-medium text-center">
-        {evaluation.grade}
-      </TableCell>
+      <TableCell className="font-medium">{evaluation.grade}</TableCell>
       <TableCell className="text-muted-foreground">
         <div className="line-clamp-2">{evaluation.comment ?? "-"}</div>
       </TableCell>
-      <TableCell className="text-muted-foreground text-center">
-        {formatDistanceToNow(new Date(evaluation.ratingDate), {
-          locale: ptBR,
-          addSuffix: true,
-        })}
+      <TableCell className="text-muted-foreground">
+        <time
+          dateTime={evaluation.ratingDate}
+          title={format(new Date(evaluation.ratingDate), "dd/MM/yyyy', 'HH:mm")}
+        >
+          {formatDistanceToNow(new Date(evaluation.ratingDate), {
+            locale: ptBR,
+            addSuffix: true,
+          })}
+        </time>
       </TableCell>
     </TableRow>
   )

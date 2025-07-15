@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { formatDistanceToNow } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 import {
@@ -71,10 +71,18 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
                   Realizado há
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  {formatDistanceToNow(new Date(evaluation.date), {
-                    locale: ptBR,
-                    addSuffix: true,
-                  })}
+                  <time
+                    dateTime={evaluation.date}
+                    title={format(
+                      new Date(evaluation.date),
+                      "dd/MM/yyyy', 'HH:mm",
+                    )}
+                  >
+                    {formatDistanceToNow(new Date(evaluation.date), {
+                      locale: ptBR,
+                      addSuffix: true,
+                    })}
+                  </time>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -84,20 +92,26 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
             <TableBody>
               <TableRow>
                 <TableCell className="text-muted-foreground">Nota</TableCell>
-                <TableCell className="text-right font-medium">
-                  {evaluation.grade}
-                </TableCell>
+                <TableCell className="text-right">{evaluation.grade}</TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell className="text-muted-foreground">
                   Avaliado há
                 </TableCell>
-                <TableCell className="text-right font-medium">
-                  {formatDistanceToNow(new Date(evaluation.ratingDate), {
-                    locale: ptBR,
-                    addSuffix: true,
-                  })}
+                <TableCell className="text-right">
+                  <time
+                    dateTime={evaluation.ratingDate}
+                    title={format(
+                      new Date(evaluation.ratingDate),
+                      "dd/MM/yyyy', 'HH:mm",
+                    )}
+                  >
+                    {formatDistanceToNow(new Date(evaluation.ratingDate), {
+                      locale: ptBR,
+                      addSuffix: true,
+                    })}
+                  </time>
                 </TableCell>
               </TableRow>
 
@@ -105,7 +119,7 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
                 <TableCell className="text-muted-foreground align-top">
                   Comentário
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-right">
                   {evaluation.comment ?? "-"}
                 </TableCell>
               </TableRow>

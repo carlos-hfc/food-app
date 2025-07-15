@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { formatDistanceToNow } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ArrowRightIcon, SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
@@ -111,11 +111,16 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell className="font-mono text-xs font-medium">
         {order.id}
       </TableCell>
-      <TableCell className="text-muted-foreground text-center">
-        {formatDistanceToNow(new Date(order.date), {
-          locale: ptBR,
-          addSuffix: true,
-        })}
+      <TableCell className="text-muted-foreground">
+        <time
+          dateTime={order.date}
+          title={format(new Date(order.date), "dd/MM/yyyy', 'HH:mm")}
+        >
+          {formatDistanceToNow(new Date(order.date), {
+            locale: ptBR,
+            addSuffix: true,
+          })}
+        </time>
       </TableCell>
       <TableCell>
         <PaymentMethod paymentMethod={order.payment} />
@@ -124,7 +129,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         <OrderStatus status={order.status} />
       </TableCell>
       <TableCell className="font-medium">{order.customerName}</TableCell>
-      <TableCell className="font-medium text-center">
+      <TableCell className="font-medium">
         {order.total.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",

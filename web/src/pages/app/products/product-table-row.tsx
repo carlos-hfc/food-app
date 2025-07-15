@@ -111,13 +111,13 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         {product.id}
       </TableCell>
       <TableCell className="font-medium">{product.name}</TableCell>
-      <TableCell className="font-medium text-center">
+      <TableCell className="font-medium">
         {product.price.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         })}
       </TableCell>
-      <TableCell className="text-center">
+      <TableCell>
         <Switch
           checked={product.available}
           onCheckedChange={() =>
@@ -126,7 +126,7 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
           disabled={isToggleAvailablingProduct}
         />
       </TableCell>
-      <TableCell className="text-center">
+      <TableCell>
         <Switch
           checked={product.active}
           onCheckedChange={() =>

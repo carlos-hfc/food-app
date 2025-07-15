@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { formatDistanceToNow } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 import { OrderStatus } from "@/components/order-status"
@@ -80,10 +80,15 @@ export function OrderDetails({ open, orderId }: OrderDetailsProps) {
                   Realizado há
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  {formatDistanceToNow(new Date(order.date), {
-                    locale: ptBR,
-                    addSuffix: true,
-                  })}
+                  <time
+                    dateTime={order.date}
+                    title={format(new Date(order.date), "dd/MM/yyyy', 'HH:mm")}
+                  >
+                    {formatDistanceToNow(new Date(order.date), {
+                      locale: ptBR,
+                      addSuffix: true,
+                    })}
+                  </time>
                 </TableCell>
               </TableRow>
             </TableBody>
