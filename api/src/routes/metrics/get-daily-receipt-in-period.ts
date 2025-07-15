@@ -67,16 +67,17 @@ export const getDailyReceiptInPeriod: FastifyPluginAsyncZod = async app => {
           sum(o.total) receipt
         from orders o
         where o."restaurantId" = ${restaurantId}
-          and o.date::varchar >= ${startDate}
-          and o.date::varchar <= ${endDate}
+          and o.date::varchar between ${startDate} and ${endDate}
         group by datetime
         order by datetime desc
+        limit 7
       `)
 
       const interval = {
         start: startDate,
         end: endDate,
       }
+
       for (const value of eachDayOfInterval(interval)) {
         const exists = receiptPerDay.find(
           item => item.datetime === format(value, "dd/MM"),
