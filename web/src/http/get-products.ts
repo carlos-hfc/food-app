@@ -10,6 +10,7 @@ export interface GetProductsResponse {
   products: {
     id: string
     name: string
+    image: string | null
     price: number
     available: boolean
     active: boolean

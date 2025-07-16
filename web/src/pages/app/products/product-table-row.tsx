@@ -11,7 +11,7 @@ import { toggleActiveProduct } from "@/http/toggle-active-product"
 import { toggleAvailableProduct } from "@/http/toggle-available-product"
 import { queryClient } from "@/lib/react-query"
 
-import { ProductDetails } from "./product-details"
+import { ProductDialog } from "./product-dialog"
 
 interface ProductTableRowProps {
   product: {
@@ -101,9 +101,10 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
             </Button>
           </DialogTrigger>
 
-          <ProductDetails
+          <ProductDialog
             open={isDetailsOpen}
             productId={product.id}
+            isEdit
           />
         </Dialog>
       </TableCell>

@@ -18,7 +18,9 @@ export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
           productId: z.string().uuid(),
         }),
         response: {
-          200: z.null(),
+          200: z.object({
+            image: z.string().url(),
+          }),
         },
       },
     },
@@ -58,7 +60,7 @@ export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.status(200).send()
+      return reply.status(200).send({ image })
     },
   )
 }

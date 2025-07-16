@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/table"
 import { getProducts } from "@/http/get-products"
 
+import { ProductDialog } from "./product-dialog"
 import { ProductTableFilters } from "./product-table-filters"
 import { ProductTableRow } from "./product-table-row"
 import { ProductTableSkeleton } from "./product-table-skeleton"
-import { StoreProductDialog } from "./store-product-dialog"
 
 export function Products() {
   const [open, setOpen] = useState(false)
@@ -62,7 +62,7 @@ export function Products() {
               <Button size="xs">Cadastrar produto</Button>
             </DialogTrigger>
 
-            <StoreProductDialog onOpenChange={setOpen} />
+            <ProductDialog onOpenChange={setOpen} />
           </Dialog>
         </div>
 
