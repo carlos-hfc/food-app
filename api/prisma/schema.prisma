@@ -14,12 +14,13 @@ enum Role {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  phone    String @unique
-  role     Role
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String   @unique
+  role      Role
+  createdAt DateTime @default(now())
 
   addresses Address[]
   orders    Order[]
@@ -32,15 +33,16 @@ model User {
 }
 
 model Address {
-  id       String  @id @default(uuid())
-  zipCode  String
-  address  String
-  number   Int?
-  district String
-  city     String
-  uf       String  @db.Char(2)
-  alias    String?
-  main     Boolean @default(false)
+  id        String   @id @default(uuid())
+  zipCode   String
+  address   String
+  number    Int?
+  district  String
+  city      String
+  uf        String   @db.Char(2)
+  alias     String?
+  main      Boolean  @default(false)
+  createdAt DateTime @default(now())
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String
@@ -51,8 +53,9 @@ model Address {
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
 
   restaurants Restaurant[]
 
@@ -60,12 +63,13 @@ model Category {
 }
 
 model Restaurant {
-  id           String  @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  phone        String  @unique
-  tax          Decimal @db.Money
+  phone        String   @unique
+  tax          Decimal  @db.Money
   deliveryTime Int
   image        String?
+  createdAt    DateTime @default(now())
 
   admin   User   @relation(fields: [adminId], references: [id])
   adminId String @unique
@@ -82,11 +86,12 @@ model Restaurant {
 }
 
 model Hour {
-  id       String  @id @default(uuid())
-  weekday  Int
-  openedAt Int
-  closedAt Int
-  open     Boolean @default(true)
+  id        String   @id @default(uuid())
+  weekday   Int
+  openedAt  Int
+  closedAt  Int
+  open      Boolean  @default(true)
+  createdAt DateTime @default(now())
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
@@ -95,13 +100,14 @@ model Hour {
 }
 
 model Product {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
-  description String  @db.Text
-  price       Decimal @db.Money
-  available   Boolean @default(true)
+  description String   @db.Text
+  price       Decimal  @db.Money
+  available   Boolean  @default(true)
   image       String?
-  active      Boolean @default(true)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
@@ -134,6 +140,7 @@ model Order {
   grade      Int?
   comment    String?       @db.Text
   ratingDate DateTime?
+  createdAt  DateTime      @default(now())
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
@@ -150,9 +157,10 @@ model Order {
 }
 
 model OrderItem {
-  id       String  @id @default(uuid())
-  quantity Int
-  price    Decimal @db.Money
+  id        String   @id @default(uuid())
+  quantity  Int
+  price     Decimal  @db.Money
+  createdAt DateTime @default(now())
 
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
@@ -164,7 +172,8 @@ model OrderItem {
 }
 
 model Favorite {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String
