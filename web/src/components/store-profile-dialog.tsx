@@ -61,6 +61,7 @@ export function StoreProfileDialog() {
     handleSubmit,
     control,
     formState: { isSubmitting },
+    reset,
   } = useForm<UpdateRestaurantForm>({
     resolver: zodResolver(updateRestaurantForm),
     values: {
@@ -270,6 +271,7 @@ export function StoreProfileDialog() {
             <Button
               type="button"
               variant={"ghost"}
+              onClick={() => reset()}
             >
               Cancelar
             </Button>
