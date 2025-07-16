@@ -72,10 +72,11 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
           p.name,
           p.price,
           p.available,
-          p.active
+          p.active,
+          p."createdAt"
         from products p
         where ${Prisma.join(search, " and ")}
-        order by p.name
+        order by p."createdAt" desc
       `
 
       const products = await prisma.$queryRaw<Query[]>(Prisma.sql`
