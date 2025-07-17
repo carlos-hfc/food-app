@@ -1,18 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
 import { BarChartIcon, Loader2Icon } from "lucide-react"
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
-import colors from "tailwindcss/colors"
+import { Cell, Pie, PieChart } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 import { getPopularProducts } from "@/http/get-popular-products"
 
-const COLORS = [
-  colors.sky[500],
-  colors.emerald[500],
-  colors.rose[500],
-  colors.violet[500],
-  colors.amber[500],
-]
+const chartConfig = {
+  amount: {
+    label: "Quantidade",
+  },
+}
 
 export function PopularProductsChart() {
   const { data: popularProducts } = useQuery({
@@ -33,12 +35,36 @@ export function PopularProductsChart() {
 
       <CardContent>
         {popularProducts ? (
-          <ResponsiveContainer
-            width={"100%"}
-            height={240}
+          <ChartContainer
+            config={chartConfig}
+            className="h-60 w-full"
           >
-            <PieChart style={{ fontSize: 12 }}>
+            <PieChart className="text-xs">
+              <ChartTooltip
+                content={<ChartTooltipContent className="w-48" />}
+              />
               <Pie
+                data={popularProducts}
+                dataKey="amount"
+                nameKey="product"
+                label={({ product, amount }) =>
+                  `${product.substring(0, 12).concat("...")} - (${amount})`
+                }
+                outerRadius={86}
+                innerRadius={64}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+              >
+                {popularProducts.map((_, i) => (
+                  <Cell
+                    key={i}
+                    fill={`var(--chart-${i + 1})`}
+                    className="stroke-background hover:opacity-80"
+                  />
+                ))}
+              </Pie>
+              {/* <Pie
                 data={popularProducts}
                 dataKey="amount"
                 nameKey="product"
@@ -83,13 +109,13 @@ export function PopularProductsChart() {
                 {popularProducts.map((_, i) => (
                   <Cell
                     key={i}
-                    fill={COLORS[i]}
+                    fill={`var(--chart-${i + 1})`}
                     className="stroke-background hover:opacity-80"
                   />
                 ))}
-              </Pie>
+              </Pie> */}
             </PieChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         ) : (
           <div className="flex w-full items-center justify-center h-60">
             <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
