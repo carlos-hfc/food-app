@@ -30,6 +30,7 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
                 open: z.boolean(),
               })
               .array(),
+            image: z.string().nullable(),
           }),
         },
       },
@@ -49,6 +50,7 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
           tax: true,
           phone: true,
           hours: true,
+          image: true,
         },
       })
 

@@ -12,9 +12,6 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
-        params: z.object({
-          restaurantId: z.string().uuid(),
-        }),
         body: z.object({
           name: z.string().optional(),
           phone: z.string().optional(),
