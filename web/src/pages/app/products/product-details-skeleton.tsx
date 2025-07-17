@@ -1,10 +1,21 @@
+import {
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function ProductDetailsSkeleton() {
   return (
-    <div className="space-y-2">
-      <Skeleton className="w-48 h-6" />
-      <Skeleton className="w-72 h-4" />
+    <div>
+      <DialogHeader>
+        <DialogTitle asChild>
+          <Skeleton className="w-48 h-6" />
+        </DialogTitle>
+        <DialogDescription asChild>
+          <Skeleton className="w-72 h-4" />
+        </DialogDescription>
+      </DialogHeader>
 
       <div className="space-y-4 py-4">
         <div className="space-y-2">

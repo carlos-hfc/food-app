@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { CameraIcon } from "lucide-react"
-import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { Dropzone } from "@/components/dropzone"
 import { Button } from "@/components/ui/button"
 import {
   DialogClose,
@@ -19,7 +18,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { addImageProduct } from "@/http/add-image-product"
-import { getProductDetails } from "@/http/get-product-details"
+import {
+  getProductDetails,
+  GetProductDetailsResponse,
+} from "@/http/get-product-details"
 import { GetProductsResponse } from "@/http/get-products"
 import { registerProduct } from "@/http/register-product"
 import { updateProduct } from "@/http/update-product"
@@ -33,8 +35,6 @@ interface ProductDialogProps {
   onOpenChange?(open: boolean): void
   productId?: string
 }
-
-const ACEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg"]
 
 const productDialogSchema = z.object({
   name: z.string().min(3),
@@ -72,6 +72,39 @@ export function ProductDialog({
     },
   })
 
+  function updateProductOnCache(
+    productId: string,
+    data: Partial<GetProductDetailsResponse>,
+  ) {
+    const cached = queryClient.getQueryData(["product", productId])
+
+    if (cached) {
+      queryClient.setQueryData(["product", productId], {
+        ...cached,
+        ...data,
+      })
+    }
+
+    const productsListCache = queryClient.getQueriesData<GetProductsResponse>({
+      queryKey: ["products"],
+    })
+
+    productsListCache.forEach(([cacheKey, cacheData]) => {
+      if (!cacheData) return
+
+      queryClient.setQueryData<GetProductsResponse>(cacheKey, {
+        ...cacheData,
+        products: cacheData.products.map(product => {
+          if (product.id === productId) {
+            return { ...product, ...data }
+          }
+
+          return product
+        }),
+      })
+    })
+  }
+
   const { mutateAsync: registerProductFn } = useMutation({
     mutationFn: registerProduct,
     onSuccess() {
@@ -85,90 +118,47 @@ export function ProductDialog({
 
   const { mutateAsync: updateProductFn } = useMutation({
     mutationFn: updateProduct,
-    onSuccess(_, variables) {
-      const cached = queryClient.getQueryData(["product", productId])
-
-      if (cached) {
-        queryClient.setQueryData(["product", productId], {
-          ...cached,
-          ...variables,
-        })
-      }
-
-      const productsListCache = queryClient.getQueriesData<GetProductsResponse>(
-        {
-          queryKey: ["products"],
-        },
-      )
-
-      productsListCache.forEach(([cacheKey, cacheData]) => {
-        if (!cacheData) return
-
-        queryClient.setQueryData<GetProductsResponse>(cacheKey, {
-          ...cacheData,
-          products: cacheData.products.map(product => {
-            if (product.id === productId) {
-              return { ...product, ...variables }
-            }
-
-            return product
-          }),
-        })
-      })
+    onSuccess(_, { productId, ...variables }) {
+      updateProductOnCache(productId, variables)
     },
   })
 
   const { mutateAsync: addImageProductFn } = useMutation({
     mutationFn: addImageProduct,
-    onSuccess({ image }) {
-      const cached = queryClient.getQueryData(["product", productId])
-
-      if (cached) {
-        queryClient.setQueryData(["product", productId], {
-          ...cached,
-          image,
-        })
-      }
-
-      const productsListCache = queryClient.getQueriesData<GetProductsResponse>(
-        {
-          queryKey: ["products"],
-        },
-      )
-
-      productsListCache.forEach(([cacheKey, cacheData]) => {
-        if (!cacheData) return
-
-        queryClient.setQueryData<GetProductsResponse>(cacheKey, {
-          ...cacheData,
-          products: cacheData.products.map(product => {
-            if (product.id === productId) {
-              return { ...product, image }
-            }
-
-            return product
-          }),
-        })
-      })
+    onSuccess({ image }, { productId }) {
+      updateProductOnCache(productId, { image })
     },
   })
 
   async function handleStoreProduct(data: ProductDialogSchema) {
     try {
       if (productId) {
-        if (data.file) {
+        if (data.file?.length) {
           await addImageProductFn({
             file: data.file[0],
             productId,
           })
         }
 
-        await updateProductFn({
-          productId,
-          name: data.name,
-          description: data.description,
-          price: data.price,
+        const productClone = structuredClone({
+          name: product?.name,
+          description: product?.description,
+          price: product?.price,
         })
+        const dataClone = structuredClone({
+          name: data?.name,
+          description: data?.description,
+          price: data?.price,
+        })
+
+        if (JSON.stringify(productClone) !== JSON.stringify(dataClone)) {
+          await updateProductFn({
+            productId,
+            name: data.name,
+            description: data.description,
+            price: data.price,
+          })
+        }
       } else {
         await registerProductFn({
           name: data.name,
@@ -190,18 +180,6 @@ export function ProductDialog({
       )
     }
   }
-
-  const imageUrl = useMemo(() => {
-    const file = watch("file")
-    if (file?.length) {
-      return URL.createObjectURL(file[0])
-    }
-
-    return product?.image ?? ""
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product?.image, watch("file")])
-
-  console.log(product, imageUrl)
 
   return (
     <DialogContent
@@ -228,33 +206,12 @@ export function ProductDialog({
             <div className="space-y-4 py-4">
               {productId && (
                 <div className="space-y-2">
-                  <div className="border-dashed border border-input rounded-md w-full h-40 text-sm relative flex items-center justify-center gap-2">
-                    <Label
-                      htmlFor="file"
-                      className="sr-only"
-                    >
-                      Imagem do produto
-                    </Label>
-                    <Input
-                      id="file"
-                      type="file"
-                      className="absolute inset-0 w-full h-full opacity-0"
-                      accept={ACEPTED_IMAGE_TYPES.join()}
-                      {...register("file")}
-                    />
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="Imagem do produto"
-                        className="size-full object-contain"
-                      />
-                    ) : (
-                      <>
-                        <CameraIcon className="size-4" />
-                        Adicione a imagem aqui
-                      </>
-                    )}
-                  </div>
+                  <Dropzone
+                    name="file"
+                    register={register}
+                    watch={watch}
+                    image={product?.image}
+                  />
                 </div>
               )}
 
