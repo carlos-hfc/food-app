@@ -14,6 +14,7 @@ export interface GetManagedRestaurantResponse {
     closedAt: string
     open: boolean
   }[]
+  image: string | null
 }
 
 export async function getManagedRestaurant() {

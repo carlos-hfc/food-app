@@ -1,7 +1,6 @@
 import { api } from "@/lib/axios"
 
 export interface UpdateRestaurantRequest {
-  id: string
   name: string
   categoryId: string
   deliveryTime: number
@@ -22,9 +21,8 @@ export async function updateRestaurant({
   name,
   phone,
   tax,
-  id,
 }: UpdateRestaurantRequest) {
-  await api.patch(`/restaurant/${id}`, {
+  await api.patch(`/restaurant`, {
     categoryId,
     deliveryTime,
     hours,

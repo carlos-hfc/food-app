@@ -5,11 +5,19 @@ import { toast } from "sonner"
 import { z } from "zod"
 
 import { WEEKDAYS } from "@/constants"
+import { addImageRestaurant } from "@/http/add-image-restaurant"
 import { getCategories } from "@/http/get-categories"
-import { getManagedRestaurant } from "@/http/get-managed-restaurant"
-import { updateRestaurant } from "@/http/update-restaurant"
+import {
+  getManagedRestaurant,
+  GetManagedRestaurantResponse,
+} from "@/http/get-managed-restaurant"
+import {
+  updateRestaurant,
+  UpdateRestaurantRequest,
+} from "@/http/update-restaurant"
 import { queryClient } from "@/lib/react-query"
 
+import { Dropzone } from "./dropzone"
 import { Button } from "./ui/button"
 import { Checkbox } from "./ui/checkbox"
 import {
@@ -39,6 +47,7 @@ const updateRestaurantForm = z.object({
   openedAt: z.string(),
   closedAt: z.string(),
   hours: z.array(z.number().nullable()),
+  file: z.custom<FileList>().optional(),
 })
 
 type UpdateRestaurantForm = z.infer<typeof updateRestaurantForm>
@@ -62,6 +71,7 @@ export function StoreProfileDialog() {
     control,
     formState: { isSubmitting },
     reset,
+    watch,
   } = useForm<UpdateRestaurantForm>({
     resolver: zodResolver(updateRestaurantForm),
     values: {
@@ -80,45 +90,94 @@ export function StoreProfileDialog() {
     },
   })
 
+  function updateRestaurantOnCache(
+    data: Partial<UpdateRestaurantRequest & { image: string | null }>,
+  ) {
+    const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+      "managed-restaurant",
+    ])
+
+    if (cached) {
+      queryClient.setQueryData(["managed-restaurant"], {
+        ...cached,
+        ...data,
+        hours: data.hours
+          ? data?.hours.map(item => ({
+              ...item,
+              id: item.hourId,
+            }))
+          : cached.hours,
+      })
+    }
+  }
+
   const { mutateAsync: updateRestaurantFn } = useMutation({
     mutationFn: updateRestaurant,
     onSuccess(_, variables) {
-      const cached = queryClient.getQueryData(["managed-restaurant"])
+      updateRestaurantOnCache(variables)
+    },
+  })
 
-      if (cached) {
-        queryClient.setQueryData(["managed-restaurant"], {
-          ...cached,
-          ...variables,
-          hours: variables.hours.map(item => ({
-            ...item,
-            id: item.hourId,
-          })),
-        })
-      }
+  const { mutateAsync: addImageRestaurantFn } = useMutation({
+    mutationFn: addImageRestaurant,
+    onSuccess({ image }) {
+      updateRestaurantOnCache({ image })
     },
   })
 
   async function handleUpdateRestaurant(data: UpdateRestaurantForm) {
-    const hours = managedRestaurant!.hours.map(hour => {
-      return {
-        hourId: hour.id,
-        open: data.hours.includes(hour.weekday),
-        openedAt: data.openedAt,
-        closedAt: data.closedAt,
-        weekday: hour.weekday,
-      }
-    })
-
     try {
-      await updateRestaurantFn({
-        id: managedRestaurant!.id,
-        categoryId: data.categoryId,
-        name: data.name,
-        phone: data.phone,
-        deliveryTime: data.deliveryTime,
-        tax: data.tax,
-        hours,
+      if (data.file?.length) {
+        await addImageRestaurantFn({
+          file: data.file[0],
+        })
+      }
+
+      const managedRestaurantClone = structuredClone({
+        name: managedRestaurant?.name,
+        categoryId: managedRestaurant?.categoryId,
+        phone: managedRestaurant?.phone,
+        tax: managedRestaurant?.tax,
+        deliveryTime: managedRestaurant?.deliveryTime,
+        openedAt: managedRestaurant?.hours[0].openedAt,
+        closedAt: managedRestaurant?.hours[0].closedAt,
+        weekday: managedRestaurant?.hours
+          .filter(item => item.open)
+          .map(item => item.weekday),
       })
+      const dataClone = structuredClone({
+        name: data?.name,
+        categoryId: data?.categoryId,
+        phone: data?.phone,
+        tax: data?.tax,
+        deliveryTime: data?.deliveryTime,
+        openedAt: data?.openedAt,
+        closedAt: data?.closedAt,
+        weekday: data?.hours,
+      })
+
+      if (
+        JSON.stringify(dataClone) !== JSON.stringify(managedRestaurantClone)
+      ) {
+        const hours = managedRestaurant!.hours.map(hour => {
+          return {
+            hourId: hour.id,
+            open: data.hours.includes(hour.weekday),
+            openedAt: data.openedAt,
+            closedAt: data.closedAt,
+            weekday: hour.weekday,
+          }
+        })
+
+        await updateRestaurantFn({
+          categoryId: data.categoryId,
+          name: data.name,
+          phone: data.phone,
+          deliveryTime: data.deliveryTime,
+          tax: data.tax,
+          hours,
+        })
+      }
 
       toast.success("Perfil atualizado com sucesso!")
     } catch (error) {
@@ -127,7 +186,11 @@ export function StoreProfileDialog() {
   }
 
   return (
-    <DialogContent>
+    <DialogContent
+      onEscapeKeyDown={() => reset()}
+      onInteractOutside={() => reset()}
+      onPointerDownOutside={() => reset()}
+    >
       <DialogHeader>
         <DialogTitle>Perfil da loja</DialogTitle>
         <DialogDescription>
@@ -137,6 +200,15 @@ export function StoreProfileDialog() {
 
       <form onSubmit={handleSubmit(handleUpdateRestaurant)}>
         <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Dropzone
+              name="file"
+              register={register}
+              watch={watch}
+              image={managedRestaurant?.image}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name">Nome</Label>
             <Input
