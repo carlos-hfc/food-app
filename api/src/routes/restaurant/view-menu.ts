@@ -35,6 +35,7 @@ export const viewMenu: FastifyPluginAsyncZod = async app => {
         where: {
           restaurantId,
           available: true,
+          active: true,
         },
       })
 
