@@ -46,6 +46,7 @@ import { registerProduct } from "./routes/product/register-product"
 import { toggleActiveProduct } from "./routes/product/toggle-active-product"
 import { toggleAvailableProduct } from "./routes/product/toggle-available-product"
 import { addImageOnRestaurant } from "./routes/restaurant/add-image-on-restaurant"
+import { bestRestaurants } from "./routes/restaurant/best-restaurants"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { getInfoRestaurant } from "./routes/restaurant/get-info-restaurant"
 import { getManagedRestaurant } from "./routes/restaurant/get-managed-restaurant"
@@ -77,7 +78,7 @@ app.register(fastifyJwt, {
   },
 })
 app.register(fastifyCors, {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://localhost:5173"],
   credentials: true,
   methods: ["GET", "PATCH", "POST", "PUT", "DELETE"],
 })
@@ -100,6 +101,7 @@ app.register(getRestaurant)
 app.register(getInfoRestaurant)
 app.register(getManagedRestaurant)
 app.register(viewMenu)
+app.register(bestRestaurants)
 
 app.register(listCategories)
 
