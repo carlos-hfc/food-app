@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { ChevronRightIcon } from "lucide-react"
-import { Helmet } from "react-helmet-async"
 
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
+import { Seo } from "@/components/seo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,7 +20,7 @@ export function HomePage() {
 
   return (
     <main className="flex flex-col relative min-h-dvh">
-      <Helmet title="Home" />
+      <Seo title="Home" />
       <Header />
 
       <section className="bg-accent py-12 lg:py-16 px-4 lg:px-8">
@@ -41,18 +41,18 @@ export function HomePage() {
                 className="shadow-none bg-background"
                 placeholder="Busque um restaurante"
               />
-              <Button className="flex-1">Buscar</Button>
+              <Button className="flex-1 h-full">Buscar</Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="relative px-4 lg:px-8 before:bg-accent before:w-full before:h-28 before:absolute before:-z-10">
+      <section className="relative overflow-hidden px-4 lg:px-8 before:bg-accent before:w-full before:h-28 before:absolute before:-z-10">
         <div className="container max-w-2xl">
           <div className="bg-primary rounded-xl p-8 relative h-52 flex flex-col justify-center">
             <p className="text-2xl text-muted font-bold">Restaurante</p>
 
-            <Button className="bg-black/30 mt-auto w-max font-bold">
+            <Button className="bg-black/30 hover:bg-black/20 mt-auto w-max font-bold">
               Ver opções <ChevronRightIcon />
             </Button>
 
