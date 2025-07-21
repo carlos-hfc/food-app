@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { ChevronRightIcon } from "lucide-react"
+import { Link } from "react-router"
 
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
@@ -49,7 +50,10 @@ export function HomePage() {
 
       <section className="relative overflow-hidden px-4 lg:px-8 before:bg-accent before:w-full before:h-28 before:absolute before:-z-10">
         <div className="container max-w-2xl">
-          <div className="bg-primary rounded-xl p-8 relative h-52 flex flex-col justify-center">
+          <Link
+            to="/restaurantes"
+            className="bg-primary rounded-xl p-8 relative h-52 flex flex-col justify-center"
+          >
             <p className="text-2xl text-muted font-bold">Restaurante</p>
 
             <Button className="bg-black/30 hover:bg-black/20 mt-auto w-max font-bold">
@@ -61,7 +65,7 @@ export function HomePage() {
               alt=""
               className="absolute right-2 bottom-0"
             />
-          </div>
+          </Link>
         </div>
       </section>
 

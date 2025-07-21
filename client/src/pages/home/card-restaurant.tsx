@@ -1,4 +1,5 @@
 import { BadgeCheckIcon } from "lucide-react"
+import { Link } from "react-router"
 
 interface CardRestaurantProps {
   restaurant: {
@@ -11,7 +12,10 @@ interface CardRestaurantProps {
 
 export function CardRestaurant({ restaurant }: CardRestaurantProps) {
   return (
-    <div className="border rounded-md flex items-center gap-2 py-8 px-3 relative flex-1">
+    <Link
+      to={`/restaurante/${restaurant.id}`}
+      className="border hover:border-muted-foreground/50 rounded-md flex items-center gap-2 py-8 px-3 relative flex-1"
+    >
       <BadgeCheckIcon className="absolute size-6 right-3 top-3 fill-primary stroke-background" />
 
       <img
@@ -26,6 +30,6 @@ export function CardRestaurant({ restaurant }: CardRestaurantProps) {
           {restaurant.category}
         </span>
       </div>
-    </div>
+    </Link>
   )
 }
