@@ -30,7 +30,10 @@ export function Header() {
   return (
     <Sheet>
       <header
-        className={cn("sticky top-0 w-full bg-accent", scrolled && "shadow-xs")}
+        className={cn(
+          "sticky top-0 w-full bg-accent z-1",
+          scrolled && "shadow-xs",
+        )}
       >
         <div className="flex items-center gap-4 container p-4 lg:p-8 max-w-6xl">
           <SheetTrigger asChild>
