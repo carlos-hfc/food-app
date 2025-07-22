@@ -8,7 +8,7 @@ import { HamburgerIcon } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="mt-auto container px-4 lg:px-8 2xl max-w-6xl space-y-10 pt-20">
+    <footer className="mt-auto container px-4 lg:px-8 max-w-6xl space-y-10 pt-20">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
         <div className="flex flex-col gap-6">
           <span className="text-foreground font-bold">food.app</span>
