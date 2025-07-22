@@ -1,5 +1,6 @@
 import { HamburgerIcon, MenuIcon, XIcon } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Link } from "react-router"
 
 import { cn } from "@/lib/utils"
 
@@ -53,12 +54,20 @@ export function Header() {
             aria-label="food.app"
           />
           <Button
+            asChild
             variant="link"
             className="max-lg:hidden ml-auto"
           >
-            Criar conta
+            <Link to="/sign-up">Criar conta</Link>
           </Button>
-          <Button className="max-lg:ml-auto">Entrar</Button>
+          <Button asChild>
+            <Link
+              to="/sign-in"
+              className="max-lg:ml-auto"
+            >
+              Entrar
+            </Link>
+          </Button>
         </div>
       </header>
 
@@ -83,12 +92,18 @@ export function Header() {
         </SheetHeader>
 
         <div className="flex flex-col gap-2">
-          <Button size="lg">Entrar</Button>
           <Button
+            asChild
+            size="lg"
+          >
+            <Link to="/sign-in">Entrar</Link>
+          </Button>
+          <Button
+            asChild
             size="lg"
             variant="link"
           >
-            Criar conta
+            <Link to="/sign-up">Criar conta</Link>
           </Button>
         </div>
       </SheetContent>
