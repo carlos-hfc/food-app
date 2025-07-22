@@ -54,10 +54,15 @@ export function HomePage() {
             to="/restaurantes"
             className="bg-primary rounded-xl p-8 relative h-52 flex flex-col justify-center"
           >
-            <p className="text-2xl text-muted font-bold">Restaurante</p>
+            <p className="text-2xl text-muted font-bold">Restaurantes</p>
 
-            <Button className="bg-black/30 hover:bg-black/20 mt-auto w-max font-bold">
-              Ver opções <ChevronRightIcon />
+            <Button
+              asChild
+              className="bg-black/30 hover:bg-black/30 mt-auto w-max font-bold"
+            >
+              <span>
+                Ver opções <ChevronRightIcon />
+              </span>
             </Button>
 
             <img
