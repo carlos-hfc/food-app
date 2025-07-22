@@ -16,7 +16,6 @@ interface Query {
   openedAt: number
   closedAt: number
   open: boolean
-  weekday: number
   avg: string
 }
 
@@ -30,7 +29,6 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           category: z.string().optional(),
           tax: z.coerce.number().optional(),
           deliveryTime: z.coerce.number().optional(),
-          pageIndex: z.coerce.number().default(0),
           grade: z.coerce.number().optional(),
         }),
         response: {
@@ -54,18 +52,11 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
 
       const search: Prisma.Sql[] = []
 
-      if (name) {
-        search.push(Prisma.sql`r.name ilike ${`%${name}%`}`)
-      }
-      if (deliveryTime) {
+      if (name) search.push(Prisma.sql`r.name ilike ${`%${name}%`}`)
+      if (deliveryTime)
         search.push(Prisma.sql`r."deliveryTime" <= ${deliveryTime}`)
-      }
-      if (tax) {
-        search.push(Prisma.sql`r.tax <= ${tax}::money`)
-      }
-      if (category) {
-        search.push(Prisma.sql`cat.name ilike ${category}`)
-      }
+      if (tax) search.push(Prisma.sql`r.tax <= ${tax}::money`)
+      if (category) search.push(Prisma.sql`cat.name ilike ${`%${category}%`}`)
 
       const where = search.length
         ? Prisma.sql`where ${Prisma.join(search, " and ")}`
@@ -79,11 +70,13 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           r.tax,
           r."deliveryTime",
           cat.name category,
-          h.*,
+          h.open,
+          h."openedAt",
+          h."closedAt",
           avg(o.grade)
         from restaurants r
         join categories cat on cat.id = r."categoryId"
-        join orders o on o."restaurantId" = r.id
+        left join orders o on o."restaurantId" = r.id
         join hours h 
           on h."restaurantId" = r.id 
           and h.weekday = extract('dow' from now() at time zone 'America/Sao_Paulo')
