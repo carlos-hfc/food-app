@@ -1,0 +1,22 @@
+import { api } from "@/lib/axios"
+
+export interface ListCategoriesRequest {
+  name?: string | null
+}
+
+export interface ListCategoriesResponse {
+  categories: Array<{
+    id: string
+    name: string
+  }>
+}
+
+export async function listCategories({ name }: ListCategoriesRequest) {
+  const response = await api.get<ListCategoriesResponse>("/category", {
+    params: {
+      name,
+    },
+  })
+
+  return response.data.categories
+}

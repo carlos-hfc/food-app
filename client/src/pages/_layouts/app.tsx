@@ -8,7 +8,7 @@ export function AppLayout() {
     <main className="flex min-h-dvh flex-col">
       <AppHeader />
 
-      <div className="container max-w-6xl flex flex-1 flex-col gap-4 p-8">
+      <div className="container max-w-6xl flex flex-1 flex-col gap-4 px-4 lg:px-8 py-8">
         <Outlet />
       </div>
 
