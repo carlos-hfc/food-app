@@ -12,14 +12,12 @@ export const listCategories: FastifyPluginAsyncZod = async app => {
           name: z.string().optional(),
         }),
         response: {
-          200: z.object({
-            categories: z.array(
-              z.object({
-                id: z.string().uuid(),
-                name: z.string(),
-              }),
-            ),
-          }),
+          200: z.array(
+            z.object({
+              id: z.string().uuid(),
+              name: z.string(),
+            }),
+          ),
         },
       },
     },
@@ -35,7 +33,7 @@ export const listCategories: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return { categories }
+      return categories
     },
   )
 }
