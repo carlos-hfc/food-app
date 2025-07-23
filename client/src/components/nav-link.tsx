@@ -7,7 +7,7 @@ export function NavLink(props: NavLinkProps) {
     <Nav
       {...props}
       className={cn(
-        "flex items-center text-sm lg:text-base font-semibold text-muted-foreground underline-offset-4 px-2 h-8 aria-[current=page]:text-primary aria-[current=page]:underline",
+        "flex items-center text-sm lg:text-base font-semibold text-muted-foreground underline-offset-8 px-2 h-8 aria-[current=page]:text-primary aria-[current=page]:underline",
         props.className,
       )}
     />

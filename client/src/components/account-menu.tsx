@@ -29,6 +29,7 @@ export function AccountMenu() {
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
+    retry: false,
   })
 
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
@@ -38,6 +39,8 @@ export function AccountMenu() {
       navigate("/", { replace: true })
     },
   })
+
+  if (!profile) return null
 
   return (
     <DropdownMenu>
