@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { StarIcon } from "lucide-react"
 import { Link, useSearchParams } from "react-router"
-import z from "zod"
 
 import { getBestRestaurants } from "@/http/get-best-restaurants"
 import { listCategories } from "@/http/list-categories"
@@ -19,18 +18,9 @@ export function Restaurants() {
 
   const category = searchParams.get("category")
   const name = searchParams.get("name")
-  const tax = z.coerce
-    .number()
-    .nullable()
-    .parse(searchParams.get("tax") ?? null)
-  const deliveryTime = z.coerce
-    .number()
-    .nullable()
-    .parse(searchParams.get("deliveryTime") ?? null)
-  const grade = z.coerce
-    .number()
-    .nullable()
-    .parse(searchParams.get("grade") ?? null)
+  const tax = searchParams.get("tax")
+  const deliveryTime = searchParams.get("deliveryTime")
+  const grade = searchParams.get("grade")
 
   const { data: restaurants } = useQuery({
     queryKey: ["restaurants", name, category, tax, deliveryTime, grade],

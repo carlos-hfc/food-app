@@ -3,9 +3,9 @@ import { api } from "@/lib/axios"
 export interface ListRestaurantsRequest {
   name?: string | null
   category?: string | null
-  tax?: number | null
-  deliveryTime?: number | null
-  grade?: number | null
+  tax?: string | null
+  deliveryTime?: string | null
+  grade?: string | null
 }
 
 export type ListRestaurantsResponse = Array<{
@@ -29,11 +29,11 @@ export async function listRestaurants({
 }: ListRestaurantsRequest) {
   const response = await api.get<ListRestaurantsResponse>("/restaurant", {
     params: {
-      category,
-      deliveryTime,
-      grade,
+      category: category === "all" ? undefined : category,
+      deliveryTime: deliveryTime === "all" ? undefined : deliveryTime,
+      grade: grade === "all" ? undefined : grade,
+      tax: tax === "all" ? undefined : tax,
       name,
-      tax,
     },
   })
 
