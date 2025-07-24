@@ -31,7 +31,7 @@ const signUpForm = z.object({
   }),
   phone: z.string(),
   tax: z.coerce.number().optional(),
-  deliveryTime: z.coerce.number().min(30).max(90),
+  deliveryTime: z.coerce.number().min(30).max(120),
   categoryId: z.string().uuid(),
   openedAt: z.string(),
   closedAt: z.string(),
