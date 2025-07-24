@@ -16,7 +16,7 @@ interface Query {
   openedAt: number
   closedAt: number
   open: boolean
-  avg: string
+  grade: string
 }
 
 export const listRestaurants: FastifyPluginAsyncZod = async app => {
@@ -40,6 +40,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
               deliveryTime: z.number(),
               image: z.string().nullable(),
               category: z.string(),
+              grade: z.number(),
               isOpen: z.boolean(),
               openingAt: z.string().optional(),
             }),
@@ -73,7 +74,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           h.open,
           h."openedAt",
           h."closedAt",
-          avg(o.grade)
+          avg(o.grade) grade
         from restaurants r
         join categories cat on cat.id = r."categoryId"
         left join orders o on o."restaurantId" = r.id
@@ -88,6 +89,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
 
       return query.map(item => ({
         ...item,
+        grade: Number(item.grade),
         tax: Number(item.tax),
         isOpen: restaurantIsOpen(item),
         openingAt:
