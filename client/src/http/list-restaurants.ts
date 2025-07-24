@@ -14,6 +14,7 @@ export type ListRestaurantsResponse = Array<{
   tax: number
   deliveryTime: number
   image: string | null
+  grade: number
   category: string
   isOpen: boolean
   openingAt?: string

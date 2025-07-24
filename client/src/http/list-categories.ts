@@ -4,12 +4,10 @@ export interface ListCategoriesRequest {
   name?: string | null
 }
 
-export interface ListCategoriesResponse {
-  categories: Array<{
-    id: string
-    name: string
-  }>
-}
+export type ListCategoriesResponse = Array<{
+  id: string
+  name: string
+}>
 
 export async function listCategories({ name }: ListCategoriesRequest) {
   const response = await api.get<ListCategoriesResponse>("/category", {
@@ -18,5 +16,5 @@ export async function listCategories({ name }: ListCategoriesRequest) {
     },
   })
 
-  return response.data.categories
+  return response.data
 }
