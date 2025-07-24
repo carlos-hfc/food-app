@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query"
-import { StarIcon } from "lucide-react"
-import { Link, useSearchParams } from "react-router"
+import { useSearchParams } from "react-router"
 
+import { Seo } from "@/components/seo"
 import { getBestRestaurants } from "@/http/get-best-restaurants"
 import { listCategories } from "@/http/list-categories"
 import { listRestaurants } from "@/http/list-restaurants"
-import { cn } from "@/lib/utils"
 
 import { BestRestaurantsCard } from "./best-restaurants-card"
 import { BestRestaurantsCardSkeleton } from "./best-restaurants-card-skeleton"
 import { CategoryCard } from "./category-card"
 import { CategoryCardSkeleton } from "./category-card-skeleton"
+import { RestaurantCard } from "./restaurant-card"
+import { RestaurantCardSkeleton } from "./restaurant-card-skeleton"
 import { RestaurantFilters } from "./restaurant-filters"
 
 export function Restaurants() {
@@ -41,6 +42,8 @@ export function Restaurants() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Seo title="Restaurantes" />
+
       {categories ? (
         <div className="space-y-3">
           <span className="text-xl lg:text-2xl block font-bold">
@@ -82,61 +85,22 @@ export function Restaurants() {
       <div className="space-y-3 py-6">
         <RestaurantFilters />
 
-        <span className="text-xl lg:text-2xl block font-bold">Lojas</span>
+        {restaurants ? (
+          <>
+            <span className="text-xl lg:text-2xl block font-bold">Lojas</span>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {restaurants?.map(restaurant => (
-            <Link
-              key={restaurant.id}
-              to={`/restaurante/${restaurant.id}`}
-              className="flex items-center gap-2 md:gap-4 hover:shadow-md rounded-md p-2 lg:p-3"
-            >
-              <img
-                src={restaurant.image ?? "/hamburger.webp"}
-                alt={restaurant.name}
-                className="rounded-md max-w-32"
-              />
-
-              <div className="space-y-1">
-                <p className="text-base font-bold line-clamp-1">
-                  {restaurant.name}
-                </p>
-
-                <div className="flex items-center text-xs">
-                  <div className="flex items-center gap-1">
-                    <StarIcon className="size-3 shrink-0 stroke-yellow-500 fill-yellow-500" />{" "}
-                    <span className="text-xs text-yellow-500 font-bold">
-                      {restaurant.grade !== 0
-                        ? restaurant.grade.toFixed(2)
-                        : "Novidade"}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {" "}
-                    - {restaurant.category}
-                  </span>
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  <span>
-                    {restaurant.deliveryTime}-{restaurant.deliveryTime + 10} min
-                    -
-                  </span>{" "}
-                  <span
-                    className={cn(restaurant.tax === 0 && "text-green-600")}
-                  >
-                    {restaurant.tax === 0
-                      ? "Grátis"
-                      : restaurant.tax.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {restaurants?.map(restaurant => (
+                <RestaurantCard
+                  key={restaurant.id}
+                  restaurant={restaurant}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <RestaurantCardSkeleton />
+        )}
       </div>
     </div>
   )
