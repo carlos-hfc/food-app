@@ -12,19 +12,16 @@ export const viewMenu: FastifyPluginAsyncZod = async app => {
           restaurantId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            products: z.array(
-              z.object({
-                id: z.string(),
-                restaurantId: z.string(),
-                name: z.string(),
-                description: z.string(),
-                price: z.number(),
-                available: z.boolean(),
-                image: z.string().nullable(),
-              }),
-            ),
-          }),
+          200: z.array(
+            z.object({
+              id: z.string().uuid(),
+              restaurantId: z.string().uuid(),
+              name: z.string(),
+              description: z.string(),
+              price: z.number(),
+              image: z.string().nullable(),
+            }),
+          ),
         },
       },
     },
@@ -37,14 +34,15 @@ export const viewMenu: FastifyPluginAsyncZod = async app => {
           available: true,
           active: true,
         },
+        orderBy: {
+          name: "asc",
+        },
       })
 
-      return {
-        products: products.map(item => ({
-          ...item,
-          price: item.price.toNumber(),
-        })),
-      }
+      return products.map(item => ({
+        ...item,
+        price: item.price.toNumber(),
+      }))
     },
   )
 }

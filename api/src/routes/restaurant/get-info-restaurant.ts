@@ -1,8 +1,38 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
+import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
+
+interface QueryRestaurants {
+  id: string
+  name: string
+  phone: string
+  category: string
+  hourId: string
+  weekday: number
+  openedAt: number
+  closedAt: number
+  open: boolean
+}
+
+interface QueryRates {
+  id: string
+  client: string
+  grade: number
+  comment: string | null
+  ratingDate: string
+}
+
+interface QueryRateResume {
+  average: number
+  totalCount: number
+}
+
+interface QueryRateByGrade {
+  count: number
+  grade: number
+}
 
 export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
   app.get(
@@ -18,36 +48,34 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
               id: z.string().uuid(),
               name: z.string(),
               phone: z.string(),
-              category: z.object({
-                name: z.string(),
-              }),
+              category: z.string(),
               hours: z.array(
                 z.object({
-                  id: z.string().uuid(),
+                  hourId: z.string().uuid(),
                   weekday: z.number(),
                   openedAt: z.number(),
                   closedAt: z.number(),
                   open: z.boolean(),
-                  restaurantId: z.string().uuid(),
                 }),
               ),
             }),
             rates: z.array(
               z.object({
-                grade: z.number().nullable(),
+                id: z.string().uuid(),
+                client: z.string(),
+                grade: z.number(),
                 comment: z.string().nullable(),
-                ratingDate: z.date().nullable(),
-                client: z.object({
-                  name: z.string(),
-                }),
+                ratingDate: z.string(),
               }),
             ),
-            avgGrade: z.string().nullable(),
-            totalGrade: z.number(),
-            rateResume: z.array(
+            rateResume: z.object({
+              totalCount: z.number(),
+              average: z.number(),
+            }),
+            rateByGrade: z.array(
               z.object({
-                _count: z.number(),
-                grade: z.number().nullable(),
+                count: z.number(),
+                grade: z.number(),
               }),
             ),
           }),
@@ -57,76 +85,78 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
     async request => {
       const { restaurantId } = request.params
 
-      const restaurant = await prisma.restaurant.findUnique({
-        where: {
-          id: restaurantId,
-        },
-        select: {
-          id: true,
-          name: true,
-          phone: true,
-          category: {
-            select: {
-              name: true,
-            },
-          },
-          hours: {
-            orderBy: {
-              weekday: "asc",
-            },
-          },
-        },
-      })
+      const query = await prisma.$queryRaw<QueryRestaurants[]>(Prisma.sql`
+        select
+          r.id,
+          r.name,
+          r.phone,
+          cat.name category,
+          h.id "hourId",
+          h.weekday,
+          h."openedAt",
+          h."closedAt",
+          h.open
+        from restaurants r
+        join categories cat on cat.id = r."categoryId"
+        join hours h on h."restaurantId" = r.id
+        where r.id = ${restaurantId}
+        order by h.weekday asc
+      `)
 
-      if (!restaurant) {
-        throw new ClientError("Restaurant not found")
+      const { id, category, name, phone } = query[0]
+
+      const restaurant = {
+        id,
+        category,
+        name,
+        phone,
+        hours: query.map(item => ({
+          hourId: item.hourId,
+          weekday: item.weekday,
+          openedAt: item.openedAt,
+          closedAt: item.closedAt,
+          open: item.open,
+        })),
       }
 
-      const grade = await prisma.order.aggregate({
-        where: {
-          restaurantId,
-        },
-        _avg: {
-          grade: true,
-        },
-        _count: {
-          grade: true,
-        },
-      })
+      const rates = await prisma.$queryRaw<QueryRates[]>(Prisma.sql`
+        select
+          o.id,
+          o.grade,
+          o.comment,
+          o."ratingDate",
+          u.name client
+        from orders o
+        join users u on u.id = o."clientId"
+        where o."restaurantId" = ${restaurantId}
+          and o."ratingDate" is not null
+        order by o."ratingDate" desc
+      `)
 
-      const rateResume = await prisma.order.groupBy({
-        by: ["grade"],
-        orderBy: {
-          grade: "desc",
-        },
-        _count: true,
-      })
+      const rateResume = await prisma.$queryRaw<QueryRateResume[]>(Prisma.sql`
+        select
+          avg(o.grade)::float average,
+          count(o.grade)::int "totalCount"
+        from orders o
+        where o."restaurantId" = ${restaurantId}
+      `)
 
-      const rates = await prisma.order.findMany({
-        where: {
-          restaurantId,
-        },
-        select: {
-          grade: true,
-          comment: true,
-          ratingDate: true,
-          client: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          ratingDate: "desc",
-        },
-      })
+      const rateByGrade = await prisma.$queryRaw<QueryRateByGrade[]>(Prisma.sql`
+        select
+          count(o.grade)::int,
+          o.grade
+        from orders o
+        where o."restaurantId" = ${restaurantId}
+          and o.grade is not null
+        group by o.grade
+        order by o.grade desc
+      `)
 
       return {
         restaurant,
         rates,
-        avgGrade: grade._avg.grade?.toFixed(2) ?? null,
-        totalGrade: grade._count.grade,
-        rateResume,
+        rateResume: rateResume[0],
+        rateByGrade,
       }
     },
   )

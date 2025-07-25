@@ -217,40 +217,43 @@ async function main() {
     })
 
   for (let weekday = 0; weekday < 7; weekday++) {
+    const openedAt = faker.number.int({ min: 540, max: 840 })
+    const closedAt = faker.number.int({ min: 1080, max: 1440 })
+
     await prisma.hour.createMany({
       data: [
         {
           weekday,
-          openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          openedAt,
+          closedAt,
           restaurantId: restaurant1.id,
           open: true,
         },
         {
           weekday,
-          openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          openedAt,
+          closedAt,
           restaurantId: restaurant2.id,
           open: true,
         },
         {
           weekday,
-          openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          openedAt,
+          closedAt,
           restaurantId: restaurant3.id,
           open: true,
         },
         {
           weekday,
-          openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          openedAt,
+          closedAt,
           restaurantId: restaurant4.id,
           open: true,
         },
         {
           weekday,
-          openedAt: faker.number.int({ min: 540, max: 840 }),
-          closedAt: faker.number.int({ min: 1080, max: 1440 }),
+          openedAt,
+          closedAt,
           restaurantId: restaurant5.id,
           open: true,
         },
