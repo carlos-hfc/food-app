@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "react-router"
 
+import { RestaurantCard } from "@/components/restaurant-card"
+import { RestaurantCardSkeleton } from "@/components/restaurant-card-skeleton"
+import { RestaurantFilters } from "@/components/restaurant-filters"
 import { Seo } from "@/components/seo"
 import { getBestRestaurants } from "@/http/get-best-restaurants"
 import { listCategories } from "@/http/list-categories"
@@ -10,9 +13,6 @@ import { BestRestaurantsCard } from "./best-restaurants-card"
 import { BestRestaurantsCardSkeleton } from "./best-restaurants-card-skeleton"
 import { CategoryCard } from "./category-card"
 import { CategoryCardSkeleton } from "./category-card-skeleton"
-import { RestaurantCard } from "./restaurant-card"
-import { RestaurantCardSkeleton } from "./restaurant-card-skeleton"
-import { RestaurantFilters } from "./restaurant-filters"
 
 export function Restaurants() {
   const [searchParams] = useSearchParams()

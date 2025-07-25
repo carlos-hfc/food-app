@@ -111,7 +111,7 @@ export function RestaurantFilters() {
               onValueChange={field.onChange}
               disabled={field.disabled}
             >
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-full lg:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -143,7 +143,7 @@ export function RestaurantFilters() {
               onValueChange={field.onChange}
               disabled={field.disabled}
             >
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-full lg:w-40">
                 <SelectValue />
               </SelectTrigger>
 
@@ -174,7 +174,7 @@ export function RestaurantFilters() {
               onValueChange={field.onChange}
               disabled={field.disabled}
             >
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-full lg:w-44">
                 <SelectValue />
               </SelectTrigger>
 
@@ -203,7 +203,7 @@ export function RestaurantFilters() {
               onValueChange={field.onChange}
               disabled={field.disabled}
             >
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-full lg:w-32">
                 <SelectValue />
               </SelectTrigger>
 
@@ -220,15 +220,19 @@ export function RestaurantFilters() {
         />
       </div>
 
-      <Button className="text-sm!">Filtrar resultados</Button>
-      <Button
-        type="button"
-        className="text-sm!"
-        variant="outline"
-        onClick={handleClearFilters}
-      >
-        Cancelar filtros
-      </Button>
+      <div className="flex flex-col md:flex-row items-center gap-2">
+        <Button className="text-sm! flex-1 w-full md:w-auto">
+          Filtrar resultados
+        </Button>
+        <Button
+          type="button"
+          className="text-sm! flex-1 w-full md:w-auto"
+          variant="outline"
+          onClick={handleClearFilters}
+        >
+          Limpar filtros
+        </Button>
+      </div>
     </form>
   )
 }
