@@ -6,6 +6,7 @@ import { SignIn } from "./auth/sign-in"
 import { SignUp } from "./auth/sign-up"
 import { Category } from "./categories/category"
 import { HomePage } from "./home/home"
+import { Restaurant } from "./restaurant/restaurant"
 import { Restaurants } from "./restaurants/restaurants"
 
 export const router = createBrowserRouter([
@@ -19,7 +20,16 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/restaurantes",
-        element: <Restaurants />,
+        children: [
+          {
+            index: true,
+            element: <Restaurants />,
+          },
+          {
+            path: ":restaurantId",
+            element: <Restaurant />,
+          },
+        ],
       },
       {
         path: "/categoria/:categoryId",
