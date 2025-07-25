@@ -13,7 +13,7 @@ interface CardRestaurantProps {
 export function CardRestaurant({ restaurant }: CardRestaurantProps) {
   return (
     <Link
-      to={`/restaurante/${restaurant.id}`}
+      to={`/restaurantes/${restaurant.id}`}
       className="border hover:border-muted-foreground/50 rounded-md flex items-center gap-2 py-8 px-3 relative flex-1"
     >
       <BadgeCheckIcon className="absolute size-6 right-3 top-3 fill-primary stroke-background" />

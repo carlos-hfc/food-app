@@ -11,7 +11,7 @@ interface BestRestaurantsCardProps {
 export function BestRestaurantsCard({ restaurant }: BestRestaurantsCardProps) {
   return (
     <Link
-      to={`/restaurante/${restaurant.id}`}
+      to={`/restaurantes/${restaurant.id}`}
       className="flex flex-col md:flex-row flex-1 items-center gap-2 py-3 px-2 hover:shadow-md transition-all rounded-md relative"
     >
       <img
