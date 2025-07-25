@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
-import { useSearchParams } from "react-router"
+import { useMatch, useSearchParams } from "react-router"
 import z from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -31,6 +31,7 @@ export function RestaurantFilters() {
     staleTime: Infinity,
   })
 
+  const isCategoryPage = useMatch("/categoria/:categoryId")
   const [searchParams, setSearchParams] = useSearchParams()
 
   const category = searchParams.get("category")
@@ -98,37 +99,39 @@ export function RestaurantFilters() {
     >
       <span className="font-semibold">Filtros</span>
 
-      <div>
-        <Label className="sr-only">Categoria</Label>
-        <Controller
-          name="category"
-          control={control}
-          render={({ field }) => (
-            <Select
-              defaultValue="all"
-              name={field.name}
-              value={field.value}
-              onValueChange={field.onChange}
-              disabled={field.disabled}
-            >
-              <SelectTrigger className="w-full lg:w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Categoria</SelectItem>
-                {categories?.map(category => (
-                  <SelectItem
-                    key={category.id}
-                    value={category.name}
-                  >
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </div>
+      {!isCategoryPage && (
+        <div>
+          <Label className="sr-only">Categoria</Label>
+          <Controller
+            name="category"
+            control={control}
+            render={({ field }) => (
+              <Select
+                defaultValue="all"
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                disabled={field.disabled}
+              >
+                <SelectTrigger className="w-full lg:w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Categoria</SelectItem>
+                  {categories?.map(category => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.name}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+      )}
 
       <div>
         <Label className="sr-only">Taxa de entrega</Label>

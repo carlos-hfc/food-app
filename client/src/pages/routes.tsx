@@ -4,6 +4,7 @@ import { AppLayout } from "./_layouts/app"
 import { AuthLayout } from "./_layouts/auth"
 import { SignIn } from "./auth/sign-in"
 import { SignUp } from "./auth/sign-up"
+import { Category } from "./categories/category"
 import { HomePage } from "./home/home"
 import { Restaurants } from "./restaurants/restaurants"
 
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: "/restaurantes",
         element: <Restaurants />,
+      },
+      {
+        path: "/categoria/:categoryId",
+        element: <Category />,
       },
     ],
   },

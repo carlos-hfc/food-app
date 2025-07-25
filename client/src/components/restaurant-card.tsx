@@ -19,7 +19,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
     <Link
       key={restaurant.id}
-      to={`/restaurante/${restaurant.id}`}
+      to={`/restaurantes/${restaurant.id}`}
       className="flex items-center gap-2 md:gap-4 hover:shadow-md rounded-md p-2 lg:p-3"
     >
       <img
