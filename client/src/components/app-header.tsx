@@ -52,8 +52,8 @@ export function AppHeader() {
   }
 
   return (
-    <header className="container px-4 lg:px-8 max-w-6xl py-4">
-      <div className="inline-flex items-center w-full gap-4">
+    <header className="px-4 lg:px-8 py-4 border-b">
+      <div className="flex items-center gap-4 container max-w-6xl">
         <HamburgerIcon className="size-8 lg:size-12 text-primary shrink-0" />
 
         <form
