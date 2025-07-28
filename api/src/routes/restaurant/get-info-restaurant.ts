@@ -1,13 +1,19 @@
+import { getDay, startOfToday } from "date-fns"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
+import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
+import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 interface QueryRestaurants {
   id: string
   name: string
   phone: string
+  image: string | null
+  tax: number
+  deliveryTime: number
   category: string
   hourId: string
   weekday: number
@@ -21,7 +27,7 @@ interface QueryRates {
   client: string
   grade: number
   comment: string | null
-  ratingDate: string
+  ratingDate: Date
 }
 
 interface QueryRateResume {
@@ -46,15 +52,20 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
           200: z.object({
             restaurant: z.object({
               id: z.string().uuid(),
+              image: z.string().nullable(),
               name: z.string(),
               phone: z.string(),
               category: z.string(),
+              tax: z.number(),
+              deliveryTime: z.number(),
+              isOpen: z.boolean(),
+              openingAt: z.string().optional(),
               hours: z.array(
                 z.object({
                   hourId: z.string().uuid(),
                   weekday: z.number(),
-                  openedAt: z.number(),
-                  closedAt: z.number(),
+                  openedAt: z.string(),
+                  closedAt: z.string(),
                   open: z.boolean(),
                 }),
               ),
@@ -65,7 +76,7 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
                 client: z.string(),
                 grade: z.number(),
                 comment: z.string().nullable(),
-                ratingDate: z.string(),
+                ratingDate: z.date(),
               }),
             ),
             rateResume: z.object({
@@ -88,8 +99,11 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
       const query = await prisma.$queryRaw<QueryRestaurants[]>(Prisma.sql`
         select
           r.id,
+          r.image,
           r.name,
           r.phone,
+          r.tax::money,
+          r."deliveryTime",
           cat.name category,
           h.id "hourId",
           h.weekday,
@@ -103,20 +117,32 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
         order by h.weekday asc
       `)
 
-      const { id, category, name, phone } = query[0]
+      const { id, category, image, name, phone, tax, deliveryTime } = query[0]
+
+      const todayHour = query.find(
+        item => item.weekday === getDay(startOfToday()),
+      )!
 
       const restaurant = {
         id,
         category,
         name,
         phone,
+        image,
+        tax: Number(tax),
+        deliveryTime,
         hours: query.map(item => ({
           hourId: item.hourId,
           weekday: item.weekday,
-          openedAt: item.openedAt,
-          closedAt: item.closedAt,
+          openedAt: convertMinutesToHours(item.openedAt),
+          closedAt: convertMinutesToHours(item.closedAt),
           open: item.open,
         })),
+        isOpen: restaurantIsOpen(todayHour),
+        openingAt:
+          todayHour.open && !restaurantIsOpen(todayHour)
+            ? convertMinutesToHours(todayHour.openedAt)
+            : undefined,
       }
 
       const rates = await prisma.$queryRaw<QueryRates[]>(Prisma.sql`
@@ -155,7 +181,10 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
       return {
         restaurant,
         rates,
-        rateResume: rateResume[0],
+        rateResume: {
+          average: rateResume[0].average ?? 0,
+          totalCount: rateResume[0].totalCount ?? 0,
+        },
         rateByGrade,
       }
     },
