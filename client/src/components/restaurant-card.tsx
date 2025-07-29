@@ -12,6 +12,8 @@ interface RestaurantCardProps {
     tax: number
     deliveryTime: number
     grade: number
+    isOpen: boolean
+    openingAt?: string
   }
 }
 
@@ -20,7 +22,10 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     <Link
       key={restaurant.id}
       to={`/restaurantes/${restaurant.id}`}
-      className="flex items-center gap-2 md:gap-4 hover:shadow-md rounded-md p-2 lg:p-3"
+      className={cn(
+        "flex items-center gap-2 md:gap-4 hover:shadow-md rounded-md p-2 lg:p-3",
+        !restaurant.isOpen && "saturate-0",
+      )}
     >
       <img
         src={restaurant.image ?? "/hamburger.webp"}
@@ -47,17 +52,23 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         </div>
 
         <div className="text-sm text-muted-foreground">
-          <span>
-            {restaurant.deliveryTime}-{restaurant.deliveryTime + 10} min -
-          </span>{" "}
-          <span className={cn(restaurant.tax === 0 && "text-green-600")}>
-            {restaurant.tax === 0
-              ? "Grátis"
-              : restaurant.tax.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-          </span>
+          {restaurant.isOpen ? (
+            <>
+              <span>
+                {restaurant.deliveryTime}-{restaurant.deliveryTime + 10} min -
+              </span>{" "}
+              <span className={cn(restaurant.tax === 0 && "text-green-600")}>
+                {restaurant.tax === 0
+                  ? "Grátis"
+                  : restaurant.tax.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+              </span>
+            </>
+          ) : (
+            <span>Fechado</span>
+          )}
         </div>
       </div>
     </Link>

@@ -14,7 +14,7 @@ import { CardRestaurant } from "./card-restaurant"
 import { CardSkeleton } from "./card-skeleton"
 
 export function HomePage() {
-  const { data: bestRestaurants, isLoading: isLoadingRestaurants } = useQuery({
+  const { data: bestRestaurants } = useQuery({
     queryKey: ["best-restaurants"],
     queryFn: getBestRestaurants,
   })
@@ -81,14 +81,16 @@ export function HomePage() {
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-4">
-            {isLoadingRestaurants && <CardSkeleton />}
-
-            {bestRestaurants?.map(restaurant => (
-              <CardRestaurant
-                key={restaurant.id}
-                restaurant={restaurant}
-              />
-            ))}
+            {bestRestaurants ? (
+              bestRestaurants?.map(restaurant => (
+                <CardRestaurant
+                  key={restaurant.id}
+                  restaurant={restaurant}
+                />
+              ))
+            ) : (
+              <CardSkeleton />
+            )}
           </div>
         </div>
       </section>

@@ -1,3 +1,8 @@
+import { useRef } from "react"
+
+import { InputNumber } from "@/components/input-number"
+import { Button } from "@/components/ui/button"
+
 interface ProductCardProps {
   product: {
     id: string
@@ -9,6 +14,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const inputRef = useRef({} as HTMLInputElement)
+
   return (
     <div className="flex flex-col border rounded-md space-y-3 px-3 py-4 hover:shadow-2xs transition-all">
       <div className="flex justify-between gap-4">
@@ -28,12 +35,29 @@ export function ProductCard({ product }: ProductCardProps) {
         />
       </div>
 
-      <span className="text-green-600 font-semibold mt-auto">
-        {product.price.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        })}
-      </span>
+      <div className="mt-auto flex flex-wrap items-center justify-between">
+        <span className="text-green-600 font-semibold">
+          {product.price.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </span>
+
+        <div className="flex gap-1">
+          <InputNumber
+            ref={inputRef}
+            defaultValue={1}
+            onDecrement={() => {
+              inputRef.current.stepDown()
+            }}
+            onIncrement={() => {
+              inputRef.current.stepUp()
+            }}
+          />
+
+          <Button>Adicionar</Button>
+        </div>
+      </div>
     </div>
   )
 }
