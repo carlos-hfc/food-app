@@ -84,6 +84,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           and h.open = true
         ${where}
         group by r.id, cat.id, h.id
+        order by h.open, h."openedAt", h."closedAt"
         ${grade ? Prisma.sql`having avg(o.grade) > ${grade}` : Prisma.empty}
       `)
 
