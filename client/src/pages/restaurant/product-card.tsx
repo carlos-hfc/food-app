@@ -1,7 +1,9 @@
+import { ShoppingCartIcon } from "lucide-react"
 import { useRef } from "react"
 
 import { InputNumber } from "@/components/input-number"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/contexts/cart"
 
 interface ProductCardProps {
   product: {
@@ -14,7 +16,22 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart()
+
   const inputRef = useRef({} as HTMLInputElement)
+
+  function handleAddToCart() {
+    const quantity = Number(inputRef.current.value)
+
+    if (quantity <= 0) return
+
+    addToCart({
+      ...product,
+      quantity,
+    })
+
+    inputRef.current.value = "0"
+  }
 
   return (
     <div className="flex flex-col border rounded-md space-y-3 px-3 py-4 hover:shadow-2xs transition-all">
@@ -46,16 +63,18 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="flex gap-1">
           <InputNumber
             ref={inputRef}
-            defaultValue={1}
-            onDecrement={() => {
-              inputRef.current.stepDown()
-            }}
-            onIncrement={() => {
-              inputRef.current.stepUp()
-            }}
+            defaultValue={0}
+            onDecrement={() => inputRef.current.stepDown()}
+            onIncrement={() => inputRef.current.stepUp()}
           />
 
-          <Button>Adicionar</Button>
+          <Button
+            size="icon"
+            onClick={handleAddToCart}
+            aria-label="Adicionar ao carrinho"
+          >
+            <ShoppingCartIcon />
+          </Button>
         </div>
       </div>
     </div>

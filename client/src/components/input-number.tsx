@@ -34,7 +34,7 @@ export function InputNumber({
           "[&::-webkit-inner-spin-button]:hidden ring-0! text-center w-8 p-0 border-none shadow-none text-foreground font-bold",
           className,
         )}
-        min={1}
+        min={0}
         readOnly
         {...props}
       />
