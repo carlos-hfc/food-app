@@ -1,21 +1,30 @@
+import { useQuery } from "@tanstack/react-query"
 import { ShoppingCartIcon } from "lucide-react"
 import { useRef } from "react"
 
 import { InputNumber } from "@/components/input-number"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/contexts/cart"
+import { getRestarauntInfo } from "@/http/get-restaurant-info"
 
 interface ProductCardProps {
   product: {
     id: string
+    restaurantId: string
     name: string
     description: string
     price: number
     image: string | null
   }
+  closedRestaurant?: boolean
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, closedRestaurant }: ProductCardProps) {
+  const { data: result } = useQuery({
+    queryKey: ["restaurant-info", product.restaurantId],
+    queryFn: () => getRestarauntInfo({ restaurantId: product.restaurantId }),
+  })
+
   const { addToCart } = useCart()
 
   const inputRef = useRef({} as HTMLInputElement)
@@ -23,18 +32,21 @@ export function ProductCard({ product }: ProductCardProps) {
   function handleAddToCart() {
     const quantity = Number(inputRef.current.value)
 
-    if (quantity <= 0) return
+    if (quantity <= 0 || closedRestaurant) return
 
     addToCart({
-      ...product,
-      quantity,
+      item: {
+        ...product,
+        quantity,
+      },
+      restaurant: result?.restaurant ?? null,
     })
 
     inputRef.current.value = "0"
   }
 
   return (
-    <div className="flex flex-col border rounded-md space-y-3 px-3 py-4 hover:shadow-2xs transition-all">
+    <div className="flex flex-col border rounded-md space-y-3 p-3 hover:shadow-2xs transition-all">
       <div className="flex justify-between gap-4">
         <div className="flex flex-col gap-3">
           <p className="font-bold md:text-lg line-clamp-2 leading-snug">
@@ -60,7 +72,10 @@ export function ProductCard({ product }: ProductCardProps) {
           })}
         </span>
 
-        <div className="flex gap-1">
+        <div
+          className="flex gap-1"
+          hidden={closedRestaurant}
+        >
           <InputNumber
             ref={inputRef}
             defaultValue={0}

@@ -80,6 +80,7 @@ export function Restaurant() {
             <ProductCard
               key={product.id}
               product={product}
+              closedRestaurant={!info?.restaurant.isOpen}
             />
           ))
         ) : (
