@@ -1,16 +1,9 @@
-import { ActionTypes } from "./actions"
-
-interface Item {
-  id: string
-  name: string
-  image: string | null
-  price: number
-  quantity: number
-}
+import { ActionTypes, CartItem, RestaurantItem } from "./actions"
 
 interface CartState {
   numberOfItems: number
-  items: Item[]
+  items: CartItem[]
+  restaurant: RestaurantItem
 }
 
 interface CartAction {
@@ -25,9 +18,12 @@ export function cartReducer(state: CartState, action: CartAction) {
         item => item.id === action.payload.item.id,
       )
 
+      const numberOfItems = action.payload.item.quantity + state.numberOfItems
+
       if (itemIndex >= 0) {
         return {
           ...state,
+          numberOfItems,
           items: [
             ...state.items.slice(0, itemIndex),
             {
@@ -42,13 +38,15 @@ export function cartReducer(state: CartState, action: CartAction) {
 
       return {
         items: [...state.items, action.payload.item],
-        numberOfItems: state.numberOfItems + 1,
+        numberOfItems,
+        restaurant: action.payload.restaurant,
       }
 
     case ActionTypes.REMOVE_TO_CART:
       const items = state.items.filter(item => item.id !== action.payload.id)
 
       return {
+        ...state,
         items,
         numberOfItems: state.numberOfItems - 1,
       }
@@ -57,6 +55,7 @@ export function cartReducer(state: CartState, action: CartAction) {
       return {
         items: [],
         numberOfItems: 0,
+        restaurant: null,
       }
 
     default:

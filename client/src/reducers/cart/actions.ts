@@ -4,19 +4,32 @@ export enum ActionTypes {
   CLEAN_CART = "CLEAN_CART",
 }
 
-interface Item {
+export interface CartItem {
   id: string
+  restaurantId: string
   name: string
   image: string | null
   price: number
   quantity: number
 }
 
-export function addItemToCart(item: Item) {
+export type RestaurantItem = {
+  id: string
+  name: string
+  image: string | null
+} | null
+
+export interface AddItemToCartParams {
+  item: CartItem
+  restaurant: RestaurantItem
+}
+
+export function addItemToCart({ item, restaurant }: AddItemToCartParams) {
   return {
     type: ActionTypes.ADD_TO_CART,
     payload: {
       item,
+      restaurant,
     },
   }
 }
