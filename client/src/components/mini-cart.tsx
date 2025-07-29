@@ -2,6 +2,9 @@ import { ShoppingBagIcon } from "lucide-react"
 
 import { useCart } from "@/contexts/cart"
 
+import { Cart } from "./cart"
+import { Sheet, SheetTrigger } from "./ui/sheet"
+
 export function MiniCart() {
   const { numberOfItems, items } = useCart()
 
@@ -15,18 +18,23 @@ export function MiniCart() {
   )
 
   return (
-    <div className="flex shrink-0 items-center gap-2">
-      <ShoppingBagIcon className="size-6 shrink-0 text-primary" />
+    <Sheet>
+      <SheetTrigger asChild>
+        <div className="flex shrink-0 items-center gap-2 cursor-default">
+          <ShoppingBagIcon className="size-6 shrink-0 text-primary" />
+          <div className="text-muted-foreground text-xs">
+            <span className="block">
+              {total.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+            <span>{numberOfItems} itens</span>
+          </div>
+        </div>
+      </SheetTrigger>
 
-      <div className="text-muted-foreground text-xs">
-        <span className="block">
-          {total.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}
-        </span>
-        <span>{numberOfItems} itens</span>
-      </div>
-    </div>
+      <Cart />
+    </Sheet>
   )
 }
