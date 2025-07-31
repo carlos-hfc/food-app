@@ -6,7 +6,7 @@ import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { deleteFavorite } from "@/http/delete-favorite"
-import { ListFavoritesRequest } from "@/http/list-favorites"
+import { ListFavoritesResponse } from "@/http/list-favorites"
 import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
 
@@ -33,12 +33,12 @@ export function FavoriteItem({ favorite }: FavoriteItemProps) {
     useMutation({
       mutationFn: deleteFavorite,
       onSuccess(_, { favoriteId }) {
-        const cached = queryClient.getQueryData<ListFavoritesRequest>([
+        const cached = queryClient.getQueryData<ListFavoritesResponse>([
           "favorites",
         ])
 
         if (cached) {
-          queryClient.setQueryData<ListFavoritesRequest>(
+          queryClient.setQueryData<ListFavoritesResponse>(
             ["favorites"],
             cached.filter(item => item.id !== favoriteId),
           )

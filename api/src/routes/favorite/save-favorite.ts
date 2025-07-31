@@ -16,7 +16,9 @@ export const saveFavorite: FastifyPluginAsyncZod = async app => {
           restaurantId: z.string().uuid(),
         }),
         response: {
-          201: z.null(),
+          201: z.object({
+            favoriteId: z.string().uuid(),
+          }),
         },
       },
     },
@@ -37,14 +39,14 @@ export const saveFavorite: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Restaurant already is favorited")
       }
 
-      await prisma.favorite.create({
+      const { id } = await prisma.favorite.create({
         data: {
           restaurantId,
           clientId,
         },
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send({ favoriteId: id })
     },
   )
 }

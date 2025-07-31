@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios"
 
-export type ListFavoritesRequest = Array<{
+export type ListFavoritesResponse = Array<{
   id: string
   restaurantId: string
   restaurantName: string
@@ -17,7 +17,7 @@ export type ListFavoritesRequest = Array<{
 }>
 
 export async function listFavorites() {
-  const response = await api.get<ListFavoritesRequest>("/favorite")
+  const response = await api.get<ListFavoritesResponse>("/favorite")
 
   return response.data
 }

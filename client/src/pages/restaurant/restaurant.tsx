@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { addFavorite } from "@/http/add-favorite"
 import { getMenu } from "@/http/get-menu"
 import { getRestarauntInfo } from "@/http/get-restaurant-info"
-import { listFavorites } from "@/http/list-favorites"
+import { listFavorites, ListFavoritesResponse } from "@/http/list-favorites"
 import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
 
@@ -42,8 +42,34 @@ export function Restaurant() {
 
   const { mutateAsync: addFavoriteFn, isPending: isFavoriting } = useMutation({
     mutationFn: addFavorite,
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ["favorites"] })
+    onSuccess({ favoriteId }, { restaurantId }) {
+      queryClient.setQueryData<ListFavoritesResponse>(
+        ["favorites"],
+        oldData => {
+          const today = info?.restaurant.hours.find(
+            item => item.weekday === new Date().getDay(),
+          )
+
+          return [
+            ...(oldData ?? []),
+            {
+              id: favoriteId,
+              restaurantId,
+              restaurantName: info?.restaurant.name ?? "",
+              tax: info?.restaurant.tax ?? 0,
+              deliveryTime: info?.restaurant.deliveryTime ?? 0,
+              image: info?.restaurant.image ?? null,
+              category: info?.restaurant.category ?? "",
+              weekday: today?.weekday ?? new Date().getDay(),
+              open: today?.open ?? true,
+              openedAt: today?.openedAt ?? "",
+              closedAt: today?.closedAt ?? "",
+              isOpen: info?.restaurant.isOpen ?? true,
+              openingAt: info?.restaurant.openingAt,
+            },
+          ]
+        },
+      )
     },
   })
 
