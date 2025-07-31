@@ -63,7 +63,7 @@ export function AccountMenu() {
 
         <DropdownMenuContent
           align="end"
-          className="w-56"
+          className="w-56 *:leading-none"
         >
           <DropdownMenuLabel className="flex flex-col">
             {isLoadingProfile ? (
@@ -84,8 +84,8 @@ export function AccountMenu() {
           <DropdownMenuSeparator />
 
           <DialogTrigger asChild>
-            <DropdownMenuItem className="flex items-center gap-2">
-              <SquareChartGanttIcon className="size-4 text-foreground" />
+            <DropdownMenuItem className="flex items-center gap-3">
+              <SquareChartGanttIcon className="size-4 text-foreground shrink-0" />
               <div>
                 <span className="block font-semibold">Dados da conta</span>
                 <span className="text-xs text-muted-foreground">
@@ -97,10 +97,10 @@ export function AccountMenu() {
 
           <DropdownMenuItem
             asChild
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
             <Link to="/pedidos">
-              <UtensilsCrossedIcon className="size-4 text-foreground" />
+              <UtensilsCrossedIcon className="size-4 text-foreground shrink-0" />
               <div>
                 <span className="block font-semibold">Pedidos</span>
                 <span className="text-xs text-muted-foreground">
@@ -112,10 +112,10 @@ export function AccountMenu() {
 
           <DropdownMenuItem
             asChild
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
             <Link to="/favoritos">
-              <HeartIcon className="size-4 text-foreground" />
+              <HeartIcon className="size-4 text-foreground shrink-0" />
               <div>
                 <span className="block font-semibold">Favoritos</span>
                 <span className="text-xs text-muted-foreground">
@@ -127,10 +127,10 @@ export function AccountMenu() {
 
           <DropdownMenuItem
             asChild
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
             <Link to="/enderecos">
-              <MapPinIcon className="size-4 text-foreground" />
+              <MapPinIcon className="size-4 text-foreground shrink-0" />
               <div>
                 <span className="block font-semibold">Endereços</span>
                 <span className="text-xs text-muted-foreground">
@@ -142,7 +142,7 @@ export function AccountMenu() {
 
           <DropdownMenuItem asChild>
             <button
-              className="w-full text-primary active:text-primary hover:text-primary!"
+              className="w-full gap-3 text-primary active:text-primary hover:text-primary!"
               disabled={isSigningOut}
               onClick={() => signOutFn()}
             >
