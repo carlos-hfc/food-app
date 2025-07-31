@@ -1,11 +1,16 @@
-import { useQuery } from "@tanstack/react-query"
-import { StoreIcon } from "lucide-react"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { HeartIcon, StoreIcon } from "lucide-react"
 import { useParams } from "react-router"
+import { toast } from "sonner"
 
 import { Seo } from "@/components/seo"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { addFavorite } from "@/http/add-favorite"
 import { getMenu } from "@/http/get-menu"
 import { getRestarauntInfo } from "@/http/get-restaurant-info"
+import { listFavorites } from "@/http/list-favorites"
+import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
 
 import { Info } from "./info"
@@ -26,6 +31,32 @@ export function Restaurant() {
     queryFn: () => getRestarauntInfo({ restaurantId }),
   })
 
+  const { data: favorites } = useQuery({
+    queryKey: ["favorites"],
+    queryFn: listFavorites,
+  })
+
+  const isFavorited = favorites?.find(
+    item => item.restaurantId === restaurantId,
+  )
+
+  const { mutateAsync: addFavoriteFn, isPending: isFavoriting } = useMutation({
+    mutationFn: addFavorite,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] })
+    },
+  })
+
+  async function handleFavorite() {
+    try {
+      await addFavoriteFn({ restaurantId })
+
+      toast.success("Favorito salvo com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao salvar favorito, tente novamente")
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {info ? (
@@ -42,6 +73,20 @@ export function Restaurant() {
             )}
           >
             <div className="absolute bg-[url(/banner.jpg)] h-full w-full bg-no-repeat bg-cover bg-position-[center_bottom_200px] lg:bg-position-[center_bottom_50px] bg-fixed" />
+
+            <Button
+              size="icon"
+              className="bg-foreground hover:bg-foreground rounded-full z-1 absolute top-2 lg:top-4 right-2 lg:right-4 size-10"
+              onClick={handleFavorite}
+              disabled={isFavoriting}
+            >
+              <HeartIcon
+                className={cn(
+                  "stroke-background size-5",
+                  isFavorited && "fill-background",
+                )}
+              />
+            </Button>
 
             {!info?.restaurant.isOpen && (
               <div className="z-10 lg:px-16 text-muted flex items-center gap-4">
