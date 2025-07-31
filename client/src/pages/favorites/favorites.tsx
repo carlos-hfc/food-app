@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query"
 import { Seo } from "@/components/seo"
 import { listFavorites } from "@/http/list-favorites"
 
+import { EmptyFavorites } from "./empty-favorites"
 import { FavoriteItem } from "./favorite-item"
 import { FavoriteItemSkeleton } from "./favorite-item-skeleton"
 
 export function Favorites() {
-  const { data: favorites } = useQuery({
+  const { data: favorites, isLoading: isLoadingFavorites } = useQuery({
     queryKey: ["favorites"],
     queryFn: listFavorites,
   })
@@ -22,7 +23,9 @@ export function Favorites() {
         </span>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {favorites ? (
+          {isLoadingFavorites ? (
+            <FavoriteItemSkeleton />
+          ) : favorites && favorites?.length > 0 ? (
             favorites.map(favorite => (
               <FavoriteItem
                 key={favorite.id}
@@ -30,7 +33,7 @@ export function Favorites() {
               />
             ))
           ) : (
-            <FavoriteItemSkeleton />
+            <EmptyFavorites />
           )}
         </div>
       </div>
