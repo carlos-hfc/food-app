@@ -12,7 +12,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 
 const restaurantFilterSchema = z.object({
-  name: z.string().optional(),
+  restaurantName: z.string().optional(),
 })
 
 type RestaurantFilterSchema = z.infer<typeof restaurantFilterSchema>
@@ -20,19 +20,19 @@ type RestaurantFilterSchema = z.infer<typeof restaurantFilterSchema>
 export function AppHeader() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const name = searchParams.get("name")
+  const restaurantName = searchParams.get("name")
 
   const { register, handleSubmit, reset } = useForm<RestaurantFilterSchema>({
     resolver: zodResolver(restaurantFilterSchema),
     defaultValues: {
-      name: name ?? "",
+      restaurantName: restaurantName ?? "",
     },
   })
 
   function handleFilter(data: RestaurantFilterSchema) {
     setSearchParams(prev => {
-      if (data.name) {
-        prev.set("name", data.name)
+      if (data.restaurantName) {
+        prev.set("name", data.restaurantName)
       } else {
         prev.delete("name")
       }
@@ -66,20 +66,20 @@ export function AppHeader() {
           />
 
           <Label
-            htmlFor="name"
+            htmlFor="restaurantName"
             className="sr-only"
           >
             Busque por um restaurante
           </Label>
           <Input
-            id="name"
+            id="restaurantName"
             type="text"
             placeholder="Busque por um restaurante"
             className="px-10"
-            {...register("name")}
+            {...register("restaurantName")}
           />
 
-          {name && (
+          {restaurantName && (
             <Button
               className="absolute right-0 text-muted-foreground"
               variant="ghost"
