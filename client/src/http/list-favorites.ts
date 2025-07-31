@@ -2,7 +2,8 @@ import { api } from "@/lib/axios"
 
 export type ListFavoritesRequest = Array<{
   id: string
-  restaurant: string
+  restaurantId: string
+  restaurantName: string
   tax: number
   deliveryTime: number
   image: string | null

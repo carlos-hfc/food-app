@@ -10,7 +10,8 @@ import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 interface Query {
   id: string
-  restaurant: string
+  restaurantId: string
+  restaurantName: string
   tax: string
   deliveryTime: number
   image: string | null
@@ -31,7 +32,8 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
           200: z.array(
             z.object({
               id: z.string().uuid(),
-              restaurant: z.string(),
+              restaurantId: z.string().uuid(),
+              restaurantName: z.string(),
               tax: z.number(),
               deliveryTime: z.number(),
               image: z.string().nullable(),
@@ -53,7 +55,8 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
       const query = await prisma.$queryRaw<Query[]>(Prisma.sql`
         select
           f.id,
-          r.name restaurant,
+          r.id "restaurantId",
+          r.name "restaurantName",
           r.tax::money,
           r."deliveryTime",
           r.image,
