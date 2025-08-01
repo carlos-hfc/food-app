@@ -18,6 +18,7 @@ import { deleteAddress } from "./routes/address/delete-address"
 import { editAddress } from "./routes/address/edit-address"
 import { listAddress } from "./routes/address/list-address"
 import { registerAddress } from "./routes/address/register-address"
+import { selectMainAddress } from "./routes/address/select-main-address"
 import { listCategories } from "./routes/category/list-categories"
 import { getEvaluation } from "./routes/evaluations/get-evaluation"
 import { listEvaluations } from "./routes/evaluations/list-evaluations"
@@ -112,6 +113,7 @@ app.register(registerAddress)
 app.register(listAddress)
 app.register(editAddress)
 app.register(deleteAddress)
+app.register(selectMainAddress)
 
 app.register(saveFavorite)
 app.register(listFavorites)
