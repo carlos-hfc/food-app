@@ -21,7 +21,7 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
           alias: z.string().optional(),
           main: z.boolean().optional(),
         }),
-        respnose: {
+        response: {
           201: z.null(),
         },
       },
@@ -29,8 +29,15 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
     async (request, reply) => {
       const { id: clientId } = await request.getCurrentUser()
 
-      const { zipCode, address, number, district, city, uf, alias } =
+      const { zipCode, address, number, district, city, uf, alias, main } =
         request.body
+
+      const addresses = await prisma.address.findMany({
+        where: {
+          clientId,
+          main: true,
+        },
+      })
 
       await prisma.address.create({
         data: {
@@ -42,6 +49,7 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
           uf,
           alias,
           clientId,
+          main: main ?? addresses.length <= 0,
         },
       })
 

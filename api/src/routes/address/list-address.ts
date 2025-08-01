@@ -12,22 +12,20 @@ export const listAddress: FastifyPluginAsyncZod = async app => {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
         response: {
-          200: z.object({
-            addresses: z.array(
-              z.object({
-                id: z.string().uuid(),
-                zipCode: z.string(),
-                address: z.string(),
-                number: z.number().nullable(),
-                district: z.string(),
-                city: z.string(),
-                uf: z.string(),
-                alias: z.string().nullable(),
-                main: z.boolean(),
-                clientId: z.string().uuid(),
-              }),
-            ),
-          }),
+          200: z.array(
+            z.object({
+              id: z.string().uuid(),
+              zipCode: z.string(),
+              address: z.string(),
+              number: z.number().nullable(),
+              district: z.string(),
+              city: z.string(),
+              uf: z.string(),
+              alias: z.string().nullable(),
+              main: z.boolean(),
+              clientId: z.string().uuid(),
+            }),
+          ),
         },
       },
     },
@@ -38,9 +36,10 @@ export const listAddress: FastifyPluginAsyncZod = async app => {
         where: {
           clientId,
         },
+        orderBy: [{ main: "desc" }, { createdAt: "asc" }],
       })
 
-      return { addresses }
+      return addresses
     },
   )
 }
