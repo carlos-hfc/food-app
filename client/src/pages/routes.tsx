@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router"
 
 import { AppLayout } from "./_layouts/app"
 import { AuthLayout } from "./_layouts/auth"
+import { Address } from "./address/address"
 import { SignIn } from "./auth/sign-in"
 import { SignUp } from "./auth/sign-up"
 import { Category } from "./categories/category"
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: "/favoritos",
         element: <Favorites />,
+      },
+      {
+        path: "/enderecos",
+        element: <Address />,
       },
     ],
   },
