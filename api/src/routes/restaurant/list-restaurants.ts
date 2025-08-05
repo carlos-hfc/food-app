@@ -16,7 +16,7 @@ interface Query {
   openedAt: number
   closedAt: number
   open: boolean
-  grade: string
+  rate: number
 }
 
 export const listRestaurants: FastifyPluginAsyncZod = async app => {
@@ -29,7 +29,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           category: z.string().optional(),
           tax: z.coerce.number().optional(),
           deliveryTime: z.coerce.number().optional(),
-          grade: z.coerce.number().optional(),
+          rate: z.coerce.number().optional(),
         }),
         response: {
           200: z.array(
@@ -40,7 +40,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
               deliveryTime: z.number(),
               image: z.string().nullable(),
               category: z.string(),
-              grade: z.number(),
+              rate: z.number(),
               isOpen: z.boolean(),
               openingAt: z.string().optional(),
             }),
@@ -49,7 +49,7 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const { name, category, tax, deliveryTime, grade } = request.query
+      const { name, category, tax, deliveryTime, rate } = request.query
 
       const search: Prisma.Sql[] = []
 
@@ -74,10 +74,11 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           h.open,
           h."openedAt",
           h."closedAt",
-          avg(o.grade) grade
+          avg(e.rate) rate
         from restaurants r
         join categories cat on cat.id = r."categoryId"
         left join orders o on o."restaurantId" = r.id
+        left join evaluations e on e."orderId" = o.id
         join hours h 
           on h."restaurantId" = r.id 
           and h.weekday = extract('dow' from now() at time zone 'America/Sao_Paulo')
@@ -85,12 +86,12 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
         ${where}
         group by r.id, cat.id, h.id
         order by h.open, h."openedAt", h."closedAt"
-        ${grade ? Prisma.sql`having avg(o.grade) > ${grade}` : Prisma.empty}
+        ${rate ? Prisma.sql`having avg(e.rate) > ${rate}` : Prisma.empty}
       `)
 
       return query.map(item => ({
         ...item,
-        grade: Number(item.grade),
+        rate: Number(item.rate),
         tax: Number(item.tax),
         isOpen: restaurantIsOpen(item),
         openingAt:

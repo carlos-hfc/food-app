@@ -21,12 +21,12 @@ export function Restaurants() {
   const name = searchParams.get("name")
   const tax = searchParams.get("tax")
   const deliveryTime = searchParams.get("deliveryTime")
-  const grade = searchParams.get("grade")
+  const rate = searchParams.get("rate")
 
   const { data: restaurants } = useQuery({
-    queryKey: ["restaurants", name, category, tax, deliveryTime, grade],
+    queryKey: ["restaurants", name, category, tax, deliveryTime, rate],
     queryFn: () =>
-      listRestaurants({ name, category, tax, deliveryTime, grade }),
+      listRestaurants({ name, category, tax, deliveryTime, rate }),
   })
 
   const { data: categories } = useQuery({

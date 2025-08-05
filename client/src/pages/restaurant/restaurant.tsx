@@ -133,7 +133,7 @@ export function Restaurant() {
           <Info
             restaurant={info.restaurant}
             rateResume={info.rateResume}
-            rateByGrade={info.rateByGrade}
+            evaluationByRate={info.evaluationByRate}
             rates={info.rates}
           />
         </>

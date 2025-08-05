@@ -26,17 +26,17 @@ export interface GetRestarauntInfoResponse {
   rates: {
     id: string
     client: string
-    grade: number
+    rate: number
     comment: string | null
-    ratingDate: string
+    createdAt: string
   }[]
   rateResume: {
     totalCount: number
     average: number
   }
-  rateByGrade: {
+  evaluationByRate: {
     count: number
-    grade: number
+    rate: number
   }[]
 }
 

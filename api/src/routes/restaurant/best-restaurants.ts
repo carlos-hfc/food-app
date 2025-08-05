@@ -35,11 +35,11 @@ export const bestRestaurants: FastifyPluginAsyncZod = async app => {
           r.name name,
           r.image image,
           cat.name category,
-          round(avg(o.grade), 2) average
+          round(avg(e.rate), 2) average
         from restaurants r
         join orders o on o."restaurantId" = r.id
+        left join evaluations e on e."orderId" = o.id
         join categories cat on cat.id = r."categoryId"
-        where o.grade is not null
         group by r.id, cat.id
         order by average desc
         limit 4

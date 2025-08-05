@@ -19,7 +19,7 @@ const restaurantFilterSchema = z.object({
   category: z.string().optional(),
   tax: z.string().optional(),
   deliveryTime: z.string().optional(),
-  grade: z.string().optional(),
+  rate: z.string().optional(),
 })
 
 type RestaurantFilterSchema = z.infer<typeof restaurantFilterSchema>
@@ -37,7 +37,7 @@ export function RestaurantFilters() {
   const category = searchParams.get("category")
   const tax = searchParams.get("tax")
   const deliveryTime = searchParams.get("deliveryTime")
-  const grade = searchParams.get("grade")
+  const rate = searchParams.get("rate")
 
   const { handleSubmit, control, reset } = useForm<RestaurantFilterSchema>({
     resolver: zodResolver(restaurantFilterSchema),
@@ -45,7 +45,7 @@ export function RestaurantFilters() {
       category: category ?? "all",
       tax: tax ?? "all",
       deliveryTime: deliveryTime ?? "all",
-      grade: grade ?? "all",
+      rate: rate ?? "all",
     },
   })
 
@@ -69,10 +69,10 @@ export function RestaurantFilters() {
         prev.delete("deliveryTime")
       }
 
-      if (data.grade) {
-        prev.set("grade", data.grade)
+      if (data.rate) {
+        prev.set("rate", data.rate)
       } else {
-        prev.delete("grade")
+        prev.delete("rate")
       }
 
       return prev
@@ -84,7 +84,7 @@ export function RestaurantFilters() {
       prev.delete("category")
       prev.delete("tax")
       prev.delete("deliveryTime")
-      prev.delete("grade")
+      prev.delete("rate")
 
       return prev
     })
@@ -196,7 +196,7 @@ export function RestaurantFilters() {
       <div>
         <Label className="sr-only">Avaliação</Label>
         <Controller
-          name="grade"
+          name="rate"
           control={control}
           render={({ field }) => (
             <Select

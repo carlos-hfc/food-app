@@ -35,7 +35,7 @@ interface QueryRateResume {
   totalCount: number
 }
 
-interface QueryRateByGrade {
+interface QueryEvaluationByRate {
   count: number
   rate: number
 }
@@ -83,7 +83,7 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
               totalCount: z.number(),
               average: z.number(),
             }),
-            rateByGrade: z.array(
+            evaluationByRate: z.array(
               z.object({
                 count: z.number(),
                 rate: z.number(),
@@ -170,7 +170,9 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
         where r.id = ${restaurantId}
       `)
 
-      const rateByGrade = await prisma.$queryRaw<QueryRateByGrade[]>(Prisma.sql`
+      const evaluationByRate = await prisma.$queryRaw<
+        QueryEvaluationByRate[]
+      >(Prisma.sql`
         select
           count(e.rate)::int,
           e.rate
@@ -189,7 +191,7 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
           average: rateResume[0].average ?? 0,
           totalCount: rateResume[0].totalCount ?? 0,
         },
-        rateByGrade,
+        evaluationByRate,
       }
     },
   )

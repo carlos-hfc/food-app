@@ -23,17 +23,17 @@ interface RestaurantSeeMoreProps {
   rates: {
     id: string
     client: string
-    grade: number
+    rate: number
     comment: string | null
-    ratingDate: string
+    createdAt: string
   }[]
   rateResume: {
     totalCount: number
     average: number
   }
-  rateByGrade: {
+  evaluationByRate: {
     count: number
-    grade: number
+    rate: number
   }[]
 }
 
@@ -41,7 +41,7 @@ export function RestaurantSeeMore({
   hours,
   rateResume,
   rates,
-  rateByGrade,
+  evaluationByRate,
 }: RestaurantSeeMoreProps) {
   return (
     <SheetContent className="p-4 lg:p-8 w-full gap-0">
@@ -69,7 +69,7 @@ export function RestaurantSeeMore({
           value="hours"
           className="space-y-3"
         >
-          {hours.map((hour, i) => (
+          {hours?.map((hour, i) => (
             <div
               key={hour.hourId}
               className={cn(
@@ -96,7 +96,7 @@ export function RestaurantSeeMore({
           className="space-y-4"
         >
           <div className="flex items-stretch justify-center gap-3 border rounded-md px-3">
-            <div className="self-center">
+            <div className="self-center py-2">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-3xl font-bold">
                   {rateResume.average.toLocaleString("pt-BR", {
@@ -115,12 +115,12 @@ export function RestaurantSeeMore({
             </div>
 
             <div className="flex-1 border-l pl-3 py-2">
-              {rateByGrade.map(rate => (
+              {evaluationByRate?.map(rate => (
                 <div
-                  key={rate.grade}
+                  key={rate.rate}
                   className="flex items-center gap-2 text-xs"
                 >
-                  <p>{rate.grade}</p>
+                  <p>{rate.rate}</p>
                   <StarIcon className="size-2.5 shrink-0 fill-foreground" />
                   <div className="w-full h-1 bg-muted-foreground/50 rounded-lg relative">
                     <div
@@ -136,7 +136,7 @@ export function RestaurantSeeMore({
           </div>
 
           <div className="divide-y-1 overflow-y-auto h-[calc(100vh_-_14rem)] lg:h-[calc(100vh_-_16rem)]">
-            {rates.map(rate => (
+            {rates?.map(rate => (
               <div
                 key={rate.id}
                 className="py-4 space-y-1"
@@ -146,19 +146,19 @@ export function RestaurantSeeMore({
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold leading-none">
-                      {rate.grade.toLocaleString("pt-BR", {
+                      {rate.rate.toLocaleString("pt-BR", {
                         style: "decimal",
                         maximumFractionDigits: 1,
                         minimumFractionDigits: 1,
                       })}
                     </span>
                     <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, i) => (
+                      {Array.from({ length: 5 })?.map((_, i) => (
                         <StarIcon
                           key={i}
                           className={cn(
                             "size-4",
-                            rate.grade >= i + 1
+                            rate.rate >= i + 1
                               ? "fill-yellow-500 stroke-yellow-500"
                               : "fill-border stroke-border",
                           )}
@@ -168,7 +168,7 @@ export function RestaurantSeeMore({
                   </div>
 
                   <span className="text-muted-foreground">
-                    {format(new Date(rate.ratingDate), "dd/MM/yyyy")}
+                    {format(new Date(rate.createdAt), "dd/MM/yyyy")}
                   </span>
                 </div>
 

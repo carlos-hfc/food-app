@@ -5,7 +5,7 @@ export interface ListRestaurantsRequest {
   category?: string | null
   tax?: string | null
   deliveryTime?: string | null
-  grade?: string | null
+  rate?: string | null
 }
 
 export type ListRestaurantsResponse = Array<{
@@ -14,7 +14,7 @@ export type ListRestaurantsResponse = Array<{
   tax: number
   deliveryTime: number
   image: string | null
-  grade: number
+  rate: number
   category: string
   isOpen: boolean
   openingAt?: string
@@ -23,7 +23,7 @@ export type ListRestaurantsResponse = Array<{
 export async function listRestaurants({
   category,
   deliveryTime,
-  grade,
+  rate,
   name,
   tax,
 }: ListRestaurantsRequest) {
@@ -31,7 +31,7 @@ export async function listRestaurants({
     params: {
       category: category === "all" ? undefined : category,
       deliveryTime: deliveryTime === "all" ? undefined : deliveryTime,
-      grade: grade === "all" ? undefined : grade,
+      rate: rate === "all" ? undefined : rate,
       tax: tax === "all" ? undefined : tax,
       name,
     },

@@ -11,7 +11,7 @@ type InfoProps = GetRestarauntInfoResponse
 export function Info({
   restaurant,
   rateResume,
-  rateByGrade,
+  evaluationByRate,
   rates,
 }: InfoProps) {
   return (
@@ -47,7 +47,7 @@ export function Info({
           <RestaurantSeeMore
             hours={restaurant.hours}
             rateResume={rateResume}
-            rateByGrade={rateByGrade}
+            evaluationByRate={evaluationByRate}
             rates={rates}
           />
         </Sheet>

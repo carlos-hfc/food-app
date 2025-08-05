@@ -11,7 +11,7 @@ interface RestaurantCardProps {
     image: string | null
     tax: number
     deliveryTime: number
-    grade: number
+    rate: number
     isOpen: boolean
     openingAt?: string
   }
@@ -40,9 +40,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="flex items-center gap-1">
             <StarIcon className="size-3 shrink-0 stroke-yellow-500 fill-yellow-500" />{" "}
             <span className="text-xs text-yellow-500 font-bold">
-              {restaurant.grade !== 0
-                ? restaurant.grade.toFixed(2)
-                : "Novidade"}
+              {restaurant.rate !== 0 ? restaurant.rate.toFixed(2) : "Novidade"}
             </span>
           </div>
           <span className="text-xs text-muted-foreground">
