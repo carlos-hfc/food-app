@@ -20,6 +20,7 @@ import { listAddress } from "./routes/address/list-address"
 import { registerAddress } from "./routes/address/register-address"
 import { selectMainAddress } from "./routes/address/select-main-address"
 import { listCategories } from "./routes/category/list-categories"
+import { evaluateOrder } from "./routes/evaluations/evaluate-order"
 import { getEvaluation } from "./routes/evaluations/get-evaluation"
 import { listEvaluations } from "./routes/evaluations/list-evaluations"
 import { deleteFavorite } from "./routes/favorite/delete-favorite"
@@ -38,7 +39,6 @@ import { dispatchOrder } from "./routes/order/dispatch-order"
 import { getOrder } from "./routes/order/get-order"
 import { listOrders } from "./routes/order/list-orders"
 import { myOrders } from "./routes/order/my-orders"
-import { rateOrder } from "./routes/order/rate-order"
 import { addImageOnProduct } from "./routes/product/add-image-on-product"
 import { editProduct } from "./routes/product/edit-product"
 import { getProduct } from "./routes/product/get-product"
@@ -129,7 +129,6 @@ app.register(toggleActiveProduct)
 
 app.register(createOrder)
 app.register(getOrder)
-app.register(rateOrder)
 app.register(myOrders)
 app.register(listOrders)
 app.register(approveOrder)
@@ -139,6 +138,7 @@ app.register(cancelOrder)
 
 app.register(listEvaluations)
 app.register(getEvaluation)
+app.register(evaluateOrder)
 
 app.register(getPopularProducts)
 app.register(getMonthOrdersAmount)

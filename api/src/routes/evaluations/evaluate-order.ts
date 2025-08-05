@@ -1,4 +1,3 @@
-import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { OrderStatus } from "generated/prisma"
 import { z } from "zod"
@@ -8,9 +7,9 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 
-export const rateOrder: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
-    "/order/:orderId",
+export const evaluateOrder: FastifyPluginAsyncZod = async app => {
+  app.register(auth).post(
+    "/evaluations/:orderId",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
@@ -18,11 +17,11 @@ export const rateOrder: FastifyPluginAsyncZod = async app => {
           orderId: z.string().uuid(),
         }),
         body: z.object({
-          grade: z.number().int().min(1),
+          rate: z.number().int().min(1),
           comment: z.string().optional(),
         }),
         response: {
-          200: z.null(),
+          201: z.null(),
         },
       },
     },
@@ -30,7 +29,7 @@ export const rateOrder: FastifyPluginAsyncZod = async app => {
       const { id: clientId } = await request.getCurrentUser()
 
       const { orderId } = request.params
-      const { grade, comment } = request.body
+      const { rate, comment } = request.body
 
       const order = await prisma.order.findUnique({
         where: {
@@ -43,26 +42,20 @@ export const rateOrder: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Order not found")
       }
 
-      if (order.ratingDate) {
-        throw new ClientError("Order already rated")
+      if (order.status !== OrderStatus.DELIVERED) {
+        throw new ClientError("Orders not delivered cannot be evaluated")
       }
 
-      if (order.status === OrderStatus.CANCELED) {
-        throw new ClientError("Canceled order cannot be rated")
-      }
-
-      await prisma.order.update({
-        where: {
-          id: orderId,
-        },
+      await prisma.evaluation.create({
         data: {
-          grade,
+          orderId,
+          rate,
           comment,
-          ratingDate: new TZDate(),
+          clientId,
         },
       })
 
-      return reply.send()
+      return reply.status(201).send()
     },
   )
 }
