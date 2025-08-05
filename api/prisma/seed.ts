@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 
 import { fakerPT_BR as faker } from "@faker-js/faker"
 import { hash } from "bcryptjs"
-import { addHours } from "date-fns"
+import { addHours, addMinutes } from "date-fns"
 import { OrderStatus, PaymentMethod, Prisma, Product } from "generated/prisma"
 
 import { prisma } from "@/lib/prisma"
@@ -347,6 +347,7 @@ async function main() {
 
   const orders: Prisma.OrderUncheckedCreateInput[] = []
   const orderItems: Prisma.OrderItemUncheckedCreateInput[] = []
+  const evaluations: Prisma.EvaluationUncheckedCreateInput[] = []
   for (let index = 0; index < 300; index++) {
     const orderId = randomUUID()
 
@@ -379,18 +380,53 @@ async function main() {
       client3.id,
     ])
 
+    const status = faker.helpers.enumValue(OrderStatus)
+    const date = faker.date.recent({ days: 90 })
+
     orders.push({
       id: orderId,
       clientId: client,
       restaurantId: restaurant1.id,
       payment: faker.helpers.enumValue(PaymentMethod),
-      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant1.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 90 }),
+      date,
+      status,
+      preparedAt: status !== "PENDING" ? addMinutes(date, 1) : null,
+      routedAt:
+        status === "ROUTING" || status === "DELIVERED" || status === "CANCELED"
+          ? addMinutes(date, restaurant1.deliveryTime)
+          : null,
+      deliveredAt:
+        status === "DELIVERED"
+          ? addMinutes(date, restaurant1.deliveryTime + 10)
+          : null,
+      canceledAt: status === "CANCELED" ? new Date() : null,
     })
+
+    if (status === OrderStatus.DELIVERED) {
+      evaluations.push({
+        rate: faker.number.int({ min: 1, max: 5 }),
+        comment: faker.helpers.arrayElement([
+          null,
+          faker.lorem.paragraph({ min: 1, max: 4 }),
+        ]),
+        createdAt: faker.date.between({
+          from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
+          to: faker.date.soon({
+            days: 2,
+            refDate: addHours(
+              addMinutes(date, restaurant1.deliveryTime + 10),
+              1,
+            ),
+          }),
+        }),
+        clientId: client,
+        orderId,
+      })
+    }
   }
 
   for (let index = 0; index < 300; index++) {
@@ -425,18 +461,53 @@ async function main() {
       client3.id,
     ])
 
+    const status = faker.helpers.enumValue(OrderStatus)
+    const date = faker.date.recent({ days: 90 })
+
     orders.push({
       id: orderId,
       clientId: client,
       restaurantId: restaurant2.id,
       payment: faker.helpers.enumValue(PaymentMethod),
-      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant2.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 90 }),
+      date,
+      status,
+      preparedAt: status !== "PENDING" ? addMinutes(date, 1) : null,
+      routedAt:
+        status === "ROUTING" || status === "DELIVERED" || status === "CANCELED"
+          ? addMinutes(date, restaurant1.deliveryTime)
+          : null,
+      deliveredAt:
+        status === "DELIVERED"
+          ? addMinutes(date, restaurant1.deliveryTime + 10)
+          : null,
+      canceledAt: status === "CANCELED" ? new Date() : null,
     })
+
+    if (status === OrderStatus.DELIVERED) {
+      evaluations.push({
+        rate: faker.number.int({ min: 1, max: 5 }),
+        comment: faker.helpers.arrayElement([
+          null,
+          faker.lorem.paragraph({ min: 1, max: 4 }),
+        ]),
+        createdAt: faker.date.between({
+          from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
+          to: faker.date.soon({
+            days: 2,
+            refDate: addHours(
+              addMinutes(date, restaurant1.deliveryTime + 10),
+              1,
+            ),
+          }),
+        }),
+        clientId: client,
+        orderId,
+      })
+    }
   }
 
   for (let index = 0; index < 300; index++) {
@@ -471,18 +542,53 @@ async function main() {
       client3.id,
     ])
 
+    const status = faker.helpers.enumValue(OrderStatus)
+    const date = faker.date.recent({ days: 90 })
+
     orders.push({
       id: orderId,
       clientId: client,
       restaurantId: restaurant3.id,
       payment: faker.helpers.enumValue(PaymentMethod),
-      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant3.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 90 }),
+      date,
+      status,
+      preparedAt: status !== "PENDING" ? addMinutes(date, 1) : null,
+      routedAt:
+        status === "ROUTING" || status === "DELIVERED" || status === "CANCELED"
+          ? addMinutes(date, restaurant1.deliveryTime)
+          : null,
+      deliveredAt:
+        status === "DELIVERED"
+          ? addMinutes(date, restaurant1.deliveryTime + 10)
+          : null,
+      canceledAt: status === "CANCELED" ? new Date() : null,
     })
+
+    if (status === OrderStatus.DELIVERED) {
+      evaluations.push({
+        rate: faker.number.int({ min: 1, max: 5 }),
+        comment: faker.helpers.arrayElement([
+          null,
+          faker.lorem.paragraph({ min: 1, max: 4 }),
+        ]),
+        createdAt: faker.date.between({
+          from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
+          to: faker.date.soon({
+            days: 2,
+            refDate: addHours(
+              addMinutes(date, restaurant1.deliveryTime + 10),
+              1,
+            ),
+          }),
+        }),
+        clientId: client,
+        orderId,
+      })
+    }
   }
 
   for (let index = 0; index < 300; index++) {
@@ -517,18 +623,53 @@ async function main() {
       client3.id,
     ])
 
+    const status = faker.helpers.enumValue(OrderStatus)
+    const date = faker.date.recent({ days: 90 })
+
     orders.push({
       id: orderId,
       clientId: client,
       restaurantId: restaurant4.id,
       payment: faker.helpers.enumValue(PaymentMethod),
-      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant4.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 90 }),
+      date,
+      status,
+      preparedAt: status !== "PENDING" ? addMinutes(date, 1) : null,
+      routedAt:
+        status === "ROUTING" || status === "DELIVERED" || status === "CANCELED"
+          ? addMinutes(date, restaurant1.deliveryTime)
+          : null,
+      deliveredAt:
+        status === "DELIVERED"
+          ? addMinutes(date, restaurant1.deliveryTime + 10)
+          : null,
+      canceledAt: status === "CANCELED" ? new Date() : null,
     })
+
+    if (status === OrderStatus.DELIVERED) {
+      evaluations.push({
+        rate: faker.number.int({ min: 1, max: 5 }),
+        comment: faker.helpers.arrayElement([
+          null,
+          faker.lorem.paragraph({ min: 1, max: 4 }),
+        ]),
+        createdAt: faker.date.between({
+          from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
+          to: faker.date.soon({
+            days: 2,
+            refDate: addHours(
+              addMinutes(date, restaurant1.deliveryTime + 10),
+              1,
+            ),
+          }),
+        }),
+        clientId: client,
+        orderId,
+      })
+    }
   }
 
   for (let index = 0; index < 300; index++) {
@@ -563,37 +704,52 @@ async function main() {
       client3.id,
     ])
 
+    const status = faker.helpers.enumValue(OrderStatus)
+    const date = faker.date.recent({ days: 90 })
+
     orders.push({
       id: orderId,
       clientId: client,
       restaurantId: restaurant5.id,
       payment: faker.helpers.enumValue(PaymentMethod),
-      status: faker.helpers.enumValue(OrderStatus),
       total: total + restaurant5.tax.toNumber(),
       addressId: faker.helpers.arrayElement(
         address.filter(item => item.clientId === client),
       ).id,
-      date: faker.date.recent({ days: 90 }),
+      date,
+      status,
+      preparedAt: status !== "PENDING" ? addMinutes(date, 1) : null,
+      routedAt:
+        status === "ROUTING" || status === "DELIVERED" || status === "CANCELED"
+          ? addMinutes(date, restaurant1.deliveryTime)
+          : null,
+      deliveredAt:
+        status === "DELIVERED"
+          ? addMinutes(date, restaurant1.deliveryTime + 10)
+          : null,
+      canceledAt: status === "CANCELED" ? new Date() : null,
     })
-  }
 
-  for (let index = 0; index < orders.length; index++) {
-    const currentOrder = orders[index]
-
-    if (currentOrder.status === OrderStatus.DELIVERED) {
-      currentOrder.grade = faker.number.int({ min: 1, max: 5 })
-      currentOrder.ratingDate = faker.date.between({
-        from: addHours(currentOrder.date as string, 1),
-        to: faker.date.soon({
-          days: 2,
-          refDate: addHours(currentOrder.date as string, 1),
+    if (status === OrderStatus.DELIVERED) {
+      evaluations.push({
+        rate: faker.number.int({ min: 1, max: 5 }),
+        comment: faker.helpers.arrayElement([
+          null,
+          faker.lorem.paragraph({ min: 1, max: 4 }),
+        ]),
+        createdAt: faker.date.between({
+          from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
+          to: faker.date.soon({
+            days: 2,
+            refDate: addHours(
+              addMinutes(date, restaurant1.deliveryTime + 10),
+              1,
+            ),
+          }),
         }),
+        clientId: client,
+        orderId,
       })
-
-      currentOrder.comment = faker.helpers.arrayElement([
-        null,
-        faker.lorem.paragraph({ min: 1, max: 4 }),
-      ])
     }
   }
 
@@ -603,6 +759,10 @@ async function main() {
 
   await prisma.orderItem.createMany({
     data: orderItems,
+  })
+
+  await prisma.evaluation.createMany({
+    data: evaluations,
   })
 
   await prisma.favorite.createMany({

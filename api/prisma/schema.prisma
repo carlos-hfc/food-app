@@ -26,7 +26,8 @@ model User {
   orders    Order[]
   favorites Favorite[]
 
-  restaurant Restaurant?
+  restaurant  Restaurant?
+  evaluations Evaluation[]
 
   @@unique([email, phone])
   @@map("users")
@@ -132,15 +133,15 @@ enum PaymentMethod {
 }
 
 model Order {
-  id         String        @id @default(uuid())
-  date       DateTime      @default(now())
-  status     OrderStatus   @default(PENDING)
-  payment    PaymentMethod
-  total      Decimal       @db.Money
-  grade      Int?
-  comment    String?       @db.Text
-  ratingDate DateTime?
-  createdAt  DateTime      @default(now())
+  id          String        @id @default(uuid())
+  date        DateTime      @default(now())
+  status      OrderStatus   @default(PENDING)
+  payment     PaymentMethod
+  total       Decimal       @db.Money
+  preparedAt  DateTime?
+  routedAt    DateTime?
+  deliveredAt DateTime?
+  canceledAt  DateTime?
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
@@ -152,6 +153,7 @@ model Order {
   addressId String
 
   orderItems OrderItem[]
+  evaluation Evaluation?
 
   @@map("orders")
 }
@@ -183,4 +185,19 @@ model Favorite {
 
   @@unique([clientId, restaurantId])
   @@map("favorites")
+}
+
+model Evaluation {
+  id        String   @id @default(uuid())
+  rate      Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @unique
+
+  @@map("evaluations")
 }
