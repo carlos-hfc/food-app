@@ -38,6 +38,7 @@ export function AccountMenu() {
     mutationFn: signOut,
     onSuccess() {
       queryClient.clear()
+      sessionStorage.removeItem("isLogged")
       navigate("/", { replace: true })
     },
   })

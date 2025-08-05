@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router"
 
+import { withPermission } from "@/components/with-permission"
+
 import { AppLayout } from "./_layouts/app"
 import { AuthLayout } from "./_layouts/auth"
 import { Address } from "./address/address"
@@ -10,6 +12,9 @@ import { Favorites } from "./favorites/favorites"
 import { HomePage } from "./home/home"
 import { Restaurant } from "./restaurant/restaurant"
 import { Restaurants } from "./restaurants/restaurants"
+
+const AddressPage = withPermission(Address)
+const FavoritePage = withPermission(Favorites)
 
 export const router = createBrowserRouter([
   {
@@ -39,11 +44,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/favoritos",
-        element: <Favorites />,
+        element: <FavoritePage />,
       },
       {
         path: "/enderecos",
-        element: <Address />,
+        element: <AddressPage />,
       },
     ],
   },

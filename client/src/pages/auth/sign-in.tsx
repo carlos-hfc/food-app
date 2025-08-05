@@ -41,7 +41,10 @@ export function SignIn() {
   const { mutateAsync: signInFn } = useMutation({
     mutationFn: signIn,
     onSuccess() {
-      navigate("/restaurantes", { replace: true })
+      sessionStorage.setItem("isLogged", "true")
+      navigate(searchParams.get("redirectTo") || "/restaurantes", {
+        replace: true,
+      })
     },
   })
 

@@ -1,7 +1,16 @@
 import { HamburgerIcon } from "lucide-react"
-import { Outlet } from "react-router"
+import { useEffect } from "react"
+import { Outlet, useNavigate } from "react-router"
 
 export function AuthLayout() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const logged = sessionStorage.getItem("isLogged")
+
+    if (logged) navigate("/restaurantes", { replace: true })
+  }, [navigate])
+
   return (
     <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-2">
       <div className="hidden lg:flex h-full flex-col justify-between p-10 text-muted-foreground fixed w-1/2 border-r border-foreground/5 bg-muted">
