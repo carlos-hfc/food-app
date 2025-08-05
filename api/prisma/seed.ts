@@ -216,49 +216,30 @@ async function main() {
       ],
     })
 
-  for (let weekday = 0; weekday < 7; weekday++) {
+  const restaurants = [
+    restaurant1,
+    restaurant2,
+    restaurant3,
+    restaurant4,
+    restaurant5,
+  ]
+
+  for (let index = 0; index < restaurants.length; index++) {
+    const id = restaurants[index].id
     const openedAt = faker.number.int({ min: 540, max: 840 })
     const closedAt = faker.number.int({ min: 1080, max: 1440 })
 
-    await prisma.hour.createMany({
-      data: [
-        {
+    for (let weekday = 0; weekday < 7; weekday++) {
+      await prisma.hour.create({
+        data: {
           weekday,
           openedAt,
           closedAt,
-          restaurantId: restaurant1.id,
+          restaurantId: id,
           open: true,
         },
-        {
-          weekday,
-          openedAt,
-          closedAt,
-          restaurantId: restaurant2.id,
-          open: true,
-        },
-        {
-          weekday,
-          openedAt,
-          closedAt,
-          restaurantId: restaurant3.id,
-          open: true,
-        },
-        {
-          weekday,
-          openedAt,
-          closedAt,
-          restaurantId: restaurant4.id,
-          open: true,
-        },
-        {
-          weekday,
-          openedAt,
-          closedAt,
-          restaurantId: restaurant5.id,
-          open: true,
-        },
-      ],
-    })
+      })
+    }
   }
 
   const products1: Product[] = []

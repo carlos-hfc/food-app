@@ -45,6 +45,7 @@ export const dispatchOrder: FastifyPluginAsyncZod = async app => {
         },
         data: {
           status: OrderStatus.ROUTING,
+          routedAt: new Date(),
         },
       })
 

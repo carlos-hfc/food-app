@@ -1,10 +1,22 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { OrderStatus } from "generated/prisma"
-import { z } from "zod"
+import { OrderStatus, Prisma } from "generated/prisma"
+import z from "zod"
 
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
+
+interface Query {
+  id: string
+  status: string
+  date: Date
+  name: string
+  image: string | null
+  quantity: number
+  productId: string
+  productName: string
+  rate: number | null
+}
 
 export const myOrders: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
@@ -16,14 +28,14 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
           200: z.array(
             z.object({
               id: z.string().uuid(),
-              status: z.nativeEnum(OrderStatus),
+              status: z.string().pipe(z.nativeEnum(OrderStatus)),
               date: z.date(),
-              grade: z.number().nullable(),
+              rate: z.number().nullable(),
               restaurant: z.object({
                 name: z.string(),
                 image: z.string().nullable(),
               }),
-              orderItems: z.array(
+              products: z.array(
                 z.object({
                   quantity: z.number(),
                   product: z.string(),
@@ -37,41 +49,51 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
     async request => {
       const { id: clientId } = await request.getCurrentUser()
 
-      const orders = await prisma.order.findMany({
-        where: {
-          clientId,
-        },
-        select: {
-          id: true,
-          date: true,
-          grade: true,
-          status: true,
-          restaurant: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
-          orderItems: {
-            select: {
-              quantity: true,
-              product: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      })
+      const query = await prisma.$queryRaw<Query[]>(Prisma.sql`
+          select
+            o.id,
+            o.status,
+            o.date,
+            r.name,
+            r.image,
+            oi.quantity,
+            pr.id "productId",
+            pr.name "productName",
+            e.rate
+          from orders o
+          join users u on u.id = o."clientId"
+          join restaurants r on r.id = o."restaurantId"
+          join "orderItems" oi on oi."orderId" = o.id
+          join products pr on pr.id = oi."productId"
+          left join evaluations e on e."orderId" = o.id
+          where u.id = ${clientId}
+        `)
 
-      return orders.map(item => ({
-        ...item,
-        orderItems: item.orderItems.map(order => ({
-          product: order.product.name,
-          quantity: order.quantity,
-        })),
-      }))
+      const orders = new Map()
+
+      for (const item of query) {
+        if (!orders.has(item.id)) {
+          orders.set(item.id, {
+            id: item.id,
+            status: item.status,
+            date: item.date,
+            rate: item.rate,
+            restaurant: {
+              name: item.name,
+              image: item.image,
+            },
+            products: [],
+          })
+        }
+
+        orders.get(item.id).products.push({
+          id: item.productId,
+          product: item.productName,
+          quantity: item.quantity,
+        })
+      }
+
+      return Array.from(orders.values())
     },
   )
 }

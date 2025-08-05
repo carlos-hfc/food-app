@@ -8,11 +8,11 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { PER_PAGE } from "@/utils/constants"
 
 interface Query {
-  orderId: string
+  id: string
   customerName: string
-  grade: number
+  rate: number
   comment: string | null
-  ratingDate: Date
+  createdAt: Date
 }
 
 export const listEvaluations: FastifyPluginAsyncZod = async app => {
@@ -23,7 +23,7 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
       schema: {
         querystring: z.object({
           pageIndex: z.coerce.number().default(0),
-          grade: z.coerce.number().optional(),
+          rate: z.coerce.number().optional(),
           comment: z
             .string()
             .transform(value => value === "true")
@@ -34,11 +34,11 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
           200: z.object({
             evaluations: z.array(
               z.object({
-                orderId: z.string().uuid(),
+                id: z.string().uuid(),
                 customerName: z.string(),
-                grade: z.number(),
+                rate: z.number(),
                 comment: z.string().nullable(),
-                ratingDate: z.date(),
+                createdAt: z.date(),
               }),
             ),
             meta: z.object({
@@ -52,28 +52,28 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
     },
     async request => {
       const restaurantId = await request.getManagedRestaurantId()
-      const { pageIndex, comment, grade } = request.query
+      const { pageIndex, comment, rate } = request.query
 
       const search: Prisma.Sql[] = []
 
-      search.push(
-        Prisma.sql`o."restaurantId" = ${restaurantId} and o.grade is not null`,
-      )
-      if (grade) search.push(Prisma.sql`o.grade = ${grade}`)
-      if (comment === true) search.push(Prisma.sql`o.comment is not null`)
-      if (comment === false) search.push(Prisma.sql`o.comment is null`)
+      search.push(Prisma.sql`r.id = ${restaurantId}`)
+      if (rate) search.push(Prisma.sql`e.rate = ${rate}`)
+      if (comment === true) search.push(Prisma.sql`e.comment is not null`)
+      if (comment === false) search.push(Prisma.sql`e.comment is null`)
 
       const baseQuery = Prisma.sql`
         select
-          o.id "orderId",
+          e.id,
           u.name "customerName",
-          o.grade,
-          o."ratingDate",
-          o.comment
-        from orders o
-        join users u on u.id = o."clientId"
+          e.rate,
+          e."createdAt",
+          e.comment
+        from evaluations e
+        join users u on u.id = e."clientId"
+        join orders o on o.id = e."orderId"
+        join restaurants r on r.id = o."restaurantId"
         where ${Prisma.join(search, " and ")}
-        order by o."ratingDate" desc
+        order by e."createdAt" desc
       `
 
       const [{ count }] = await prisma.$queryRaw<

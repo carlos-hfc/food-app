@@ -25,9 +25,9 @@ interface QueryRestaurants {
 interface QueryRates {
   id: string
   client: string
-  grade: number
+  rate: number
   comment: string | null
-  ratingDate: Date
+  createdAt: Date
 }
 
 interface QueryRateResume {
@@ -37,7 +37,7 @@ interface QueryRateResume {
 
 interface QueryRateByGrade {
   count: number
-  grade: number
+  rate: number
 }
 
 export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
@@ -74,9 +74,9 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
               z.object({
                 id: z.string().uuid(),
                 client: z.string(),
-                grade: z.number(),
+                rate: z.number(),
                 comment: z.string().nullable(),
-                ratingDate: z.date(),
+                createdAt: z.date(),
               }),
             ),
             rateResume: z.object({
@@ -86,7 +86,7 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
             rateByGrade: z.array(
               z.object({
                 count: z.number(),
-                grade: z.number(),
+                rate: z.number(),
               }),
             ),
           }),
@@ -147,35 +147,39 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
 
       const rates = await prisma.$queryRaw<QueryRates[]>(Prisma.sql`
         select
-          o.id,
-          o.grade,
-          o.comment,
-          o."ratingDate",
+          e.id,
+          e.rate,
+          e.comment,
+          e."createdAt",
           u.name client
-        from orders o
-        join users u on u.id = o."clientId"
-        where o."restaurantId" = ${restaurantId}
-          and o."ratingDate" is not null
-        order by o."ratingDate" desc
+        from evaluations e
+        join users u on u.id = e."clientId"
+        join orders o on o.id = e."orderId"
+        join restaurants r on r.id = o."restaurantId"
+        where r.id = ${restaurantId}
+        order by e."createdAt" desc
       `)
 
       const rateResume = await prisma.$queryRaw<QueryRateResume[]>(Prisma.sql`
         select
-          avg(o.grade)::float average,
-          count(o.grade)::int "totalCount"
-        from orders o
-        where o."restaurantId" = ${restaurantId}
+          avg(e.rate)::float average,
+          count(e.rate)::int "totalCount"
+        from evaluations e
+        join orders o on o.id = e."orderId"
+        join restaurants r on r.id = o."restaurantId"
+        where r.id = ${restaurantId}
       `)
 
       const rateByGrade = await prisma.$queryRaw<QueryRateByGrade[]>(Prisma.sql`
         select
-          count(o.grade)::int,
-          o.grade
-        from orders o
-        where o."restaurantId" = ${restaurantId}
-          and o.grade is not null
-        group by o.grade
-        order by o.grade desc
+          count(e.rate)::int,
+          e.rate
+        from evaluations e
+        join orders o on o.id = e."orderId"
+        join restaurants r on r.id = o."restaurantId"
+        where r.id = ${restaurantId}
+        group by e.rate
+        order by e.rate desc
       `)
 
       return {

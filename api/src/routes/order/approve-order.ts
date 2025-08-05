@@ -45,6 +45,7 @@ export const approveOrder: FastifyPluginAsyncZod = async app => {
         },
         data: {
           status: OrderStatus.PREPARING,
+          preparedAt: new Date(),
         },
       })
 

@@ -49,6 +49,7 @@ export const cancelOrder: FastifyPluginAsyncZod = async app => {
         },
         data: {
           status: OrderStatus.CANCELED,
+          canceledAt: new Date(),
         },
       })
 

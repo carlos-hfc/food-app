@@ -45,6 +45,7 @@ export const deliverOrder: FastifyPluginAsyncZod = async app => {
         },
         data: {
           status: OrderStatus.DELIVERED,
+          deliveredAt: new Date(),
         },
       })
 
