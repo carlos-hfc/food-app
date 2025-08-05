@@ -17,36 +17,37 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { getEvaluationDetails } from "@/http/get-evaluation-details"
+import { cn } from "@/lib/utils"
 
 import { EvaluationDetailsSkeleton } from "./evaluation-details-skeleton"
 
 interface EvaluationDetailsProps {
-  orderId: string
+  id: string
   open: boolean
 }
 
-export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
+export function EvaluationDetails({ open, id }: EvaluationDetailsProps) {
   const { data: evaluation } = useQuery({
-    queryKey: ["evaluation", orderId],
-    queryFn: () => getEvaluationDetails({ orderId }),
+    queryKey: ["evaluation", id],
+    queryFn: () => getEvaluationDetails({ id }),
     enabled: open,
   })
 
   return (
-    <DialogContent>
+    <DialogContent className={cn(evaluation && "max-h-10/12 h-full")}>
       <DialogHeader>
-        <DialogTitle>Pedido: {orderId}</DialogTitle>
+        <DialogTitle>Pedido: {id}</DialogTitle>
         <DialogDescription>Detalhes da avaliação</DialogDescription>
       </DialogHeader>
 
       {evaluation ? (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto">
           <Table>
             <TableBody>
               <TableRow>
                 <TableCell className="text-muted-foreground">Cliente</TableCell>
                 <TableCell className="flex justify-end">
-                  {evaluation.client.name}
+                  {evaluation.customer.name}
                 </TableCell>
               </TableRow>
 
@@ -55,14 +56,14 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
                   Telefone
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  {evaluation.client.phone}
+                  {evaluation.customer.phone}
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell className="text-muted-foreground">E-mail</TableCell>
                 <TableCell className="flex justify-end">
-                  {evaluation.client.email}
+                  {evaluation.customer.email}
                 </TableCell>
               </TableRow>
 
@@ -85,14 +86,10 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
                   </time>
                 </TableCell>
               </TableRow>
-            </TableBody>
-          </Table>
 
-          <Table>
-            <TableBody>
               <TableRow>
                 <TableCell className="text-muted-foreground">Nota</TableCell>
-                <TableCell className="text-right">{evaluation.grade}</TableCell>
+                <TableCell className="text-right">{evaluation.rate}</TableCell>
               </TableRow>
 
               <TableRow>
@@ -101,13 +98,13 @@ export function EvaluationDetails({ open, orderId }: EvaluationDetailsProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <time
-                    dateTime={evaluation.ratingDate}
+                    dateTime={evaluation.createdAt}
                     title={format(
-                      new Date(evaluation.ratingDate),
+                      new Date(evaluation.createdAt),
                       "dd/MM/yyyy', 'HH:mm",
                     )}
                   >
-                    {formatDistanceToNow(new Date(evaluation.ratingDate), {
+                    {formatDistanceToNow(new Date(evaluation.createdAt), {
                       locale: ptBR,
                       addSuffix: true,
                     })}

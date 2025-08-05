@@ -2,17 +2,17 @@ import { api } from "@/lib/axios"
 
 export interface GetEvaluationsRequest {
   pageIndex?: number | null
-  grade?: string | null
+  rate?: string | null
   comment?: string | null
 }
 
 export interface GetEvaluationsResponse {
   evaluations: {
-    orderId: string
+    id: string
     customerName: string
-    grade: number
+    rate: number
     comment: string | null
-    ratingDate: string
+    createdAt: string
   }[]
   meta: {
     totalCount: number
@@ -23,13 +23,13 @@ export interface GetEvaluationsResponse {
 export async function getEvaluations({
   pageIndex,
   comment,
-  grade,
+  rate,
 }: GetEvaluationsRequest) {
   const response = await api.get<GetEvaluationsResponse>("/evaluations", {
     params: {
       pageIndex: pageIndex ?? 0,
       comment: comment === "all" ? null : comment,
-      grade: grade === "all" ? null : grade,
+      rate: rate === "all" ? null : rate,
     },
   })
 

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select"
 
 const evaluationFilterSchema = z.object({
-  grade: z.string().optional(),
+  rate: z.string().optional(),
   comment: z.string().optional(),
 })
 
@@ -22,13 +22,13 @@ type EvaluationFilterSchema = z.infer<typeof evaluationFilterSchema>
 export function EvaluationTableFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const grade = searchParams.get("grade")
+  const rate = searchParams.get("rate")
   const comment = searchParams.get("comment")
 
   const { handleSubmit, control, reset } = useForm<EvaluationFilterSchema>({
     resolver: zodResolver(evaluationFilterSchema),
     defaultValues: {
-      grade: grade ?? "all",
+      rate: rate ?? "all",
       comment: comment ?? "all",
     },
   })
@@ -41,10 +41,10 @@ export function EvaluationTableFilters() {
         prev.delete("comment")
       }
 
-      if (data.grade) {
-        prev.set("grade", data.grade)
+      if (data.rate) {
+        prev.set("rate", data.rate)
       } else {
-        prev.delete("grade")
+        prev.delete("rate")
       }
 
       prev.set("page", "1")
@@ -56,7 +56,7 @@ export function EvaluationTableFilters() {
   function handleClearFilters() {
     setSearchParams(prev => {
       prev.delete("page")
-      prev.delete("grade")
+      prev.delete("rate")
       prev.delete("comment")
 
       return prev
@@ -73,7 +73,7 @@ export function EvaluationTableFilters() {
       <span className="text-sm font-semibold">Filtros</span>
 
       <Controller
-        name="grade"
+        name="rate"
         control={control}
         render={({ field }) => (
           <Select

@@ -11,11 +11,11 @@ import { EvaluationDetails } from "./evaluation-details"
 
 interface EvaluationTableRowProps {
   evaluation: {
-    orderId: string
+    id: string
     customerName: string
-    grade: number
+    rate: number
     comment: string | null
-    ratingDate: string
+    createdAt: string
   }
 }
 
@@ -41,24 +41,24 @@ export function EvaluationTableRow({ evaluation }: EvaluationTableRowProps) {
 
           <EvaluationDetails
             open={isDetailsOpen}
-            orderId={evaluation.orderId}
+            id={evaluation.id}
           />
         </Dialog>
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">
-        {evaluation.orderId}
+        {evaluation.id}
       </TableCell>
       <TableCell className="font-medium">{evaluation.customerName}</TableCell>
-      <TableCell className="font-medium">{evaluation.grade}</TableCell>
+      <TableCell className="font-medium">{evaluation.rate}</TableCell>
       <TableCell className="text-muted-foreground">
         <div className="line-clamp-2">{evaluation.comment ?? "-"}</div>
       </TableCell>
       <TableCell className="text-muted-foreground">
         <time
-          dateTime={evaluation.ratingDate}
-          title={format(new Date(evaluation.ratingDate), "dd/MM/yyyy', 'HH:mm")}
+          dateTime={evaluation.createdAt}
+          title={format(new Date(evaluation.createdAt), "dd/MM/yyyy', 'HH:mm")}
         >
-          {formatDistanceToNow(new Date(evaluation.ratingDate), {
+          {formatDistanceToNow(new Date(evaluation.createdAt), {
             locale: ptBR,
             addSuffix: true,
           })}

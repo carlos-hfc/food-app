@@ -19,7 +19,7 @@ import { EvaluationTableSkeleton } from "./evaluation-table-skeleton"
 export function Evaluations() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const grade = searchParams.get("grade")
+  const rate = searchParams.get("rate")
   const comment = searchParams.get("comment")
 
   const pageIndex = z.coerce
@@ -28,8 +28,8 @@ export function Evaluations() {
     .parse(searchParams.get("page") ?? 1)
 
   const { data: result, isLoading: isLoadingEvaluations } = useQuery({
-    queryKey: ["evaluations", pageIndex, grade, comment],
-    queryFn: () => getEvaluations({ pageIndex, grade, comment }),
+    queryKey: ["evaluations", pageIndex, rate, comment],
+    queryFn: () => getEvaluations({ pageIndex, rate, comment }),
   })
 
   function handlePaginate(pageIndex: number) {
@@ -65,7 +65,7 @@ export function Evaluations() {
 
               {result?.evaluations.map(evaluation => (
                 <EvaluationTableRow
-                  key={evaluation.orderId}
+                  key={evaluation.id}
                   evaluation={evaluation}
                 />
               ))}
