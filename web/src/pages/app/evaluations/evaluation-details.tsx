@@ -22,21 +22,24 @@ import { cn } from "@/lib/utils"
 import { EvaluationDetailsSkeleton } from "./evaluation-details-skeleton"
 
 interface EvaluationDetailsProps {
-  id: string
+  evaluationId: string
   open: boolean
 }
 
-export function EvaluationDetails({ open, id }: EvaluationDetailsProps) {
+export function EvaluationDetails({
+  open,
+  evaluationId,
+}: EvaluationDetailsProps) {
   const { data: evaluation } = useQuery({
-    queryKey: ["evaluation", id],
-    queryFn: () => getEvaluationDetails({ id }),
+    queryKey: ["evaluation", evaluationId],
+    queryFn: () => getEvaluationDetails({ evaluationId }),
     enabled: open,
   })
 
   return (
     <DialogContent className={cn(evaluation && "max-h-10/12 h-full")}>
       <DialogHeader>
-        <DialogTitle>Pedido: {id}</DialogTitle>
+        <DialogTitle>Pedido: {evaluationId}</DialogTitle>
         <DialogDescription>Detalhes da avaliação</DialogDescription>
       </DialogHeader>
 

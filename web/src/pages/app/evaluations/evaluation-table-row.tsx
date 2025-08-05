@@ -41,7 +41,7 @@ export function EvaluationTableRow({ evaluation }: EvaluationTableRowProps) {
 
           <EvaluationDetails
             open={isDetailsOpen}
-            id={evaluation.id}
+            evaluationId={evaluation.id}
           />
         </Dialog>
       </TableCell>

@@ -1,7 +1,7 @@
 import { api } from "@/lib/axios"
 
 export interface GetEvaluationDetailsRequest {
-  id: string
+  evaluationId: string
 }
 
 export interface GetEvaluationDetailsResponse {
@@ -25,10 +25,10 @@ export interface GetEvaluationDetailsResponse {
   }[]
 }
 export async function getEvaluationDetails({
-  id,
+  evaluationId,
 }: GetEvaluationDetailsRequest) {
   const response = await api.get<GetEvaluationDetailsResponse>(
-    `/evaluations/${id}`,
+    `/evaluations/${evaluationId}`,
   )
 
   return response.data
