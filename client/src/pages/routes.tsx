@@ -10,11 +10,13 @@ import { SignUp } from "./auth/sign-up"
 import { Category } from "./categories/category"
 import { Favorites } from "./favorites/favorites"
 import { HomePage } from "./home/home"
+import { Orders } from "./orders/orders"
 import { Restaurant } from "./restaurant/restaurant"
 import { Restaurants } from "./restaurants/restaurants"
 
 const AddressPage = withPermission(Address)
 const FavoritePage = withPermission(Favorites)
+const OrderPage = withPermission(Orders)
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: "/enderecos",
         element: <AddressPage />,
+      },
+      {
+        path: "/pedidos",
+        element: <OrderPage />,
       },
     ],
   },

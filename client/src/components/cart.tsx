@@ -1,6 +1,7 @@
 import { XIcon } from "lucide-react"
 
 import { useCart } from "@/contexts/cart"
+import { cn } from "@/lib/utils"
 
 import { EmptyCart } from "./empty-cart"
 import { Button } from "./ui/button"
@@ -14,7 +15,9 @@ export function Cart() {
       aria-describedby={undefined}
       autoFocus={undefined}
     >
-      <SheetHeader className="items-center flex-row border-b">
+      <SheetHeader
+        className={cn("items-center flex-row", numberOfItems > 0 && "border-b")}
+      >
         <SheetClose
           asChild
           className="top-4 left-4"

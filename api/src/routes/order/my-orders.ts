@@ -50,24 +50,32 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
       const { id: clientId } = await request.getCurrentUser()
 
       const query = await prisma.$queryRaw<Query[]>(Prisma.sql`
-          select
-            o.id,
-            o.status,
-            o.date,
-            r.name,
-            r.image,
-            oi.quantity,
-            pr.id "productId",
-            pr.name "productName",
-            e.rate
-          from orders o
-          join users u on u.id = o."clientId"
-          join restaurants r on r.id = o."restaurantId"
-          join "orderItems" oi on oi."orderId" = o.id
-          join products pr on pr.id = oi."productId"
-          left join evaluations e on e."orderId" = o.id
-          where u.id = ${clientId}
-        `)
+        select
+          o.id,
+          o.status,
+          o.date,
+          r.name,
+          r.image,
+          oi.quantity,
+          pr.id "productId",
+          pr.name "productName",
+          e.rate
+        from orders o
+        join users u on u.id = o."clientId"
+        join restaurants r on r.id = o."restaurantId"
+        join "orderItems" oi on oi."orderId" = o.id
+        join products pr on pr.id = oi."productId"
+        left join evaluations e on e."orderId" = o.id
+        where u.id = ${clientId}
+        order by
+          case o.status
+            when 'PENDING' then 3
+            when 'PREPARING' then 2
+            when 'ROUTING' then 1
+            when 'DELIVERED' then 0
+            when 'CANCELED' then 0
+          end desc, o.date desc
+      `)
 
       const orders = new Map()
 
