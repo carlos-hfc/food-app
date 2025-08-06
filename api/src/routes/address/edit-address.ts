@@ -17,11 +17,11 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
         }),
         body: z.object({
           zipCode: z.string().optional(),
-          address: z.string().optional(),
-          number: z.number().nullable().optional(),
+          street: z.string().optional(),
+          number: z.number().optional(),
           district: z.string().optional(),
           city: z.string().optional(),
-          uf: z.string().optional(),
+          state: z.string().optional(),
           alias: z.string().nullable().optional(),
           main: z.boolean().optional(),
         }),
@@ -46,16 +46,8 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Address not found")
       }
 
-      const {
-        zipCode,
-        address: addressName,
-        number,
-        district,
-        city,
-        uf,
-        alias,
-        main,
-      } = request.body
+      const { zipCode, street, number, district, city, state, alias, main } =
+        request.body
 
       await prisma.address.update({
         where: {
@@ -63,11 +55,11 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
         },
         data: {
           zipCode,
-          address: addressName,
+          street,
           number,
           district,
           city,
-          uf,
+          state,
           alias,
           main,
         },

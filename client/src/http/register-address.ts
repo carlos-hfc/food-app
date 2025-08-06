@@ -1,14 +1,14 @@
 import { api } from "@/lib/axios"
 
 export interface RegisterAddressRequest {
-  alias?: string
+  alias: string | null
   zipCode: string
-  address: string
-  number?: number
+  street: string
+  number: number
   district: string
   city: string
-  uf: string
-  main?: boolean
+  state: string
+  main: boolean
 }
 
 export interface RegisterAddressResponse {
@@ -16,20 +16,20 @@ export interface RegisterAddressResponse {
 }
 
 export async function registerAddress({
-  address,
+  street,
   city,
   district,
-  uf,
+  state,
   zipCode,
   alias,
   main,
   number,
 }: RegisterAddressRequest) {
   const response = await api.post<RegisterAddressResponse>("/address", {
-    address,
+    street,
     city,
     district,
-    uf,
+    state,
     zipCode,
     alias,
     main,

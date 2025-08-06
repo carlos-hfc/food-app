@@ -28,11 +28,11 @@ interface AddressItemProps {
   address: {
     id: string
     zipCode: string
-    address: string
-    number: number | null
+    street: string
+    number: number
     district: string
     city: string
-    uf: string
+    state: string
     alias: string | null
     main: boolean
   }
@@ -126,13 +126,12 @@ export function AddressItem({ address }: AddressItemProps) {
         <p className="font-semibold">
           {address.alias
             ? address.alias
-            : `${address.address}${address.number ? `, ${address.number}` : ""}`}
+            : `${address.street}, ${address.number}`}
         </p>
         <span className="text-sm leading-0">
-          {address.alias && address.address}
-          {address.alias && address.number && `, ${address.number} - `}
-          {address.alias && !address.number && " - "}
-          {address.district}, {address.city}, {address.uf}
+          {address.alias && `${address.street}, ${address.number}`}
+          {address.alias && " - "}
+          {address.district}, {address.city}, {address.state}
         </span>
       </div>
 

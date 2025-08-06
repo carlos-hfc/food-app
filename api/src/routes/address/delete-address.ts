@@ -36,9 +36,12 @@ export const deleteAddress: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Address not found")
       }
 
-      await prisma.address.delete({
+      await prisma.address.update({
         where: {
           id: addressId,
+        },
+        data: {
+          active: false,
         },
       })
 

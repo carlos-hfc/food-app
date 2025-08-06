@@ -1,36 +1,36 @@
 import { api } from "@/lib/axios"
 
-export interface GetAddressRequest {
+export interface UpdateAddressRequest {
   addressId: string
   zipCode: string
-  address: string
-  number: number | null
+  street: string
+  number: number
   district: string
   city: string
-  uf: string
+  state: string
   alias: string | null
   main: boolean
 }
 
 export async function updateAddress({
   addressId,
-  address,
+  street,
   alias,
   city,
   district,
   main,
   number,
-  uf,
+  state,
   zipCode,
-}: GetAddressRequest) {
+}: UpdateAddressRequest) {
   await api.patch(`/address/${addressId}`, {
-    address,
+    street,
     alias,
     city,
     district,
     main,
     number,
-    uf,
+    state,
     zipCode,
   })
 }

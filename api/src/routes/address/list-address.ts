@@ -16,14 +16,13 @@ export const listAddress: FastifyPluginAsyncZod = async app => {
             z.object({
               id: z.string().uuid(),
               zipCode: z.string(),
-              address: z.string(),
-              number: z.number().nullable(),
+              street: z.string(),
+              number: z.number(),
               district: z.string(),
               city: z.string(),
-              uf: z.string(),
+              state: z.string(),
               alias: z.string().nullable(),
               main: z.boolean(),
-              clientId: z.string().uuid(),
             }),
           ),
         },
@@ -35,6 +34,7 @@ export const listAddress: FastifyPluginAsyncZod = async app => {
       const addresses = await prisma.address.findMany({
         where: {
           clientId,
+          active: true,
         },
         orderBy: [{ main: "desc" }, { createdAt: "asc" }],
       })

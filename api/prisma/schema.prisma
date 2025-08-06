@@ -36,14 +36,15 @@ model User {
 model Address {
   id        String   @id @default(uuid())
   zipCode   String
-  address   String
-  number    Int?
+  street    String
+  number    Int
   district  String
   city      String
-  uf        String   @db.Char(2)
+  state     String   @db.Char(2)
   alias     String?
   main      Boolean  @default(false)
   createdAt DateTime @default(now())
+  active    Boolean  @default(true)
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String

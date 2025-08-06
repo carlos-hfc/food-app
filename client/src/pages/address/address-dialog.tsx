@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label"
 import { getAddress, GetAddressResponse } from "@/http/get-address"
 import { ListAddressResponse } from "@/http/list-address"
 import { registerAddress } from "@/http/register-address"
-import { GetAddressRequest, updateAddress } from "@/http/update-address"
+import { updateAddress } from "@/http/update-address"
 import { queryClient } from "@/lib/react-query"
 
 import { AddressDialogSkeleton } from "./address-dialog-skeleton"
@@ -28,11 +28,11 @@ import { AddressDialogSkeleton } from "./address-dialog-skeleton"
 const addressSchema = z.object({
   alias: z.string().optional(),
   zipCode: z.string(),
-  address: z.string(),
-  number: z.coerce.number<number>().optional(),
+  street: z.string(),
+  number: z.coerce.number<number>(),
   district: z.string(),
   city: z.string(),
-  uf: z.string(),
+  state: z.string(),
   main: z.boolean().optional(),
   apiLoaded: z.boolean().default(false).optional(),
 })
@@ -80,13 +80,13 @@ export function AddressDialog({
   } = useForm<AddressDialogSchema>({
     resolver: zodResolver(addressSchema),
     values: {
-      address: address?.address ?? "",
+      street: address?.street ?? "",
       zipCode: address?.zipCode ?? "",
       alias: address?.alias ?? "",
-      number: address?.number ?? undefined,
+      number: address?.number ?? 0,
       district: address?.district ?? "",
       city: address?.city ?? "",
-      uf: address?.uf ?? "",
+      state: address?.state ?? "",
       main: address?.main ?? false,
     },
   })
@@ -102,10 +102,10 @@ export function AddressDialog({
       )
 
       if (!("erro" in response.data)) {
-        setValue("address", response.data.logradouro)
+        setValue("street", response.data.logradouro)
         setValue("district", response.data.bairro)
         setValue("city", response.data.localidade)
-        setValue("uf", response.data.uf)
+        setValue("state", response.data.uf)
 
         setValue("apiLoaded", true)
       } else {
@@ -118,7 +118,7 @@ export function AddressDialog({
 
   function updateAddressOnCache(
     addressId: string,
-    data: Partial<GetAddressRequest>,
+    data: Omit<GetAddressResponse, "id">,
   ) {
     const currentAddress = queryClient.getQueryData<GetAddressResponse>([
       "address",
@@ -135,6 +135,13 @@ export function AddressDialog({
     const cached = queryClient.getQueryData<ListAddressResponse>(["addresses"])
 
     if (cached) {
+      if (!isEdit) {
+        cached.push({
+          ...data,
+          id: addressId,
+        })
+      }
+
       queryClient.setQueryData<ListAddressResponse>(
         ["addresses"],
         cached
@@ -175,49 +182,49 @@ export function AddressDialog({
     try {
       if (addressId) {
         const addressClone = structuredClone({
-          address: address?.address,
+          street: address?.street,
           zipCode: address?.zipCode,
           alias: address?.alias,
           number: address?.number,
           district: address?.district,
           city: address?.city,
-          uf: address?.uf,
+          state: address?.state,
           main: address?.main,
         })
         const dataClone = structuredClone({
-          address: data?.address,
+          street: data?.street,
           zipCode: data?.zipCode,
           alias: data?.alias || null,
-          number: data?.number || null,
+          number: data?.number,
           district: data?.district,
           city: data?.city,
-          uf: data?.uf,
+          state: data?.state,
           main: data?.main || false,
         })
 
         if (JSON.stringify(addressClone) !== JSON.stringify(dataClone)) {
           await updateAddressFn({
             addressId,
-            address: data?.address,
+            street: data?.street,
             zipCode: data?.zipCode,
             alias: data?.alias || null,
-            number: data?.number || null,
+            number: data?.number,
             district: data?.district,
             city: data?.city,
-            uf: data?.uf,
+            state: data?.state,
             main: data?.main || false,
           })
         }
       } else {
         await registerAddressFn({
           zipCode: data.zipCode,
-          address: data.address,
-          number: data.number !== 0 ? data.number : undefined,
+          street: data.street,
+          number: data.number,
           district: data.district,
           city: data.city,
-          uf: data.uf,
-          alias: data.alias,
-          main: data.main,
+          state: data.state,
+          alias: data.alias || null,
+          main: data.main || false,
         })
       }
 
@@ -302,13 +309,13 @@ export function AddressDialog({
                 <Input
                   id="address"
                   type="text"
-                  {...register("address")}
-                  disabled={!isFilled || !!watch("address")}
+                  {...register("street")}
+                  disabled={!isFilled || !!watch("street")}
                   autoComplete="address-line1"
                 />
-                {errors.address?.message && (
+                {errors.street?.message && (
                   <p className="text-xs text-destructive font-medium">
-                    {errors.address.message}
+                    {errors.street.message}
                   </p>
                 )}
               </div>
@@ -366,13 +373,13 @@ export function AddressDialog({
                   <Input
                     id="uf"
                     type="text"
-                    {...register("uf")}
-                    disabled={!isFilled || !!watch("uf")}
+                    {...register("state")}
+                    disabled={!isFilled || !!watch("state")}
                     autoComplete="address-level1"
                   />
-                  {errors.uf?.message && (
+                  {errors.state?.message && (
                     <p className="text-xs text-destructive font-medium">
-                      {errors.uf.message}
+                      {errors.state.message}
                     </p>
                   )}
                 </div>
@@ -387,7 +394,6 @@ export function AddressDialog({
                       <Checkbox
                         id="main"
                         checked={Boolean(field.value)}
-                        // onCheckedChange={checked => checked ? field.onChange(true) : field.onChange(false)}
                         onCheckedChange={checked =>
                           field.onChange(Boolean(checked))
                         }
