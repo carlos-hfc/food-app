@@ -92,7 +92,7 @@ export function AppHeader() {
           )}
         </form>
 
-        <nav className="ml-auto inline-flex items-center gap-2">
+        <nav className="ml-auto inline-flex items-center md:gap-2">
           <NavLink to="/inicio">Início</NavLink>
           <NavLink to="/restaurantes">Restaurantes</NavLink>
           <AccountMenu />

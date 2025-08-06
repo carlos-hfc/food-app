@@ -1,17 +1,26 @@
 import { useMutation } from "@tanstack/react-query"
-import { CheckCircle2Icon, EllipsisVerticalIcon } from "lucide-react"
+import {
+  CheckCircle2Icon,
+  Edit2Icon,
+  EllipsisVerticalIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { toast } from "sonner"
 
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { deleteAddress } from "@/http/delete-address"
 import { ListAddressResponse } from "@/http/list-address"
 import { selectMainAddress } from "@/http/select-main-address"
 import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
+
+import { AddressDialog } from "./address-dialog"
 
 interface AddressItemProps {
   address: {
@@ -53,6 +62,23 @@ export function AddressItem({ address }: AddressItemProps) {
     },
   })
 
+  const { mutateAsync: deleteAddressFn, isPending: isDeletingAddress } =
+    useMutation({
+      mutationFn: deleteAddress,
+      onSuccess(_, { addressId }) {
+        const cached = queryClient.getQueryData<ListAddressResponse>([
+          "addresses",
+        ])
+
+        if (cached) {
+          queryClient.setQueryData<ListAddressResponse>(
+            ["addresses"],
+            cached.filter(item => item.id !== addressId),
+          )
+        }
+      },
+    })
+
   async function handleSelectMain() {
     try {
       if (address.main) return
@@ -67,6 +93,16 @@ export function AddressItem({ address }: AddressItemProps) {
     }
   }
 
+  async function handleDeleteAddress() {
+    try {
+      await deleteAddressFn({ addressId: address.id })
+
+      toast.success("Endereço excluído com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao excluir endereço, tente novamente")
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -76,12 +112,13 @@ export function AddressItem({ address }: AddressItemProps) {
     >
       <div className="space-y-2">
         <p className="font-semibold">
-          {address.alias ? address.alias : address.address}
+          {address.alias
+            ? address.alias
+            : `${address.address} ${address.number ? `, ${address.number}` : ""}`}
         </p>
         <span className="text-sm leading-0">
-          {address.alias ? address.address : ""}
-          {address.number && `, ${address.number}`}
-          {address.alias && address.number && " - "}
+          {address.alias && address.address}
+          {address.number && `, ${address.number} - `}
           {address.district}, {address.city}, {address.uf}
         </span>
       </div>
@@ -97,19 +134,40 @@ export function AddressItem({ address }: AddressItemProps) {
           onClick={handleSelectMain}
         />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className="h-min"
-            aria-label="Abrir menu"
-          >
-            <EllipsisVerticalIcon className="size-4 text-primary" />
-          </DropdownMenuTrigger>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="h-min"
+              aria-label="Abrir menu"
+            >
+              <EllipsisVerticalIcon className="size-4 text-primary" />
+            </DropdownMenuTrigger>
 
-          <DropdownMenuContent>
-            <DropdownMenuItem>Editar</DropdownMenuItem>
-            <DropdownMenuItem>Excluir</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <DropdownMenuContent align="end">
+              <DialogTrigger asChild>
+                <DropdownMenuItem asChild>
+                  <button className="w-full">
+                    <Edit2Icon />
+                    Editar
+                  </button>
+                </DropdownMenuItem>
+              </DialogTrigger>
+
+              <DropdownMenuItem asChild>
+                <button
+                  className="w-full"
+                  disabled={isDeletingAddress}
+                  onClick={handleDeleteAddress}
+                >
+                  <Trash2Icon />
+                  Excluir
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <AddressDialog />
+        </Dialog>
       </div>
     </div>
   )

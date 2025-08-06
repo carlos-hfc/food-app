@@ -10,7 +10,6 @@ export type ListAddressResponse = Array<{
   uf: string
   alias: string | null
   main: boolean
-  clientId: string
 }>
 
 export async function listAddress() {

@@ -49,7 +49,7 @@ export function AccountMenu() {
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild={true}>
-          <div className="flex select-none items-center gap-2 px-2 text-muted-foreground">
+          <div className="flex select-none items-center gap-1 md:gap-2 px-2 text-muted-foreground">
             <span className="text-sm lg:text-base font-semibold">
               {isLoadingProfile ? (
                 <Skeleton className="h-4 w-20" />

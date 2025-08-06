@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
 
@@ -16,12 +17,15 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ListAddressResponse } from "@/http/list-address"
+import { registerAddress } from "@/http/register-address"
+import { queryClient } from "@/lib/react-query"
 
 const addressSchema = z.object({
   alias: z.string().optional(),
   zipCode: z.string(),
   address: z.string(),
-  number: z.string().optional(),
+  number: z.coerce.number<number>().optional(),
   district: z.string(),
   city: z.string(),
   uf: z.string(),
@@ -29,7 +33,7 @@ const addressSchema = z.object({
   apiLoaded: z.boolean().default(false).optional(),
 })
 
-type AddressSchema = z.infer<typeof addressSchema>
+type AddressDialogSchema = z.infer<typeof addressSchema>
 
 type CepResponse =
   | {
@@ -42,6 +46,9 @@ type CepResponse =
   | { erro: boolean }
 
 interface AddressDialogProps {
+  isEdit?: boolean
+  open?: boolean
+  onOpenChange?(open: boolean): void
   addressId?: string
 }
 
@@ -52,8 +59,10 @@ export function AddressDialog() {
     setValue,
     handleSubmit,
     watch,
+    control,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<AddressSchema>({
+  } = useForm<AddressDialogSchema>({
     resolver: zodResolver(addressSchema),
   })
 
@@ -82,6 +91,66 @@ export function AddressDialog() {
     }
   }
 
+  const { mutateAsync: registerAddressFn } = useMutation({
+    mutationFn: registerAddress,
+    onSuccess({ addressId }, variables) {
+      const cached = queryClient.getQueryData<ListAddressResponse>([
+        "addresses",
+      ])
+
+      if (cached) {
+        queryClient.setQueryData<ListAddressResponse>(
+          ["addresses"],
+          [
+            ...cached,
+            {
+              ...variables,
+              id: addressId,
+              alias: variables.alias ?? null,
+              main: variables.main ?? false,
+              number: variables.number ?? null,
+            },
+          ]
+            .map(item => {
+              if (variables.main) {
+                if (item.id === addressId) {
+                  return { ...item, main: true }
+                }
+
+                if (item.id !== addressId) {
+                  return { ...item, main: false }
+                }
+              }
+
+              return item
+            })
+            .sort((a, b) => (a.main > b.main ? -1 : 1)),
+        )
+      }
+
+      reset()
+    },
+  })
+
+  async function handleStoreAddress(data: AddressDialogSchema) {
+    try {
+      await registerAddressFn({
+        zipCode: data.zipCode,
+        address: data.address,
+        number: data.number !== 0 ? data.number : undefined,
+        district: data.district,
+        city: data.city,
+        uf: data.uf,
+        alias: data.alias,
+        main: data.main,
+      })
+
+      toast.success("Endereço cadastrado com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao cadastrar o endereço, tente novamente")
+    }
+  }
+
   return (
     <DialogContent>
       <DialogHeader>
@@ -91,7 +160,7 @@ export function AddressDialog() {
         <DialogDescription>Lorem ipsum dolor sit</DialogDescription>
       </DialogHeader>
 
-      <form>
+      <form onSubmit={handleSubmit(handleStoreAddress)}>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="alias">Apelido do local</Label>
@@ -100,6 +169,11 @@ export function AddressDialog() {
               type="text"
               {...register("alias")}
             />
+            {errors.alias?.message && (
+              <p className="text-xs text-destructive font-medium">
+                {errors.alias.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -110,6 +184,7 @@ export function AddressDialog() {
                 type="text"
                 inputMode="numeric"
                 {...register("zipCode")}
+                autoComplete="postal-code"
               />
               <Button
                 type="button"
@@ -119,6 +194,11 @@ export function AddressDialog() {
                 Buscar
               </Button>
             </div>
+            {errors.zipCode?.message && (
+              <p className="text-xs text-destructive font-medium">
+                {errors.zipCode.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -128,7 +208,13 @@ export function AddressDialog() {
               type="text"
               {...register("address")}
               disabled={!isFilled || !!watch("address")}
+              autoComplete="address-line1"
             />
+            {errors.address?.message && (
+              <p className="text-xs text-destructive font-medium">
+                {errors.address.message}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
@@ -139,7 +225,13 @@ export function AddressDialog() {
                 type="text"
                 {...register("district")}
                 disabled={!isFilled || !!watch("district")}
+                autoComplete="address-level3"
               />
+              {errors.district?.message && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.district.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="number">Número</Label>
@@ -149,6 +241,11 @@ export function AddressDialog() {
                 min={1}
                 {...register("number")}
               />
+              {errors.number?.message && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.number.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -160,7 +257,13 @@ export function AddressDialog() {
                 type="text"
                 {...register("city")}
                 disabled={!isFilled || !!watch("city")}
+                autoComplete="address-level2"
               />
+              {errors.city?.message && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.city.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="uf">Estado</Label>
@@ -169,16 +272,39 @@ export function AddressDialog() {
                 type="text"
                 {...register("uf")}
                 disabled={!isFilled || !!watch("uf")}
+                autoComplete="address-level1"
               />
+              {errors.uf?.message && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.uf.message}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="flex gap-2 items-center">
-            <Checkbox
-              id="main"
-              {...register("main")}
-            />
-            <Label htmlFor="main">Endereço principal</Label>
+          <div className="space-y-2">
+            <div className="flex gap-2 items-center">
+              <Controller
+                name="main"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    id="main"
+                    checked={Boolean(field.value)}
+                    // onCheckedChange={checked => checked ? field.onChange(true) : field.onChange(false)}
+                    onCheckedChange={checked =>
+                      field.onChange(Boolean(checked))
+                    }
+                  />
+                )}
+              />
+              <Label htmlFor="main">Endereço principal</Label>
+            </div>
+            {errors.main?.message && (
+              <p className="text-xs text-destructive font-medium">
+                {errors.main.message}
+              </p>
+            )}
           </div>
         </div>
 
