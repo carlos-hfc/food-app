@@ -1,10 +1,12 @@
 import { useMutation } from "@tanstack/react-query"
+import { isAxiosError } from "axios"
 import {
   CheckCircle2Icon,
   Edit2Icon,
   EllipsisVerticalIcon,
   Trash2Icon,
 } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
 
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -33,11 +35,12 @@ interface AddressItemProps {
     uf: string
     alias: string | null
     main: boolean
-    clientId: string
   }
 }
 
 export function AddressItem({ address }: AddressItemProps) {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
   const { mutateAsync: selectMainAddressFn } = useMutation({
     mutationFn: selectMainAddress,
     onSuccess(_, { addressId }) {
@@ -99,6 +102,15 @@ export function AddressItem({ address }: AddressItemProps) {
 
       toast.success("Endereço excluído com sucesso!")
     } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response?.data.message === "Prisma error") {
+          toast.error(
+            "Você não pode deletar um endereço utilizado em um pedido",
+          )
+
+          return
+        }
+      }
       toast.error("Falha ao excluir endereço, tente novamente")
     }
   }
@@ -114,11 +126,12 @@ export function AddressItem({ address }: AddressItemProps) {
         <p className="font-semibold">
           {address.alias
             ? address.alias
-            : `${address.address} ${address.number ? `, ${address.number}` : ""}`}
+            : `${address.address}${address.number ? `, ${address.number}` : ""}`}
         </p>
         <span className="text-sm leading-0">
           {address.alias && address.address}
-          {address.number && `, ${address.number} - `}
+          {address.alias && address.number && `, ${address.number} - `}
+          {address.alias && !address.number && " - "}
           {address.district}, {address.city}, {address.uf}
         </span>
       </div>
@@ -134,7 +147,10 @@ export function AddressItem({ address }: AddressItemProps) {
           onClick={handleSelectMain}
         />
 
-        <Dialog>
+        <Dialog
+          open={isDetailsOpen}
+          onOpenChange={setIsDetailsOpen}
+        >
           <DropdownMenu>
             <DropdownMenuTrigger
               className="h-min"
@@ -166,7 +182,11 @@ export function AddressItem({ address }: AddressItemProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <AddressDialog />
+          <AddressDialog
+            open={isDetailsOpen}
+            addressId={address.id}
+            isEdit
+          />
         </Dialog>
       </div>
     </div>

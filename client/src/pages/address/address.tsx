@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
 
 import { Seo } from "@/components/seo"
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,8 @@ import { AddressItem } from "./address-item"
 import { AddressItemSkeleton } from "./address-item-skeleton"
 
 export function Address() {
+  const [open, setOpen] = useState(false)
+
   const { data: addresses, isLoading: isLoadingAddress } = useQuery({
     queryKey: ["addresses"],
     queryFn: listAddress,
@@ -25,12 +28,15 @@ export function Address() {
             Meus endereços
           </span>
 
-          <Dialog>
+          <Dialog
+            open={open}
+            onOpenChange={setOpen}
+          >
             <DialogTrigger asChild>
               <Button size="sm">Adicionar endereço</Button>
             </DialogTrigger>
 
-            <AddressDialog />
+            <AddressDialog onOpenChange={setOpen} />
           </Dialog>
         </div>
 

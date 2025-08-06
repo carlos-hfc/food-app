@@ -18,11 +18,11 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
         body: z.object({
           zipCode: z.string().optional(),
           address: z.string().optional(),
-          number: z.number().optional(),
+          number: z.number().nullable().optional(),
           district: z.string().optional(),
           city: z.string().optional(),
           uf: z.string().optional(),
-          alias: z.string().optional(),
+          alias: z.string().nullable().optional(),
           main: z.boolean().optional(),
         }),
         response: {

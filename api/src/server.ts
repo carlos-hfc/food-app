@@ -16,6 +16,7 @@ import { env } from "./env"
 import { errorHandler } from "./error-handler"
 import { deleteAddress } from "./routes/address/delete-address"
 import { editAddress } from "./routes/address/edit-address"
+import { getAddress } from "./routes/address/get-address"
 import { listAddress } from "./routes/address/list-address"
 import { registerAddress } from "./routes/address/register-address"
 import { selectMainAddress } from "./routes/address/select-main-address"
@@ -114,6 +115,7 @@ app.register(listAddress)
 app.register(editAddress)
 app.register(deleteAddress)
 app.register(selectMainAddress)
+app.register(getAddress)
 
 app.register(saveFavorite)
 app.register(listFavorites)
