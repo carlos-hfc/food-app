@@ -14,6 +14,7 @@ export function Cart() {
     <SheetContent
       aria-describedby={undefined}
       autoFocus={undefined}
+      className="w-full"
     >
       <SheetHeader
         className={cn("items-center flex-row", numberOfItems > 0 && "border-b")}

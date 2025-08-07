@@ -31,7 +31,7 @@ export function AccountMenu() {
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
-    retry: false,
+    retry: 2,
   })
 
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({

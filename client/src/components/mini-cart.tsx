@@ -6,30 +6,18 @@ import { Cart } from "./cart"
 import { Sheet, SheetTrigger } from "./ui/sheet"
 
 export function MiniCart() {
-  const { numberOfItems, items } = useCart()
-
-  const { total } = items.reduce(
-    (accumulator, current) => {
-      accumulator.total += current.price * current.quantity
-
-      return accumulator
-    },
-    { total: 0 },
-  )
+  const { numberOfItems } = useCart()
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <div className="flex shrink-0 items-center gap-2 cursor-default">
-          <ShoppingBagIcon className="size-6 shrink-0 text-primary" />
-          <div className="text-muted-foreground text-xs">
-            <span className="block">
-              {total.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
+          <div className="relative">
+            <ShoppingBagIcon className="size-6 shrink-0 text-primary" />
+
+            <span className="absolute -top-2 -right-2.5 bg-primary rounded-full size-4 text-xs text-center text-background font-semibold">
+              {numberOfItems}
             </span>
-            <span>{numberOfItems} itens</span>
           </div>
         </div>
       </SheetTrigger>
