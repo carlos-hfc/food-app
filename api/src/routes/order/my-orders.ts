@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
-import { OrderStatus, Prisma } from "generated/prisma"
+import { OrderStatus, PaymentMethod, Prisma } from "generated/prisma"
 import z from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -9,12 +9,20 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 interface Query {
   id: string
   status: string
+  payment: string
   date: Date
+  preparedAt: Date | null
+  routedAt: Date | null
+  deliveredAt: Date | null
+  canceledAt: Date | null
+  restaurantId: string
   name: string
   image: string | null
   quantity: number
   productId: string
   productName: string
+  productImage: string | null
+  price: string
   rate: number | null
 }
 
@@ -29,16 +37,25 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
             z.object({
               id: z.string().uuid(),
               status: z.string().pipe(z.nativeEnum(OrderStatus)),
+              payment: z.string().pipe(z.nativeEnum(PaymentMethod)),
               date: z.date(),
+              preparedAt: z.date().nullable(),
+              routedAt: z.date().nullable(),
+              deliveredAt: z.date().nullable(),
+              canceledAt: z.date().nullable(),
               rate: z.number().nullable(),
               restaurant: z.object({
+                id: z.string().uuid(),
                 name: z.string(),
                 image: z.string().nullable(),
               }),
               products: z.array(
                 z.object({
+                  id: z.string().uuid(),
                   quantity: z.number(),
-                  product: z.string(),
+                  name: z.string(),
+                  image: z.string().nullable(),
+                  price: z.number(),
                 }),
               ),
             }),
@@ -53,12 +70,20 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
         select
           o.id,
           o.status,
+          o.payment,
           o.date,
+          o."preparedAt",
+          o."routedAt",
+          o."deliveredAt",
+          o."canceledAt",
+          r.id "restaurantId",
           r.name,
           r.image,
           oi.quantity,
           pr.id "productId",
           pr.name "productName",
+          pr.image "productImage",
+          pr.price,
           e.rate
         from orders o
         join users u on u.id = o."clientId"
@@ -83,10 +108,16 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
         if (!orders.has(item.id)) {
           orders.set(item.id, {
             id: item.id,
+            payment: item.payment,
             status: item.status,
             date: item.date,
+            preparedAt: item.preparedAt,
+            routedAt: item.routedAt,
+            deliveredAt: item.deliveredAt,
+            canceledAt: item.canceledAt,
             rate: item.rate,
             restaurant: {
+              id: item.restaurantId,
               name: item.name,
               image: item.image,
             },
@@ -96,8 +127,10 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
 
         orders.get(item.id).products.push({
           id: item.productId,
-          product: item.productName,
+          name: item.productName,
           quantity: item.quantity,
+          image: item.productImage,
+          price: Number(item.price),
         })
       }
 
