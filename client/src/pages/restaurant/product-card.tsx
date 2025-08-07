@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
-import { ShoppingCartIcon } from "lucide-react"
+import { InfoIcon, ShoppingCartIcon } from "lucide-react"
 import { useRef } from "react"
+import { toast } from "sonner"
 
 import { InputNumber } from "@/components/input-number"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,7 @@ export function ProductCard({ product, closedRestaurant }: ProductCardProps) {
     queryFn: () => getRestarauntInfo({ restaurantId: product.restaurantId }),
   })
 
-  const { addToCart } = useCart()
+  const { addToCart, cleanCart, items } = useCart()
 
   const inputRef = useRef({} as HTMLInputElement)
 
@@ -33,6 +34,63 @@ export function ProductCard({ product, closedRestaurant }: ProductCardProps) {
     const quantity = Number(inputRef.current.value)
 
     if (quantity <= 0 || closedRestaurant) return
+
+    if (
+      items.length > 0 &&
+      items.find(item => item.restaurantId !== product.restaurantId)
+    ) {
+      toast(
+        <div className="space-y-2">
+          <div className="flex gap-1">
+            <InfoIcon className="size-4" />
+
+            <div>
+              <p className="text-sm font-bold leading-none">
+                Você só pode adicionar itens de uma loja por vez
+              </p>
+              <span className="text-xs font-semibold leading-none">
+                Deseja esvaziar a sacola e adicionar este item?
+              </span>
+            </div>
+          </div>
+
+          <div className="space-x-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-6! text-xs!"
+              onClick={() => toast.dismiss()}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="h-6! text-xs!"
+              onClick={() => {
+                cleanCart()
+                addToCart({
+                  item: {
+                    ...product,
+                    quantity,
+                  },
+                  restaurant: result?.restaurant ?? null,
+                })
+                toast.dismiss()
+              }}
+            >
+              Esvaziar sacola e adicionar
+            </Button>
+          </div>
+        </div>,
+        {
+          classNames: {
+            toast: "bg-[var(--info-bg)]! text-[var(--info-text)]!",
+          },
+        },
+      )
+      return
+    }
 
     addToCart({
       item: {

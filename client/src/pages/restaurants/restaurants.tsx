@@ -25,8 +25,7 @@ export function Restaurants() {
 
   const { data: restaurants } = useQuery({
     queryKey: ["restaurants", name, category, tax, deliveryTime, rate],
-    queryFn: () =>
-      listRestaurants({ name, category, tax, deliveryTime, rate }),
+    queryFn: () => listRestaurants({ name, category, tax, deliveryTime, rate }),
   })
 
   const { data: categories } = useQuery({
@@ -69,7 +68,7 @@ export function Restaurants() {
             Os melhores no food.app
           </span>
 
-          <div className="flex gap-4 overflow-x-auto py-2 scrollbar-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto py-2 scrollbar-hidden">
             {bestRestaurants?.map(restaurant => (
               <BestRestaurantsCard
                 key={restaurant.id}

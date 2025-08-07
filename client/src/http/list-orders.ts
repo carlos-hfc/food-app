@@ -3,15 +3,24 @@ import { api } from "@/lib/axios"
 export type ListOrdersResponse = Array<{
   id: string
   status: string
+  payment: string
   date: string
+  preparedAt: string | null
+  routedAt: string | null
+  deliveredAt: string | null
+  canceledAt: string | null
   rate: number | null
   restaurant: {
+    id: string
     name: string
     image: string | null
   }
   products: {
+    id: string
     quantity: number
-    product: string
+    name: string
+    image: string | null
+    price: number
   }[]
 }>
 
