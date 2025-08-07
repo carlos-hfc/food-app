@@ -1,8 +1,18 @@
-import { Seo } from "@/components/seo"
+import { useQuery } from "@tanstack/react-query"
 
+import { Seo } from "@/components/seo"
+import { listOrders } from "@/http/list-orders"
+
+import { EmptyOrders } from "./empty-orders"
 import { OrderItem } from "./order-item"
+import { OrderItemSkeleton } from "./order-item-skeleton"
 
 export function Orders() {
+  const { data: orders, isLoading: isLoadingOrders } = useQuery({
+    queryKey: ["orders"],
+    queryFn: listOrders,
+  })
+
   return (
     <div className="flex flex-col gap-6">
       <Seo title="Meus pedidos" />
@@ -12,10 +22,19 @@ export function Orders() {
           Meus pedidos
         </span>
 
-        <div className="grid gap-3 md:gap-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <OrderItem key={i} />
-          ))}
+        <div className="grid gap-4 md:gap-6">
+          {isLoadingOrders ? (
+            <OrderItemSkeleton />
+          ) : orders && orders.length > 0 ? (
+            orders.map(order => (
+              <OrderItem
+                key={order.id}
+                order={order}
+              />
+            ))
+          ) : (
+            <EmptyOrders />
+          )}
         </div>
       </div>
     </div>

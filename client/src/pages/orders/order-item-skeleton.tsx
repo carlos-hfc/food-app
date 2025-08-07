@@ -1,11 +1,14 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function OrderItemSkeleton() {
-  return (
-    <div className="space-y-2">
+  return Array.from({ length: 5 }).map((_, i) => (
+    <div
+      key={i}
+      className="space-y-2"
+    >
       <Skeleton className="h-4 w-36" />
 
-      <div className="rounded-md shadow-md p-3 md:px-4 divide-y space-y-3 *:pb-3">
+      <div className="rounded-md shadow-md p-3 md:px-4 divide-y divide-accent space-y-3 *:pb-3">
         <div className="flex items-center gap-2 md:gap-4">
           <Skeleton className="rounded-full size-16 md:size-24" />
 
@@ -34,12 +37,12 @@ export function OrderItemSkeleton() {
           <Skeleton className="h-4 w-20" />
         </div>
 
-        <div className="flex gap-2 pb-0!">
+        <div className="flex gap-4 pb-0!">
           <Skeleton className="h-8 w-full" />
 
           <Skeleton className="h-8 w-full" />
         </div>
       </div>
     </div>
-  )
+  ))
 }

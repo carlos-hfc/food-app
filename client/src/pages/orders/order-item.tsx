@@ -1,25 +1,54 @@
-import { CheckCircle2Icon, ChevronRightIcon, StarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
+import { ChevronRightIcon, StarIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-export function OrderItem() {
+import { OrderStatus, OrderStatusType } from "./order-status"
+
+interface OrderItemProps {
+  order: {
+    id: string
+    status: string
+    date: string
+    rate: number | null
+    restaurant: {
+      name: string
+      image: string | null
+    }
+    products: {
+      quantity: number
+      product: string
+    }[]
+  }
+}
+
+export function OrderItem({ order }: OrderItemProps) {
+  const orderDate = format(new Date(order.date), "EEEEEE dd MMMM yyyy", {
+    locale: ptBR,
+  })
+
   return (
     <div className="space-y-2">
-      <time className="text-muted-foreground text-xs md:text-sm block">
-        Dom 03 agosto 2025
+      <time
+        dateTime={order.date}
+        title={orderDate}
+        className="text-muted-foreground text-xs md:text-sm block capitalize"
+      >
+        {orderDate}
       </time>
 
-      <div className="rounded-md shadow-md p-3 md:px-4 divide-y space-y-3 *:pb-3">
+      <div className="rounded-md shadow-md p-3 md:px-6 divide-y space-y-3 *:pb-3">
         <div className="flex items-center gap-2 md:gap-4">
           <img
-            src="/hamburger.webp"
-            alt=""
+            src={order.restaurant.image ?? "/hamburger.webp"}
+            alt={order.restaurant.name}
             className="rounded-full object-cover size-16 md:size-24"
           />
 
           <span className="text-sm md:text-base font-semibold">
-            Restaurante
+            {order.restaurant.name}
           </span>
 
           <ChevronRightIcon
@@ -29,36 +58,42 @@ export function OrderItem() {
         </div>
 
         <div className="text-xs md:text-sm space-y-1">
-          <div className="flex items-center gap-1">
-            <CheckCircle2Icon className="size-4 md:size-5 fill-green-600 stroke-background" />
-            <span className="text-muted-foreground">Pedido concluido</span>
-          </div>
+          <OrderStatus status={order.status as OrderStatusType} />
 
           <div className="flex items-center gap-1">
-            <span className="rounded-sm bg-accent px-1">1</span>
-            <p className="text-muted-foreground">X-Salada</p>
+            <span className="rounded-sm bg-accent px-1">
+              {order.products.at(0)?.quantity}
+            </span>
+            <p className="text-muted-foreground">
+              {order.products.at(0)?.product}
+            </p>
           </div>
 
-          <span className="font-semibold text-muted-foreground">
-            mais 1 item
-          </span>
+          {order.products.length > 1 && (
+            <span className="font-semibold text-muted-foreground">
+              mais {order.products.length - 1} item(s)
+            </span>
+          )}
         </div>
 
-        <div className="flex text-sm justify-between">
-          <span className="text-muted-foreground">Avaliação</span>
+        {order.rate && (
+          <div className="flex text-sm justify-between">
+            <span className="text-muted-foreground">Avaliação</span>
 
-          <div className="flex">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <StarIcon
-                key={i}
-                className={cn(
-                  "size-4 fill-foreground stroke-foreground",
-                  i === 4 && "fill-foreground/50 stroke-foreground/40",
-                )}
-              />
-            ))}
+            <div className="flex">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <StarIcon
+                  key={i}
+                  className={cn(
+                    "size-4 fill-foreground stroke-foreground",
+                    Number(order.rate) <= i &&
+                      "fill-foreground/50 stroke-foreground/40",
+                  )}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex gap-2 pb-0!">
           <Button
