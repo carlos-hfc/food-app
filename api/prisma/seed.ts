@@ -26,12 +26,19 @@ async function main() {
 
   const password = await hash("12345678", 10)
 
-  const [admin1, admin2, admin3, admin4, admin5] =
+  const [admin1, admin2, admin3, admin4, admin5, admin6] =
     await prisma.user.createManyAndReturn({
       data: [
         {
           email: "carlos@email.com",
           name: "Carlos",
+          password,
+          phone: faker.phone.number({ style: "international" }),
+          role: "ADMIN",
+        },
+        {
+          email: faker.internet.email({ provider: "email.com" }).toLowerCase(),
+          name: faker.person.fullName(),
           password,
           phone: faker.phone.number({ style: "international" }),
           role: "ADMIN",
@@ -264,69 +271,58 @@ async function main() {
     ],
   })
 
-  const [restaurant1, restaurant2, restaurant3, restaurant4, restaurant5] =
-    await prisma.restaurant.createManyAndReturn({
-      data: [
-        {
-          adminId: admin1.id,
-          categoryId: faker.helpers.arrayElement(
-            categories.map(({ id }) => id),
-          ),
-          deliveryTime: faker.number.int({ min: 30, max: 120 }),
-          tax: faker.number.int({ min: 0, max: 20 }),
-          name: faker.company.name(),
-          phone: faker.phone.number({ style: "international" }),
-        },
-        {
-          adminId: admin2.id,
-          categoryId: faker.helpers.arrayElement(
-            categories.map(({ id }) => id),
-          ),
-          deliveryTime: faker.number.int({ min: 30, max: 120 }),
-          tax: faker.number.int({ min: 0, max: 20 }),
-          name: faker.company.name(),
-          phone: faker.phone.number({ style: "international" }),
-        },
-        {
-          adminId: admin3.id,
-          categoryId: faker.helpers.arrayElement(
-            categories.map(({ id }) => id),
-          ),
-          deliveryTime: faker.number.int({ min: 30, max: 120 }),
-          tax: faker.number.int({ min: 0, max: 20 }),
-          name: faker.company.name(),
-          phone: faker.phone.number({ style: "international" }),
-        },
-        {
-          adminId: admin4.id,
-          categoryId: faker.helpers.arrayElement(
-            categories.map(({ id }) => id),
-          ),
-          deliveryTime: faker.number.int({ min: 30, max: 120 }),
-          tax: faker.number.int({ min: 0, max: 20 }),
-          name: faker.company.name(),
-          phone: faker.phone.number({ style: "international" }),
-        },
-        {
-          adminId: admin5.id,
-          categoryId: faker.helpers.arrayElement(
-            categories.map(({ id }) => id),
-          ),
-          deliveryTime: faker.number.int({ min: 30, max: 120 }),
-          tax: faker.number.int({ min: 0, max: 20 }),
-          name: faker.company.name(),
-          phone: faker.phone.number({ style: "international" }),
-        },
-      ],
-    })
-
-  const restaurants = [
-    restaurant1,
-    restaurant2,
-    restaurant3,
-    restaurant4,
-    restaurant5,
-  ]
+  const restaurants = await prisma.restaurant.createManyAndReturn({
+    data: [
+      {
+        adminId: admin1.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+      {
+        adminId: admin2.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+      {
+        adminId: admin3.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+      {
+        adminId: admin4.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+      {
+        adminId: admin5.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+      {
+        adminId: admin6.id,
+        categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
+        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        tax: faker.number.int({ min: 0, max: 20 }),
+        name: faker.company.name(),
+        phone: faker.phone.number({ style: "international" }),
+      },
+    ],
+  })
 
   const products: Product[] = []
   const orders: Prisma.OrderUncheckedCreateInput[] = []
@@ -447,7 +443,7 @@ async function main() {
 
       if (status === OrderStatus.DELIVERED) {
         evaluations.push({
-          rate: faker.number.int({ min: 1, max: 5 }),
+          rate: faker.number.int({ min: 3, max: 5 }),
           comment: faker.helpers.arrayElement([
             null,
             faker.lorem.paragraph({ min: 1, max: 4 }),
@@ -470,545 +466,6 @@ async function main() {
       orderIndex++
     }
   }
-
-  // const products1: Product[] = []
-  // const products2: Product[] = []
-  // const products3: Product[] = []
-  // const products4: Product[] = []
-  // const products5: Product[] = []
-
-  // for (let index = 0; index < 30; index++) {
-  //   products1.push(
-  //     await prisma.product.create({
-  //       data: {
-  //         description: faker.commerce.productDescription(),
-  //         name: faker.commerce.productName(),
-  //         price: faker.commerce.price({
-  //           min: 20,
-  //           max: 40,
-  //           dec: 1,
-  //         }),
-  //         restaurantId: restaurant1.id,
-  //         available: true,
-  //       },
-  //     }),
-  //   )
-  //   products2.push(
-  //     await prisma.product.create({
-  //       data: {
-  //         description: faker.commerce.productDescription(),
-  //         name: faker.commerce.productName(),
-  //         price: faker.commerce.price({
-  //           min: 20,
-  //           max: 40,
-  //           dec: 1,
-  //         }),
-  //         restaurantId: restaurant2.id,
-  //         available: true,
-  //       },
-  //     }),
-  //   )
-  //   products3.push(
-  //     await prisma.product.create({
-  //       data: {
-  //         description: faker.commerce.productDescription(),
-  //         name: faker.commerce.productName(),
-  //         price: faker.commerce.price({
-  //           min: 20,
-  //           max: 40,
-  //           dec: 1,
-  //         }),
-  //         restaurantId: restaurant3.id,
-  //         available: true,
-  //       },
-  //     }),
-  //   )
-  //   products4.push(
-  //     await prisma.product.create({
-  //       data: {
-  //         description: faker.commerce.productDescription(),
-  //         name: faker.commerce.productName(),
-  //         price: faker.commerce.price({
-  //           min: 20,
-  //           max: 40,
-  //           dec: 1,
-  //         }),
-  //         restaurantId: restaurant4.id,
-  //         available: true,
-  //       },
-  //     }),
-  //   )
-  //   products5.push(
-  //     await prisma.product.create({
-  //       data: {
-  //         description: faker.commerce.productDescription(),
-  //         name: faker.commerce.productName(),
-  //         price: faker.commerce.price({
-  //           min: 20,
-  //           max: 40,
-  //           dec: 1,
-  //         }),
-  //         restaurantId: restaurant5.id,
-  //         available: true,
-  //       },
-  //     }),
-  //   )
-  // }
-
-  // for (let index = 0; index < 10; index++) {
-  //   const orderId = randomUUID()
-
-  //   const orderProducts1 = faker.helpers.arrayElements(products1, {
-  //     min: 1,
-  //     max: 5,
-  //   })
-
-  //   let total = 0
-
-  //   orderProducts1.forEach(product => {
-  //     const quantity = faker.number.int({
-  //       min: 1,
-  //       max: 5,
-  //     })
-
-  //     total += product.price.toNumber() * quantity
-
-  //     orderItems.push({
-  //       orderId,
-  //       productId: product.id,
-  //       price: product.price,
-  //       quantity,
-  //     })
-  //   })
-
-  //   const client = faker.helpers.arrayElement([
-  //     client1.id,
-  //     client2.id,
-  //     client3.id,
-  //     client4.id,
-  //     client5.id,
-  //     client6.id,
-  //     client7.id,
-  //   ])
-
-  //   const status = faker.helpers.arrayElement([
-  //     OrderStatus.DELIVERED,
-  //     OrderStatus.CANCELED,
-  //   ])
-  //   const date = faker.date.recent({ days: 90 })
-
-  //   orders.push({
-  //     id: orderId,
-  //     clientId: client,
-  //     restaurantId: restaurant1.id,
-  //     payment: faker.helpers.enumValue(PaymentMethod),
-  //     total: total + restaurant1.tax.toNumber(),
-  //     addressId: faker.helpers.arrayElement(
-  //       address.filter(item => item.clientId === client),
-  //     ).id,
-  //     date,
-  //     status,
-  //     preparedAt: addMinutes(date, 1),
-  //     routedAt:
-  //       status === "CANCELED"
-  //         ? null
-  //         : addMinutes(date, restaurant1.deliveryTime),
-  //     deliveredAt:
-  //       status === "DELIVERED"
-  //         ? addMinutes(date, restaurant1.deliveryTime + 10)
-  //         : null,
-  //     canceledAt:
-  //       status === "CANCELED"
-  //         ? addMinutes(date, restaurant1.deliveryTime + 10)
-  //         : null,
-  //   })
-
-  //   if (status === OrderStatus.DELIVERED) {
-  //     evaluations.push({
-  //       rate: faker.number.int({ min: 1, max: 5 }),
-  //       comment: faker.helpers.arrayElement([
-  //         null,
-  //         faker.lorem.paragraph({ min: 1, max: 4 }),
-  //       ]),
-  //       createdAt: faker.date.between({
-  //         from: addHours(addMinutes(date, restaurant1.deliveryTime + 10), 1),
-  //         to: faker.date.soon({
-  //           days: 2,
-  //           refDate: addHours(
-  //             addMinutes(date, restaurant1.deliveryTime + 10),
-  //             1,
-  //           ),
-  //         }),
-  //       }),
-  //       clientId: client,
-  //       orderId,
-  //     })
-  //   }
-  // }
-
-  // for (let index = 0; index < 10; index++) {
-  //   const orderId = randomUUID()
-
-  //   const orderProducts2 = faker.helpers.arrayElements(products2, {
-  //     min: 1,
-  //     max: 5,
-  //   })
-
-  //   let total = 0
-
-  //   orderProducts2.forEach(product => {
-  //     const quantity = faker.number.int({
-  //       min: 1,
-  //       max: 5,
-  //     })
-
-  //     total += product.price.toNumber() * quantity
-
-  //     orderItems.push({
-  //       orderId,
-  //       productId: product.id,
-  //       price: product.price,
-  //       quantity,
-  //     })
-  //   })
-
-  //   const client = faker.helpers.arrayElement([
-  //     client1.id,
-  //     client2.id,
-  //     client3.id,
-  //     client4.id,
-  //     client5.id,
-  //     client6.id,
-  //     client7.id,
-  //   ])
-
-  //   const status = faker.helpers.arrayElement([
-  //     OrderStatus.DELIVERED,
-  //     OrderStatus.CANCELED,
-  //   ])
-  //   const date = faker.date.recent({ days: 90 })
-
-  //   orders.push({
-  //     id: orderId,
-  //     clientId: client,
-  //     restaurantId: restaurant2.id,
-  //     payment: faker.helpers.enumValue(PaymentMethod),
-  //     total: total + restaurant2.tax.toNumber(),
-  //     addressId: faker.helpers.arrayElement(
-  //       address.filter(item => item.clientId === client),
-  //     ).id,
-  //     date,
-  //     status,
-  //     preparedAt: addMinutes(date, 1),
-  //     routedAt:
-  //       status === "CANCELED"
-  //         ? null
-  //         : addMinutes(date, restaurant2.deliveryTime),
-  //     deliveredAt:
-  //       status === "DELIVERED"
-  //         ? addMinutes(date, restaurant2.deliveryTime + 10)
-  //         : null,
-  //     canceledAt:
-  //       status === "CANCELED"
-  //         ? addMinutes(date, restaurant2.deliveryTime + 10)
-  //         : null,
-  //   })
-
-  //   if (status === OrderStatus.DELIVERED) {
-  //     evaluations.push({
-  //       rate: faker.number.int({ min: 1, max: 5 }),
-  //       comment: faker.helpers.arrayElement([
-  //         null,
-  //         faker.lorem.paragraph({ min: 1, max: 4 }),
-  //       ]),
-  //       createdAt: faker.date.between({
-  //         from: addHours(addMinutes(date, restaurant2.deliveryTime + 10), 1),
-  //         to: faker.date.soon({
-  //           days: 2,
-  //           refDate: addHours(
-  //             addMinutes(date, restaurant2.deliveryTime + 10),
-  //             1,
-  //           ),
-  //         }),
-  //       }),
-  //       clientId: client,
-  //       orderId,
-  //     })
-  //   }
-  // }
-
-  // for (let index = 0; index < 10; index++) {
-  //   const orderId = randomUUID()
-
-  //   const orderProducts3 = faker.helpers.arrayElements(products3, {
-  //     min: 1,
-  //     max: 5,
-  //   })
-
-  //   let total = 0
-
-  //   orderProducts3.forEach(product => {
-  //     const quantity = faker.number.int({
-  //       min: 1,
-  //       max: 5,
-  //     })
-
-  //     total += product.price.toNumber() * quantity
-
-  //     orderItems.push({
-  //       orderId,
-  //       productId: product.id,
-  //       price: product.price,
-  //       quantity,
-  //     })
-  //   })
-
-  //   const client = faker.helpers.arrayElement([
-  //     client1.id,
-  //     client2.id,
-  //     client3.id,
-  //     client4.id,
-  //     client5.id,
-  //     client6.id,
-  //     client7.id,
-  //   ])
-
-  //   const status = faker.helpers.arrayElement([
-  //     OrderStatus.DELIVERED,
-  //     OrderStatus.CANCELED,
-  //   ])
-  //   const date = faker.date.recent({ days: 90 })
-
-  //   orders.push({
-  //     id: orderId,
-  //     clientId: client,
-  //     restaurantId: restaurant3.id,
-  //     payment: faker.helpers.enumValue(PaymentMethod),
-  //     total: total + restaurant3.tax.toNumber(),
-  //     addressId: faker.helpers.arrayElement(
-  //       address.filter(item => item.clientId === client),
-  //     ).id,
-  //     date,
-  //     status,
-  //     preparedAt: addMinutes(date, 1),
-  //     routedAt:
-  //       status === "CANCELED"
-  //         ? null
-  //         : addMinutes(date, restaurant3.deliveryTime),
-  //     deliveredAt:
-  //       status === "DELIVERED"
-  //         ? addMinutes(date, restaurant3.deliveryTime + 10)
-  //         : null,
-  //     canceledAt:
-  //       status === "CANCELED"
-  //         ? addMinutes(date, restaurant3.deliveryTime + 10)
-  //         : null,
-  //   })
-
-  //   if (status === OrderStatus.DELIVERED) {
-  //     evaluations.push({
-  //       rate: faker.number.int({ min: 1, max: 5 }),
-  //       comment: faker.helpers.arrayElement([
-  //         null,
-  //         faker.lorem.paragraph({ min: 1, max: 4 }),
-  //       ]),
-  //       createdAt: faker.date.between({
-  //         from: addHours(addMinutes(date, restaurant3.deliveryTime + 10), 1),
-  //         to: faker.date.soon({
-  //           days: 2,
-  //           refDate: addHours(
-  //             addMinutes(date, restaurant3.deliveryTime + 10),
-  //             1,
-  //           ),
-  //         }),
-  //       }),
-  //       clientId: client,
-  //       orderId,
-  //     })
-  //   }
-  // }
-
-  // for (let index = 0; index < 10; index++) {
-  //   const orderId = randomUUID()
-
-  //   const orderProducts4 = faker.helpers.arrayElements(products4, {
-  //     min: 1,
-  //     max: 5,
-  //   })
-
-  //   let total = 0
-
-  //   orderProducts4.forEach(product => {
-  //     const quantity = faker.number.int({
-  //       min: 1,
-  //       max: 5,
-  //     })
-
-  //     total += product.price.toNumber() * quantity
-
-  //     orderItems.push({
-  //       orderId,
-  //       productId: product.id,
-  //       price: product.price,
-  //       quantity,
-  //     })
-  //   })
-
-  //   const client = faker.helpers.arrayElement([
-  //     client1.id,
-  //     client2.id,
-  //     client3.id,
-  //     client4.id,
-  //     client5.id,
-  //     client6.id,
-  //     client7.id,
-  //   ])
-
-  //   const status = faker.helpers.arrayElement([
-  //     OrderStatus.DELIVERED,
-  //     OrderStatus.CANCELED,
-  //   ])
-  //   const date = faker.date.recent({ days: 90 })
-
-  //   orders.push({
-  //     id: orderId,
-  //     clientId: client,
-  //     restaurantId: restaurant4.id,
-  //     payment: faker.helpers.enumValue(PaymentMethod),
-  //     total: total + restaurant4.tax.toNumber(),
-  //     addressId: faker.helpers.arrayElement(
-  //       address.filter(item => item.clientId === client),
-  //     ).id,
-  //     date,
-  //     status,
-  //     preparedAt: addMinutes(date, 1),
-  //     routedAt:
-  //       status === "CANCELED"
-  //         ? null
-  //         : addMinutes(date, restaurant4.deliveryTime),
-  //     deliveredAt:
-  //       status === "DELIVERED"
-  //         ? addMinutes(date, restaurant4.deliveryTime + 10)
-  //         : null,
-  //     canceledAt:
-  //       status === "CANCELED"
-  //         ? addMinutes(date, restaurant4.deliveryTime + 10)
-  //         : null,
-  //   })
-
-  //   if (status === OrderStatus.DELIVERED) {
-  //     evaluations.push({
-  //       rate: faker.number.int({ min: 1, max: 5 }),
-  //       comment: faker.helpers.arrayElement([
-  //         null,
-  //         faker.lorem.paragraph({ min: 1, max: 4 }),
-  //       ]),
-  //       createdAt: faker.date.between({
-  //         from: addHours(addMinutes(date, restaurant4.deliveryTime + 10), 1),
-  //         to: faker.date.soon({
-  //           days: 2,
-  //           refDate: addHours(
-  //             addMinutes(date, restaurant4.deliveryTime + 10),
-  //             1,
-  //           ),
-  //         }),
-  //       }),
-  //       clientId: client,
-  //       orderId,
-  //     })
-  //   }
-  // }
-
-  // for (let index = 0; index < 10; index++) {
-  //   const orderId = randomUUID()
-
-  //   const orderProducts5 = faker.helpers.arrayElements(products5, {
-  //     min: 1,
-  //     max: 5,
-  //   })
-
-  //   let total = 0
-
-  //   orderProducts5.forEach(product => {
-  //     const quantity = faker.number.int({
-  //       min: 1,
-  //       max: 5,
-  //     })
-
-  //     total += product.price.toNumber() * quantity
-
-  //     orderItems.push({
-  //       orderId,
-  //       productId: product.id,
-  //       price: product.price,
-  //       quantity,
-  //     })
-  //   })
-
-  //   const client = faker.helpers.arrayElement([
-  //     client1.id,
-  //     client2.id,
-  //     client3.id,
-  //     client4.id,
-  //     client5.id,
-  //     client6.id,
-  //     client7.id,
-  //   ])
-
-  //   const status = faker.helpers.arrayElement([
-  //     OrderStatus.DELIVERED,
-  //     OrderStatus.CANCELED,
-  //   ])
-  //   const date = faker.date.recent({ days: 90 })
-
-  //   orders.push({
-  //     id: orderId,
-  //     clientId: client,
-  //     restaurantId: restaurant5.id,
-  //     payment: faker.helpers.enumValue(PaymentMethod),
-  //     total: total + restaurant5.tax.toNumber(),
-  //     addressId: faker.helpers.arrayElement(
-  //       address.filter(item => item.clientId === client),
-  //     ).id,
-  //     date,
-  //     status,
-  //     preparedAt: addMinutes(date, 1),
-  //     routedAt:
-  //       status === "CANCELED"
-  //         ? null
-  //         : addMinutes(date, restaurant5.deliveryTime),
-  //     deliveredAt:
-  //       status === "DELIVERED"
-  //         ? addMinutes(date, restaurant5.deliveryTime + 10)
-  //         : null,
-  //     canceledAt:
-  //       status === "CANCELED"
-  //         ? addMinutes(date, restaurant5.deliveryTime + 10)
-  //         : null,
-  //   })
-
-  //   if (status === OrderStatus.DELIVERED) {
-  //     evaluations.push({
-  //       rate: faker.number.int({ min: 1, max: 5 }),
-  //       comment: faker.helpers.arrayElement([
-  //         null,
-  //         faker.lorem.paragraph({ min: 1, max: 4 }),
-  //       ]),
-  //       createdAt: faker.date.between({
-  //         from: addHours(addMinutes(date, restaurant5.deliveryTime + 10), 1),
-  //         to: faker.date.soon({
-  //           days: 2,
-  //           refDate: addHours(
-  //             addMinutes(date, restaurant5.deliveryTime + 10),
-  //             1,
-  //           ),
-  //         }),
-  //       }),
-  //       clientId: client,
-  //       orderId,
-  //     })
-  //   }
-  // }
 
   await prisma.order.createMany({
     data: orders,
@@ -1034,13 +491,9 @@ async function main() {
           client6.id,
           client7.id,
         ]),
-        restaurantId: faker.helpers.arrayElement([
-          restaurant1.id,
-          restaurant2.id,
-          restaurant3.id,
-          restaurant4.id,
-          restaurant5.id,
-        ]),
+        restaurantId: faker.helpers.arrayElement(
+          restaurants.map(({ id }) => id),
+        ),
       },
       {
         clientId: faker.helpers.arrayElement([
@@ -1052,13 +505,9 @@ async function main() {
           client6.id,
           client7.id,
         ]),
-        restaurantId: faker.helpers.arrayElement([
-          restaurant1.id,
-          restaurant2.id,
-          restaurant3.id,
-          restaurant4.id,
-          restaurant5.id,
-        ]),
+        restaurantId: faker.helpers.arrayElement(
+          restaurants.map(({ id }) => id),
+        ),
       },
       {
         clientId: faker.helpers.arrayElement([
@@ -1070,13 +519,9 @@ async function main() {
           client6.id,
           client7.id,
         ]),
-        restaurantId: faker.helpers.arrayElement([
-          restaurant1.id,
-          restaurant2.id,
-          restaurant3.id,
-          restaurant4.id,
-          restaurant5.id,
-        ]),
+        restaurantId: faker.helpers.arrayElement(
+          restaurants.map(({ id }) => id),
+        ),
       },
       {
         clientId: faker.helpers.arrayElement([
@@ -1088,13 +533,9 @@ async function main() {
           client6.id,
           client7.id,
         ]),
-        restaurantId: faker.helpers.arrayElement([
-          restaurant1.id,
-          restaurant2.id,
-          restaurant3.id,
-          restaurant4.id,
-          restaurant5.id,
-        ]),
+        restaurantId: faker.helpers.arrayElement(
+          restaurants.map(({ id }) => id),
+        ),
       },
       {
         clientId: faker.helpers.arrayElement([
@@ -1106,13 +547,9 @@ async function main() {
           client6.id,
           client7.id,
         ]),
-        restaurantId: faker.helpers.arrayElement([
-          restaurant1.id,
-          restaurant2.id,
-          restaurant3.id,
-          restaurant4.id,
-          restaurant5.id,
-        ]),
+        restaurantId: faker.helpers.arrayElement(
+          restaurants.map(({ id }) => id),
+        ),
       },
     ],
     skipDuplicates: true,
