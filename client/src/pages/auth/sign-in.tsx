@@ -68,10 +68,10 @@ export function SignIn() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <Button
         asChild
-        className="absolute left-8 top-8"
+        className="absolute left-4 top-4 md:left-8 md:top-8"
         variant="link"
       >
         <Link to="/">
@@ -81,14 +81,14 @@ export function SignIn() {
       </Button>
       <Button
         asChild
-        className="absolute right-8 top-8"
+        className="absolute right-4 top-4 md:right-8 md:top-8"
         variant="ghost"
       >
         <Link to="/sign-up">Criar conta</Link>
       </Button>
 
       <Seo title="Login" />
-      <div className="flex flex-col justify-center gap-6 w-80">
+      <div className="flex flex-col justify-center gap-6 max-w-80">
         <div className="flex flex-col gap-2 text-center">
           <h1 className="text-2xl font-semibold">Acessar minha conta</h1>
           <p className="text-sm text-muted-foreground">

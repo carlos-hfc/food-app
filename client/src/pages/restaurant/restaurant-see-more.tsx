@@ -167,9 +167,13 @@ export function RestaurantSeeMore({
                     </div>
                   </div>
 
-                  <span className="text-muted-foreground">
+                  <time
+                    dateTime={rate.createdAt}
+                    title={format(new Date(rate.createdAt), "dd/MM/yyyy")}
+                    className="text-muted-foreground"
+                  >
                     {format(new Date(rate.createdAt), "dd/MM/yyyy")}
-                  </span>
+                  </time>
                 </div>
 
                 {rate.comment && (
