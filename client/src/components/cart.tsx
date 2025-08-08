@@ -1,7 +1,8 @@
 import { XIcon } from "lucide-react"
-import { useLocation, useNavigate } from "react-router"
+import { Link, useLocation, useNavigate } from "react-router"
 
 import { useCart } from "@/contexts/cart"
+import { useCheckout } from "@/hooks/useCheckout"
 import { formatPriceNumber } from "@/lib/format-price-number"
 import { cn } from "@/lib/utils"
 
@@ -18,6 +19,7 @@ import {
 
 export function Cart() {
   const { numberOfItems, items, restaurant, cleanCart } = useCart()
+  const { subtotal, tax, total } = useCheckout()
 
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -27,20 +29,6 @@ export function Cart() {
 
     navigate(`/restaurantes/${restaurant?.id}`)
   }
-
-  const { subtotal, tax, total } = items.reduce(
-    (accumulator, current) => {
-      accumulator.subtotal += current.price * current.quantity
-      accumulator.total = accumulator.subtotal + accumulator.tax
-
-      return accumulator
-    },
-    {
-      subtotal: 0,
-      tax: restaurant?.tax ?? 0,
-      total: 0,
-    },
-  )
 
   return (
     <SheetContent
@@ -167,7 +155,14 @@ export function Cart() {
               </p>
             </div>
 
-            <Button className="w-1/2">Continuar</Button>
+            <Button asChild>
+              <Link
+                to="/checkout"
+                className="w-1/2"
+              >
+                Continuar
+              </Link>
+            </Button>
           </SheetFooter>
         </>
       )}
