@@ -118,75 +118,78 @@ export function AddressItem({ address }: AddressItemProps) {
   return (
     <div
       className={cn(
-        "flex justify-between gap-3 cursor-default select-none border rounded-md p-3",
+        "flex flex-col gap-3 cursor-default select-none border rounded-md p-3",
         address.main && "border-primary",
       )}
     >
-      <div className="space-y-2">
+      <div className="flex justify-between">
         <p className="font-semibold">
           {address.alias
             ? address.alias
             : `${address.street}, ${address.number}`}
         </p>
+
+        <div className="flex gap-3">
+          <CheckCircle2Icon
+            aria-label="Endereço principal"
+            className={cn(
+              address.main
+                ? "size-[18px] fill-primary stroke-background pointer-events-none"
+                : "size-4 text-primary",
+            )}
+            onClick={handleSelectMain}
+          />
+
+          <Dialog
+            open={isDetailsOpen}
+            onOpenChange={setIsDetailsOpen}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="h-min"
+                aria-label="Abrir menu"
+              >
+                <EllipsisVerticalIcon className="size-4 text-primary" />
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DialogTrigger asChild>
+                  <DropdownMenuItem asChild>
+                    <button className="w-full">
+                      <Edit2Icon />
+                      Editar
+                    </button>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+
+                <DropdownMenuItem asChild>
+                  <button
+                    className="w-full"
+                    disabled={isDeletingAddress}
+                    onClick={handleDeleteAddress}
+                  >
+                    <Trash2Icon />
+                    Excluir
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <AddressDialog
+              open={isDetailsOpen}
+              addressId={address.id}
+              isEdit
+            />
+          </Dialog>
+        </div>
+      </div>
+
+      <div className="space-y-2">
         <span className="text-sm leading-0">
           {address.alias && `${address.street}, ${address.number}`}
           {address.alias && " - "}
           {address.district}, {address.city}, {address.state}
         </span>
-      </div>
-
-      <div className="flex gap-3">
-        <CheckCircle2Icon
-          aria-label="Endereço principal"
-          className={cn(
-            address.main
-              ? "size-[18px] fill-primary stroke-background pointer-events-none"
-              : "size-4 text-primary",
-          )}
-          onClick={handleSelectMain}
-        />
-
-        <Dialog
-          open={isDetailsOpen}
-          onOpenChange={setIsDetailsOpen}
-        >
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className="h-min"
-              aria-label="Abrir menu"
-            >
-              <EllipsisVerticalIcon className="size-4 text-primary" />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DialogTrigger asChild>
-                <DropdownMenuItem asChild>
-                  <button className="w-full">
-                    <Edit2Icon />
-                    Editar
-                  </button>
-                </DropdownMenuItem>
-              </DialogTrigger>
-
-              <DropdownMenuItem asChild>
-                <button
-                  className="w-full"
-                  disabled={isDeletingAddress}
-                  onClick={handleDeleteAddress}
-                >
-                  <Trash2Icon />
-                  Excluir
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <AddressDialog
-            open={isDetailsOpen}
-            addressId={address.id}
-            isEdit
-          />
-        </Dialog>
       </div>
     </div>
   )
