@@ -1,6 +1,7 @@
 import { StarIcon } from "lucide-react"
 import { Link } from "react-router"
 
+import { formatPriceNumber } from "@/lib/format-price-number"
 import { cn } from "@/lib/utils"
 
 interface RestaurantCardProps {
@@ -30,7 +31,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       <img
         src={restaurant.image ?? "/hamburger.webp"}
         alt={restaurant.name}
-        className="rounded-md max-w-32"
+        className="rounded-md max-w-16 md:max-w-32"
       />
 
       <div className="space-y-1">
@@ -58,10 +59,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               <span className={cn(restaurant.tax === 0 && "text-green-600")}>
                 {restaurant.tax === 0
                   ? "Grátis"
-                  : restaurant.tax.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                  : formatPriceNumber(restaurant.tax)}
               </span>
             </>
           ) : (

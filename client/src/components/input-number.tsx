@@ -9,21 +9,29 @@ import { Input } from "./ui/input"
 interface InputNumberProps extends ComponentProps<"input"> {
   onDecrement(): void
   onIncrement(): void
+  containerClassName?: string
 }
 
 export function InputNumber({
   className,
   onDecrement,
   onIncrement,
+  containerClassName,
   ...props
 }: InputNumberProps) {
   return (
-    <div className="relative flex items-center justify-center rounded-md border w-fit">
+    <div
+      className={cn(
+        "relative flex items-center justify-center rounded-md border w-fit",
+        containerClassName,
+      )}
+    >
       <Button
         type="button"
         size="sm"
         variant="ghost"
         onClick={onDecrement}
+        aria-label="Diminuir quantidade"
       >
         <MinusIcon className="size-4" />
       </Button>
@@ -44,6 +52,7 @@ export function InputNumber({
         size="sm"
         variant="ghost"
         onClick={onIncrement}
+        aria-label="Aumentar quantidade"
       >
         <PlusIcon className="size-4" />
       </Button>

@@ -7,6 +7,7 @@ import { InputNumber } from "@/components/input-number"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/contexts/cart"
 import { getRestarauntInfo } from "@/http/get-restaurant-info"
+import { formatPriceNumber } from "@/lib/format-price-number"
 
 interface ProductCardProps {
   product: {
@@ -124,10 +125,7 @@ export function ProductCard({ product, closedRestaurant }: ProductCardProps) {
 
       <div className="mt-auto flex flex-wrap items-center justify-between">
         <span className="text-green-600 font-semibold">
-          {product.price.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}
+          {formatPriceNumber(product.price)}
         </span>
 
         <div

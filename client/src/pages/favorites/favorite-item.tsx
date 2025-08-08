@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { deleteFavorite } from "@/http/delete-favorite"
 import { ListFavoritesResponse } from "@/http/list-favorites"
+import { formatPriceNumber } from "@/lib/format-price-number"
 import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
 
@@ -90,12 +91,7 @@ export function FavoriteItem({ favorite }: FavoriteItemProps) {
           </span>{" "}
           -{" "}
           <span className={cn(favorite.tax === 0 && "text-green-600")}>
-            {favorite.tax === 0
-              ? "Grátis"
-              : favorite.tax.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+            {favorite.tax === 0 ? "Grátis" : formatPriceNumber(favorite.tax)}
           </span>
         </div>
       </div>

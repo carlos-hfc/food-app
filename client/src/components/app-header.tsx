@@ -52,7 +52,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="py-4 border-b sticky top-0 bg-background shadow-sm">
+    <header className="py-4 border-b sticky top-0 bg-background shadow-sm z-2">
       <div className="flex items-center gap-4 container max-w-6xl px-4 lg:px-8">
         <HamburgerIcon className="size-8 lg:size-12 text-primary shrink-0" />
 

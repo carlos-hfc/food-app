@@ -8,6 +8,7 @@ export interface CartItem {
   id: string
   restaurantId: string
   name: string
+  description: string
   image: string | null
   price: number
   quantity: number
@@ -17,6 +18,7 @@ export type RestaurantItem = {
   id: string
   name: string
   image: string | null
+  tax: number
 } | null
 
 export interface AddItemToCartParams {
