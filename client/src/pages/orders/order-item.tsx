@@ -27,6 +27,7 @@ interface OrderItemProps {
       id: string
       name: string
       image: string | null
+      tax: number
     }
     products: {
       id: string

@@ -5,7 +5,6 @@ interface CheckoutItemProps {
     id: string
     restaurantId: string
     name: string
-    description: string
     image: string | null
     price: number
     quantity: number
