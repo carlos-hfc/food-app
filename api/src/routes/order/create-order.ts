@@ -108,6 +108,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
           },
           restaurantId,
           available: true,
+          active: true,
         },
       })
 
