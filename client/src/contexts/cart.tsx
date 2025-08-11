@@ -3,6 +3,7 @@ import {
   PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
 } from "react"
@@ -39,13 +40,13 @@ export function CartProvider({ children }: PropsWithChildren) {
       restaurant: null,
     },
     initialState => {
-      // const cartItemsStorage = localStorage.getItem("@cart_items")
+      const cartItemsStorage = localStorage.getItem("@cart_items")
 
-      // if (cartItemsStorage) {
-      //   const parsedCartItems = JSON.parse(cartItemsStorage)
+      if (cartItemsStorage) {
+        const parsedCartItems = JSON.parse(cartItemsStorage)
 
-      //   return parsedCartItems
-      // }
+        return parsedCartItems
+      }
 
       return initialState
     },
@@ -53,11 +54,11 @@ export function CartProvider({ children }: PropsWithChildren) {
 
   const { items, numberOfItems, restaurant } = cartState
 
-  // useEffect(() => {
-  //   const cartItemsJSON = JSON.stringify(cartState)
+  useEffect(() => {
+    const cartItemsJSON = JSON.stringify(cartState)
 
-  //   localStorage.setItem("@cart_items", cartItemsJSON)
-  // }, [cartState])
+    localStorage.setItem("@cart_items", cartItemsJSON)
+  }, [cartState])
 
   const addToCart = useCallback((data: AddItemToCartParams) => {
     dispatch(addItemToCart(data))

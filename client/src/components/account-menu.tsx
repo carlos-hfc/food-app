@@ -32,6 +32,7 @@ export function AccountMenu() {
     queryKey: ["profile"],
     queryFn: getProfile,
     retry: 2,
+    enabled: Boolean(sessionStorage.getItem("isLogged")),
   })
 
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({

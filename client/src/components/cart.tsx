@@ -157,7 +157,7 @@ export function Cart() {
 
             <Button asChild>
               <Link
-                to="/checkout"
+                to="/checkout?step=1"
                 className="w-1/2"
               >
                 Continuar

@@ -37,7 +37,7 @@ export function ProductCart({ product }: ProductCartProps) {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2">
       <img
         src={product.image ?? "/hamburger.webp"}
         alt={product.name}
@@ -46,15 +46,12 @@ export function ProductCart({ product }: ProductCartProps) {
 
       <div className="leading-0">
         <p className="text-sm font-bold line-clamp-2">{product.name}</p>
-        <span className="text-xs text-muted-foreground line-clamp-1">
-          {product.description}
-        </span>
         <span className="text-sm font-bold block mt-1">
           {formatPriceNumber(product.price)}
         </span>
       </div>
 
-      <div className="self-center">
+      <div className="self-center ml-auto">
         <InputNumber
           ref={inputRef}
           defaultValue={product.quantity}

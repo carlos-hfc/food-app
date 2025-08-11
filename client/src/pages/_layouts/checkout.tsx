@@ -11,7 +11,7 @@ export function CheckoutLayout() {
       <ScrollRestoration />
 
       <div className="overflow-y-auto flex-1 flex">
-        <div className="container max-w-3xl flex flex-1 flex-col gap-4 px-4 lg:px-8 my-8">
+        <div className="container max-w-3xl flex px-4 lg:px-8 my-8">
           <Outlet />
         </div>
       </div>
