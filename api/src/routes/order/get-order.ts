@@ -8,17 +8,22 @@ import { auth } from "@/middlewares/auth"
 interface Query {
   id: string
   date: Date
+  preparedAt: Date | null
+  routedAt: Date | null
+  deliveredAt: Date | null
+  canceledAt: Date | null
   payment: string
   status: string
   total: string
   customerName: string
   phone: string
   email: string
-  address: string
-  number: number | null
+  street: string
+  number: number
   district: string
   city: string
-  uf: string
+  state: string
+  restaurantId: string
   restaurantName: string
   restaurantImage: string | null
   tax: string
@@ -43,6 +48,10 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
           200: z.object({
             id: z.string().uuid(),
             date: z.date(),
+            preparedAt: z.date().nullable(),
+            routedAt: z.date().nullable(),
+            deliveredAt: z.date().nullable(),
+            canceledAt: z.date().nullable(),
             payment: z.string().toUpperCase().pipe(z.nativeEnum(PaymentMethod)),
             status: z.string().toUpperCase().pipe(z.nativeEnum(OrderStatus)),
             total: z.number(),
@@ -53,13 +62,14 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
               phone: z.string(),
             }),
             address: z.object({
-              address: z.string(),
-              number: z.number().nullable(),
+              street: z.string(),
+              number: z.number(),
               district: z.string(),
               city: z.string(),
-              uf: z.string(),
+              state: z.string(),
             }),
             restaurant: z.object({
+              id: z.string().uuid(),
               name: z.string(),
               image: z.string().nullable(),
               deliveryTime: z.number(),
@@ -85,17 +95,22 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
         select
           o.id,
           o.date,
+          o."preparedAt",
+          o."routedAt",
+          o."deliveredAt",
+          o."canceledAt",
           o.payment,
           o.status,
           o.total,
           u.name "customerName",
           u.phone,
           u.email,
-          ad.address,
+          ad.street,
           ad.number,
           ad.district,
           ad.city,
-          ad.uf,
+          ad.state,
+          r.id "restaurantId",
           r.name "restaurantName",
           r.image "restaurantImage",
           r.tax::money,
@@ -119,17 +134,22 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
       const {
         id,
         date,
+        preparedAt,
+        routedAt,
+        deliveredAt,
+        canceledAt,
         payment,
         status,
         total,
         customerName,
         phone,
         email,
-        address,
+        street,
         number,
         district,
         city,
-        uf,
+        state,
+        restaurantId,
         restaurantName,
         restaurantImage,
         tax,
@@ -140,11 +160,16 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
       const order = {
         id,
         date,
+        preparedAt,
+        routedAt,
+        deliveredAt,
+        canceledAt,
         payment,
         status,
         total: Number(total),
         rate,
         restaurant: {
+          id: restaurantId,
           name: restaurantName,
           image: restaurantImage,
           tax: Number(tax),
@@ -156,11 +181,11 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
           email,
         },
         address: {
-          address,
+          street,
           number,
           district,
           city,
-          uf,
+          state,
         },
         products: query.map(item => ({
           id: item.productId,
