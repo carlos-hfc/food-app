@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { useCart } from "@/contexts/cart"
 import { evaluateOrder } from "@/http/evaluate-order"
@@ -223,13 +224,24 @@ export function OrderDetails({ open, orderId }: OrderDetailsProps) {
 
   return (
     <DialogContent className="max-h-10/12 overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle>{order?.restaurant.name}</DialogTitle>
-        <DialogDescription>
-          Pedido {orderId} -{" "}
-          {order?.date && format(new Date(order?.date), "dd/MM 'às' HH:mm")}
-        </DialogDescription>
-      </DialogHeader>
+      {order ? (
+        <DialogHeader>
+          <DialogTitle>{order.restaurant.name}</DialogTitle>
+          <DialogDescription>
+            Pedido {orderId} -{" "}
+            {format(new Date(order.date), "dd/MM 'às' HH:mm")}
+          </DialogDescription>
+        </DialogHeader>
+      ) : (
+        <DialogHeader>
+          <DialogTitle>
+            <Skeleton className="w-52 h-6" />
+          </DialogTitle>
+          <DialogDescription>
+            <Skeleton className="w-full h-4" />
+          </DialogDescription>
+        </DialogHeader>
+      )}
 
       {order ? (
         <div className="space-y-6">
