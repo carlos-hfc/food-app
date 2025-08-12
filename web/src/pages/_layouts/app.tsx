@@ -9,7 +9,7 @@ export function AppLayout() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const intercetorId = api.interceptors.response.use(
+    const interceptorId = api.interceptors.response.use(
       response => response,
       error => {
         if (isAxiosError(error)) {
@@ -19,6 +19,8 @@ export function AppLayout() {
           if (status === 400 && message === "Invalid auth token") {
             navigate("/sign-in", { replace: true })
           }
+
+          throw error
         } else {
           console.log(error.response)
           throw error
@@ -27,7 +29,7 @@ export function AppLayout() {
     )
 
     return () => {
-      api.interceptors.response.eject(intercetorId)
+      api.interceptors.response.eject(interceptorId)
     }
   }, [navigate])
 

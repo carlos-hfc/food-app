@@ -22,6 +22,10 @@ export function withPermission<T extends object>(Component: ComponentType<T>) {
               sessionStorage.removeItem("isLogged")
               navigate(redirectOnError, { replace: true })
             }
+
+            throw error
+          } else {
+            throw error
           }
         },
       )
