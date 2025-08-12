@@ -1,8 +1,10 @@
 import { useMutation } from "@tanstack/react-query"
+import { isAxiosError } from "axios"
 import { format, formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ArrowRightIcon, SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 import { OrderStatus, OrderStatusType } from "@/components/order-status"
 import { PaymentMethod } from "@/components/payment-method"
@@ -59,6 +61,14 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       async onSuccess(_, { orderId }) {
         updateOrderStatusOnCache(orderId, "CANCELED")
       },
+      onError(error) {
+        if (isAxiosError(error)) {
+          toast.error(error.response?.data.message)
+          return
+        }
+
+        toast.error("Erro ao atualizar o pedido")
+      },
     })
 
   const { mutateAsync: approveOrderFn, isPending: isApprovingOrder } =
@@ -66,6 +76,14 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       mutationFn: approveOrder,
       async onSuccess(_, { orderId }) {
         updateOrderStatusOnCache(orderId, "PREPARING")
+      },
+      onError(error) {
+        if (isAxiosError(error)) {
+          toast.error(error.response?.data.message)
+          return
+        }
+
+        toast.error("Erro ao atualizar o pedido")
       },
     })
 
@@ -75,6 +93,14 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       async onSuccess(_, { orderId }) {
         updateOrderStatusOnCache(orderId, "ROUTING")
       },
+      onError(error) {
+        if (isAxiosError(error)) {
+          toast.error(error.response?.data.message)
+          return
+        }
+
+        toast.error("Erro ao atualizar o pedido")
+      },
     })
 
   const { mutateAsync: deliverOrderFn, isPending: isDeliveringOrder } =
@@ -82,6 +108,14 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       mutationFn: deliverOrder,
       async onSuccess(_, { orderId }) {
         updateOrderStatusOnCache(orderId, "DELIVERED")
+      },
+      onError(error) {
+        if (isAxiosError(error)) {
+          toast.error(error.response?.data.message)
+          return
+        }
+
+        toast.error("Erro ao atualizar o pedido")
       },
     })
 

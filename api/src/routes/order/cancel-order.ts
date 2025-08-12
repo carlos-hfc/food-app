@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { OrderStatus } from "generated/prisma"
 import { z } from "zod"
@@ -5,6 +6,7 @@ import { z } from "zod"
 import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
+import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 
 export const cancelOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
@@ -21,6 +23,26 @@ export const cancelOrder: FastifyPluginAsyncZod = async app => {
     },
     async (request, reply) => {
       const restaurantId = await request.getManagedRestaurantId()
+
+      const restaurant = await prisma.restaurant.findUnique({
+        where: {
+          id: restaurantId,
+        },
+        include: {
+          hours: {
+            where: {
+              weekday: new TZDate().getDay(),
+            },
+          },
+        },
+      })
+
+      if (
+        !restaurantIsOpen(restaurant!.hours[0]) ||
+        !restaurant!.hours[0].open
+      ) {
+        throw new ClientError("Restaurant is not open to update order status")
+      }
 
       const { orderId } = request.params
 

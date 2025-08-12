@@ -1,5 +1,4 @@
-import { tz, TZDate } from "@date-fns/tz"
-import { differenceInMinutes, startOfToday } from "date-fns"
+import { TZDate } from "@date-fns/tz"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { PaymentMethod } from "generated/prisma"
 import { z } from "zod"
@@ -8,6 +7,7 @@ import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
+import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 
 export const createOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
@@ -50,28 +50,11 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         },
         include: {
           hours: {
-            orderBy: {
-              weekday: "asc",
-            },
             where: {
               weekday: {
                 equals: new TZDate().getDay(),
               },
-              open: true,
-              openedAt: {
-                lte: differenceInMinutes(
-                  new Date(),
-                  startOfToday({ in: tz("-03:00") }),
-                ),
-              },
-              closedAt: {
-                gte: differenceInMinutes(
-                  new Date(),
-                  startOfToday({ in: tz("-03:00") }),
-                ),
-              },
             },
-            take: 1,
           },
         },
       })
@@ -80,8 +63,8 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Restaurant not found")
       }
 
-      if (restaurant.hours.length <= 0) {
-        throw new ClientError("Closed restaurant")
+      if (restaurantIsOpen(restaurant.hours[0]) || !restaurant.hours[0].open) {
+        throw new ClientError("Restaurant is closed")
       }
 
       const address = await prisma.address.findUnique({
