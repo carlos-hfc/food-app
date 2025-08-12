@@ -7,7 +7,7 @@ import {
   UseFormWatch,
 } from "react-hook-form"
 
-import { PaymentItem } from "./payment-item"
+import { PaymentItem } from "../payment-item"
 
 interface PaymentStepProps<T extends FieldValues> {
   name: Path<T>
