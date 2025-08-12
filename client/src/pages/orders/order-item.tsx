@@ -2,14 +2,17 @@ import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ChevronRightIcon, InfoIcon, StarIcon } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useCart } from "@/contexts/cart"
 import { getMenu } from "@/http/get-menu"
 import { getRestarauntInfo } from "@/http/get-restaurant-info"
 import { cn } from "@/lib/utils"
 
+import { OrderDetails } from "./order-details"
 import { OrderStatus, OrderStatusType } from "./order-status"
 
 interface OrderItemProps {
@@ -40,6 +43,8 @@ interface OrderItemProps {
 }
 
 export function OrderItem({ order }: OrderItemProps) {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
   const { data: result } = useQuery({
     queryKey: ["restaurant-info", order.restaurant.id],
     queryFn: () => getRestarauntInfo({ restaurantId: order.restaurant.id }),
@@ -224,22 +229,50 @@ export function OrderItem({ order }: OrderItemProps) {
         )}
 
         <div className="flex gap-2 pb-0!">
-          <Button
-            variant="link"
-            size="sm"
-            className="text-sm! flex-1"
+          <Dialog
+            open={isDetailsOpen}
+            onOpenChange={setIsDetailsOpen}
           >
-            Detalhes
-          </Button>
-          <div className="h-auto w-px bg-border" />
-          <Button
-            variant="link"
-            size="sm"
-            className="text-sm! flex-1"
-            onClick={handleAddToCart}
-          >
-            Adicionar à sacola
-          </Button>
+            <DialogTrigger asChild>
+              <Button
+                variant="link"
+                size="sm"
+                className="text-sm! flex-1"
+              >
+                Detalhes
+              </Button>
+            </DialogTrigger>
+
+            <OrderDetails
+              open={isDetailsOpen}
+              orderId={order.id}
+            />
+          </Dialog>
+
+          {order.status !== "ROUTING" && (
+            <div className="h-auto w-px bg-border" />
+          )}
+
+          {["PREPARING", "PENDING"].includes(order.status) && (
+            <Button
+              variant="link"
+              size="sm"
+              className="text-sm! flex-1"
+            >
+              Cancelar
+            </Button>
+          )}
+
+          {["CANCELED", "DELIVERED"].includes(order.status) && (
+            <Button
+              variant="link"
+              size="sm"
+              className="text-sm! flex-1"
+              onClick={handleAddToCart}
+            >
+              Adicionar à sacola
+            </Button>
+          )}
         </div>
       </div>
     </div>
