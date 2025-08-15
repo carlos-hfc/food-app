@@ -1,0 +1,1 @@
+CREATE DATABASE food_app_test;

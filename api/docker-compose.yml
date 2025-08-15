@@ -8,6 +8,5 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: charlos
       POSTGRES_DB: food-app
-      PGDATA: /data/postgres
     volumes:
-      - ./data/pg:/data/postgres
+      - ./docker/setup.sql:/docker-entrypoint-initdb.d/init.sql

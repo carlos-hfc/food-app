@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch --env-file .env src/server.ts",
-    "prisma:migrate": "npx prisma migrate dev"
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:seed": "npx prisma db seed",
+    "pretest": "dotenv -e .env.test npx prisma migrate dev",
+    "test": "dotenv -e .env.test vitest run",
+    "test:watch": "dotenv -e .env.test vitest",
+    "test:coverage": "dotenv -e .env.test vitest run --coverage"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -17,9 +22,15 @@
     "@ch-faustino/eslint-config": "^1.0.1",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.0.1",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^3.2.4",
+    "dotenv-cli": "^10.0.0",
     "prisma": "^6.9.0",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@date-fns/tz": "^1.2.0",
