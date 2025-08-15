@@ -11,6 +11,7 @@ import { useCart } from "@/contexts/cart"
 import { useCheckout } from "@/hooks/useCheckout"
 import { createOrder } from "@/http/create-order"
 import { formatPriceNumber } from "@/lib/format-price-number"
+import { queryClient } from "@/lib/react-query"
 
 import { CheckoutItem } from "./checkout-item"
 import { PaymentStep } from "./steps/payment-step"
@@ -24,7 +25,7 @@ const checkoutSchema = z.object({
 type CheckoutSchema = z.infer<typeof checkoutSchema>
 
 export function Checkout() {
-  const { items, numberOfItems, restaurant, cleanCart } = useCart()
+  const { items, numberOfItems, restaurant } = useCart()
   const { subtotal, tax, total } = useCheckout()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -37,9 +38,9 @@ export function Checkout() {
   const { mutateAsync: createOrderFn, isPending: isCreatingOrder } =
     useMutation({
       mutationFn: createOrder,
-      onSuccess() {
-        navigate("/pedidos")
-        cleanCart()
+      onSuccess({ orderId }) {
+        queryClient.invalidateQueries({ queryKey: ["orders"] })
+        navigate(`/pedidos?order=${orderId}`)
       },
     })
 
@@ -69,7 +70,7 @@ export function Checkout() {
 
       toast.success("Pedido realizado com sucesso!")
     } catch (error) {
-      toast.success("Falha ao fazer o pedido, tente novamente")
+      toast.error("Falha ao fazer o pedido, tente novamente")
     }
   }
 
