@@ -10,7 +10,7 @@ import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 
 export const cancelOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/order/:orderId/cancel",
+    "/orders/:orderId/cancel",
     {
       schema: {
         params: z.object({
@@ -22,11 +22,21 @@ export const cancelOrder: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const restaurantId = await request.getManagedRestaurantId()
+      const { orderId } = request.params
+
+      const order = await prisma.order.findUnique({
+        where: {
+          id: orderId,
+        },
+      })
+
+      if (!order) {
+        throw new ClientError("Order not found")
+      }
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
-          id: restaurantId,
+          id: order.restaurantId,
         },
         include: {
           hours: {
@@ -42,19 +52,6 @@ export const cancelOrder: FastifyPluginAsyncZod = async app => {
         !restaurant!.hours[0].open
       ) {
         throw new ClientError("Restaurant is not open to update order status")
-      }
-
-      const { orderId } = request.params
-
-      const order = await prisma.order.findUnique({
-        where: {
-          id: orderId,
-          restaurantId,
-        },
-      })
-
-      if (!order) {
-        throw new ClientError("Order not found")
       }
 
       if (
