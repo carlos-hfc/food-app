@@ -39,6 +39,7 @@ export const getMonthOrdersAmount: FastifyPluginAsyncZod = async app => {
         from orders o
         where o."restaurantId" = ${restaurantId}
           and o.date <= ${endOfCurrentMonth}
+          and o.status = 'DELIVERED'
         group by "month"
         having count(o.id) > 1
         order by "month" desc

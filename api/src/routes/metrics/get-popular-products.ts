@@ -38,6 +38,7 @@ export const getPopularProducts: FastifyPluginAsyncZod = async app => {
         left join orders o on o.id = oi."orderId"
         left join products p on p.id = oi."productId"
         where o."restaurantId" = ${restaurantId}
+          and o.status = 'DELIVERED'
         group by p.name
         order by amount desc
         limit 5

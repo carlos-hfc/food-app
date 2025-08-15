@@ -40,6 +40,7 @@ export const getMonthReceipt: FastifyPluginAsyncZod = async app => {
         from orders o
         where o."restaurantId" = ${restaurantId}
           and to_char(o.date, 'YYYY-MM') <= ${currentMonthWithYear}
+          and o.status = 'DELIVERED'
         group by to_char(o.date, 'YYYY-MM')
         order by to_char(o.date, 'YYYY-MM') desc
       `)

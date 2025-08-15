@@ -68,6 +68,7 @@ export const getDailyReceiptInPeriod: FastifyPluginAsyncZod = async app => {
         from orders o
         where o."restaurantId" = ${restaurantId}
           and o.date::varchar between ${startDate} and ${endDate}
+          and o.status = 'DELIVERED'
         group by datetime
         order by datetime desc
         limit 7
