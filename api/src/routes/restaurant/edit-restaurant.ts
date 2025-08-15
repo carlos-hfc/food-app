@@ -1,6 +1,7 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
+import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -39,18 +40,49 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
 
       const { deliveryTime, name, phone, tax, categoryId, hours } = request.body
 
-      await prisma.restaurant.update({
-        where: {
-          id: restaurantId,
-        },
-        data: {
-          name,
-          phone,
-          tax,
-          deliveryTime,
-          categoryId,
-        },
-      })
+      if (phone) {
+        const [restaurantExists, userExists] = await Promise.all([
+          prisma.restaurant.findFirst({
+            where: {
+              phone,
+            },
+          }),
+          prisma.user.findFirst({
+            where: {
+              phone,
+            },
+          }),
+        ])
+
+        if (restaurantExists || userExists) {
+          throw new ClientError("Restaurant already exists")
+        }
+      }
+
+      await Promise.all([
+        prisma.user.updateMany({
+          where: {
+            restaurant: {
+              id: restaurantId,
+            },
+          },
+          data: {
+            phone,
+          },
+        }),
+        prisma.restaurant.update({
+          where: {
+            id: restaurantId,
+          },
+          data: {
+            name,
+            phone,
+            tax,
+            deliveryTime,
+            categoryId,
+          },
+        }),
+      ])
 
       if (hours) {
         await Promise.all(

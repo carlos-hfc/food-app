@@ -52,12 +52,9 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
         restaurantName,
       } = request.body
 
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: {
-          email_phone: {
-            email,
-            phone,
-          },
+          OR: [{ email }, { phone }],
         },
       })
 
@@ -75,10 +72,6 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           open: item.open ?? true,
         }))
       })
-
-      if (operationHours.length < 7) {
-        throw new ClientError("Invalid weekdays")
-      }
 
       await prisma.user.create({
         data: {
