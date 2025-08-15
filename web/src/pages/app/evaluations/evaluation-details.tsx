@@ -39,7 +39,7 @@ export function EvaluationDetails({
   return (
     <DialogContent className={cn(evaluation && "max-h-10/12 h-full")}>
       <DialogHeader>
-        <DialogTitle>Pedido: {evaluationId}</DialogTitle>
+        <DialogTitle>Avaliação: {evaluationId}</DialogTitle>
         <DialogDescription>Detalhes da avaliação</DialogDescription>
       </DialogHeader>
 
