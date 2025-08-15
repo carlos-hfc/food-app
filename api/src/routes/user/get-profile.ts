@@ -1,8 +1,6 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
-import { ClientError } from "@/errors/client-error"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 
 export const getProfile: FastifyPluginAsyncZod = async app => {
@@ -21,23 +19,7 @@ export const getProfile: FastifyPluginAsyncZod = async app => {
       },
     },
     async request => {
-      const { id } = await request.getCurrentUser()
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-        },
-      })
-
-      if (!user) {
-        throw new ClientError("User not found")
-      }
+      const user = await request.getCurrentUser()
 
       return user
     },
