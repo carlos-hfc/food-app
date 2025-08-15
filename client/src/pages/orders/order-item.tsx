@@ -1,15 +1,20 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ChevronRightIcon, InfoIcon, StarIcon } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useCart } from "@/contexts/cart"
+import { cancelOrder } from "@/http/cancel-order"
 import { getMenu } from "@/http/get-menu"
+import { GetOrderResponse } from "@/http/get-order"
 import { getRestarauntInfo } from "@/http/get-restaurant-info"
+import { ListOrdersResponse } from "@/http/list-orders"
+import { queryClient } from "@/lib/react-query"
 import { cn } from "@/lib/utils"
 
 import { OrderDetails } from "./order-details"
@@ -43,7 +48,11 @@ interface OrderItemProps {
 }
 
 export function OrderItem({ order }: OrderItemProps) {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [searchParams] = useSearchParams()
+
+  const [isDetailsOpen, setIsDetailsOpen] = useState(
+    searchParams.get("order") ? searchParams.get("order") === order.id : false,
+  )
 
   const { data: result } = useQuery({
     queryKey: ["restaurant-info", order.restaurant.id],
@@ -56,6 +65,12 @@ export function OrderItem({ order }: OrderItemProps) {
   })
 
   const { addToCart, cleanCart, items } = useCart()
+
+  useEffect(() => {
+    if (searchParams.get("order")) {
+      cleanCart()
+    }
+  }, [cleanCart, searchParams])
 
   const orderDate = format(new Date(order.date), "EEEEEE dd MMMM yyyy", {
     locale: ptBR,
@@ -162,6 +177,56 @@ export function OrderItem({ order }: OrderItemProps) {
     toast.success("Produto adicionado à sacola")
   }
 
+  const { mutateAsync: cancelOrderFn, isPending: isCancelingOrder } =
+    useMutation({
+      mutationFn: cancelOrder,
+      onSuccess(_, { orderId }) {
+        const cached = queryClient.getQueryData<GetOrderResponse>([
+          "order",
+          orderId,
+        ])
+
+        if (cached) {
+          queryClient.setQueryData<GetOrderResponse>(["order", orderId], {
+            ...cached,
+            status: "CANCELED",
+            canceledAt: new Date().toString(),
+          })
+        }
+
+        const ordersListCached = queryClient.getQueryData<ListOrdersResponse>([
+          "orders",
+        ])
+
+        if (ordersListCached) {
+          queryClient.setQueryData<ListOrdersResponse>(
+            ["orders"],
+            ordersListCached.map(item => {
+              if (item.id === orderId) {
+                return {
+                  ...item,
+                  status: "CANCELED",
+                  canceledAt: new Date().toString(),
+                }
+              }
+
+              return item
+            }),
+          )
+        }
+      },
+    })
+
+  async function handleCancelOrder() {
+    try {
+      await cancelOrderFn({ orderId: order.id })
+
+      toast.success("Pedido cancelado com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao cancelar o seu pedido, tente novamente")
+    }
+  }
+
   return (
     <div className="space-y-2">
       <time
@@ -244,7 +309,11 @@ export function OrderItem({ order }: OrderItemProps) {
             </DialogTrigger>
 
             <OrderDetails
-              open={isDetailsOpen}
+              open={
+                searchParams.get("order")
+                  ? searchParams.get("order") === order.id
+                  : isDetailsOpen
+              }
               orderId={order.id}
             />
           </Dialog>
@@ -258,6 +327,8 @@ export function OrderItem({ order }: OrderItemProps) {
               variant="link"
               size="sm"
               className="text-sm! flex-1"
+              onClick={handleCancelOrder}
+              disabled={isCancelingOrder}
             >
               Cancelar
             </Button>
