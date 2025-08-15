@@ -40,6 +40,8 @@ export function Restaurant() {
     item => item.restaurantId === restaurantId,
   )
 
+  const isLogged = sessionStorage.getItem("isLogged")
+
   const { mutateAsync: addFavoriteFn, isPending: isFavoriting } = useMutation({
     mutationFn: addFavorite,
     onSuccess({ favoriteId }, { restaurantId }) {
@@ -100,19 +102,21 @@ export function Restaurant() {
           >
             <div className="absolute bg-[url(/banner.jpg)] h-full w-full bg-no-repeat bg-cover bg-position-[center_bottom_200px] lg:bg-position-[center_bottom_50px] bg-fixed" />
 
-            <Button
-              size="icon"
-              className="bg-foreground hover:bg-foreground rounded-full z-1 absolute top-2 lg:top-4 right-2 lg:right-4 size-10"
-              onClick={handleFavorite}
-              disabled={isFavoriting}
-            >
-              <HeartIcon
-                className={cn(
-                  "stroke-background size-5",
-                  isFavorited && "fill-background",
-                )}
-              />
-            </Button>
+            {isLogged && (
+              <Button
+                size="icon"
+                className="bg-foreground hover:bg-foreground rounded-full z-1 absolute top-2 lg:top-4 right-2 lg:right-4 size-10"
+                onClick={handleFavorite}
+                disabled={isFavoriting}
+              >
+                <HeartIcon
+                  className={cn(
+                    "stroke-background size-5",
+                    isFavorited && "fill-background",
+                  )}
+                />
+              </Button>
+            )}
 
             {!info?.restaurant.isOpen && (
               <div className="z-10 lg:px-16 text-muted flex items-center gap-4">
