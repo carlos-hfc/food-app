@@ -11,14 +11,12 @@ import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 
 export const createOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
-    "/restaurant/:restaurantId/order",
+    "/orders",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
-        params: z.object({
-          restaurantId: z.string().uuid(),
-        }),
         body: z.object({
+          restaurantId: z.string().uuid(),
           addressId: z.string().uuid(),
           payment: z.string().toUpperCase().pipe(z.nativeEnum(PaymentMethod)),
           products: z
@@ -33,7 +31,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         response: {
           201: z.object({
             orderId: z.string().uuid(),
-            total: z.string(),
+            total: z.number(),
           }),
         },
       },
@@ -41,8 +39,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
     async (request, reply) => {
       const { id: clientId } = await request.getCurrentUser()
 
-      const { restaurantId } = request.params
-      const { addressId, products, payment } = request.body
+      const { restaurantId, addressId, products, payment } = request.body
 
       const restaurant = await prisma.restaurant.findUnique({
         where: {
@@ -63,7 +60,7 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Restaurant not found")
       }
 
-      if (restaurantIsOpen(restaurant.hours[0]) || !restaurant.hours[0].open) {
+      if (!restaurantIsOpen(restaurant.hours[0]) || !restaurant.hours[0].open) {
         throw new ClientError("Restaurant is closed")
       }
 
@@ -133,13 +130,12 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
           throw new ClientError("Order not found")
         }
 
-        const total = (
+        const total =
           orderItems.reduce((acc, cur) => {
             acc += cur.quantity * cur.price.toNumber()
 
             return acc
           }, 0) + restaurant.tax.toNumber()
-        ).toFixed(2)
 
         await tx.order.update({
           where: {
