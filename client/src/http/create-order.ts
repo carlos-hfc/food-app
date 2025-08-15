@@ -10,15 +10,23 @@ export interface CreateOrderRequest {
   }[]
 }
 
+export interface CreateOrderResponse {
+  orderId: string
+  total: number
+}
+
 export async function createOrder({
   addressId,
   payment,
   products,
   restaurantId,
 }: CreateOrderRequest) {
-  await api.post(`/restaurant/${restaurantId}/order`, {
+  const response = await api.post<CreateOrderResponse>(`/orders`, {
+    restaurantId,
     addressId,
     payment,
     products,
   })
+
+  return response.data
 }

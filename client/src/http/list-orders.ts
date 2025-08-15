@@ -14,6 +14,7 @@ export type ListOrdersResponse = Array<{
     id: string
     name: string
     image: string | null
+    tax: number
   }
   products: {
     id: string
@@ -25,7 +26,7 @@ export type ListOrdersResponse = Array<{
 }>
 
 export async function listOrders() {
-  const response = await api.get<ListOrdersResponse>("/order/me")
+  const response = await api.get<ListOrdersResponse>("/orders/me")
 
   return response.data
 }

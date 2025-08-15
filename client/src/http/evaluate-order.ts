@@ -11,7 +11,8 @@ export async function evaluateOrder({
   rate,
   comment,
 }: EvaluateOrderProps) {
-  await api.post(`/evaluations/${orderId}`, {
+  await api.post(`/evaluations`, {
+    orderId,
     rate,
     comment,
   })

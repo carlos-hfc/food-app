@@ -27,7 +27,7 @@ export async function getProducts({
   available,
   pageIndex,
 }: GetProductsRequest) {
-  const response = await api.get<GetProductsResponse>("/product", {
+  const response = await api.get<GetProductsResponse>("/products", {
     params: {
       pageIndex: pageIndex ?? 0,
       available: available === "all" ? null : available,

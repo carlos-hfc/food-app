@@ -10,7 +10,7 @@ export type ListCategoriesResponse = Array<{
 }>
 
 export async function listCategories({ name }: ListCategoriesRequest) {
-  const response = await api.get<ListCategoriesResponse>("/category", {
+  const response = await api.get<ListCategoriesResponse>("/categories", {
     params: {
       name,
     },

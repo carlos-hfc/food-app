@@ -22,7 +22,7 @@ export async function updateRestaurant({
   phone,
   tax,
 }: UpdateRestaurantRequest) {
-  await api.patch(`/restaurant`, {
+  await api.put(`/restaurants`, {
     categoryId,
     deliveryTime,
     hours,

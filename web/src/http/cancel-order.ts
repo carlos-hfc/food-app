@@ -5,5 +5,5 @@ export interface CancelOrderRequest {
 }
 
 export async function cancelOrder({ orderId }: CancelOrderRequest) {
-  await api.patch(`/order/${orderId}/cancel`)
+  await api.patch(`/orders/${orderId}/cancel`)
 }

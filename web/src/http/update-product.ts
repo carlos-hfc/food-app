@@ -13,7 +13,7 @@ export async function updateProduct({
   price,
   description,
 }: UpdateProductRequest) {
-  await api.patch(`/product/${productId}`, {
+  await api.put(`/products/${productId}`, {
     name,
     price,
     description,

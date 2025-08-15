@@ -27,7 +27,7 @@ export async function getOrders({
   payment,
   status,
 }: GetOrdersRequest) {
-  const response = await api.get<GetOrdersResponse>("/order", {
+  const response = await api.get<GetOrdersResponse>("/orders", {
     params: {
       pageIndex: pageIndex ?? 0,
       status: status === "all" ? null : status,

@@ -15,7 +15,7 @@ export async function updateProfile({
   password,
   phone,
 }: UpdateProfileRequest) {
-  await api.patch("/profile", {
+  await api.put("/profile", {
     confirmPassword,
     email,
     name,

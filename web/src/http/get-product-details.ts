@@ -16,7 +16,7 @@ export async function getProductDetails({
   productId,
 }: GetProductDetailsRequest) {
   const response = await api.get<GetProductDetailsResponse>(
-    `/product/${productId}`,
+    `/products/${productId}`,
   )
 
   return response.data

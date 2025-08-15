@@ -28,7 +28,7 @@ export async function signUp({
   restaurantName,
   tax,
 }: SignUpRequest) {
-  await api.post("/restaurant", {
+  await api.post("/restaurants", {
     email,
     password,
     categoryId,

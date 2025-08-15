@@ -5,5 +5,5 @@ export interface DeliverOrderRequest {
 }
 
 export async function deliverOrder({ orderId }: DeliverOrderRequest) {
-  await api.patch(`/order/${orderId}/deliver`)
+  await api.patch(`/orders/${orderId}/deliver`)
 }

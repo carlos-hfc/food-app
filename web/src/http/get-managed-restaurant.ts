@@ -14,6 +14,10 @@ export interface GetManagedRestaurantResponse {
     closedAt: string
     open: boolean
   }[]
+  admin: {
+    name: string
+    email: string
+  }
   image: string | null
 }
 

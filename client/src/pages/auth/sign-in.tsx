@@ -53,6 +53,7 @@ export function SignIn() {
       await signInFn({
         email: data.email,
         password: data.password,
+        role: "CLIENT",
       })
 
       toast.success("Login efetuado com sucesso!")

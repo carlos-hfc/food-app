@@ -15,7 +15,7 @@ export type GetMenuResponse = Array<{
 
 export async function getMenu({ restaurantId }: GetMenuRequest) {
   const response = await api.get<GetMenuResponse>(
-    `/restaurant/${restaurantId}/menu`,
+    `/restaurants/${restaurantId}/menu`,
   )
 
   return response.data

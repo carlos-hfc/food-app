@@ -7,5 +7,5 @@ export interface ToggleActiveProductRequest {
 export async function toggleActiveProduct({
   productId,
 }: ToggleActiveProductRequest) {
-  await api.patch(`/product/${productId}/active`)
+  await api.patch(`/products/${productId}/active`)
 }

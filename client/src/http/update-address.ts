@@ -23,7 +23,7 @@ export async function updateAddress({
   state,
   zipCode,
 }: UpdateAddressRequest) {
-  await api.patch(`/address/${addressId}`, {
+  await api.put(`/addresses/${addressId}`, {
     street,
     alias,
     city,

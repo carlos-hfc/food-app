@@ -17,7 +17,7 @@ export interface GetAddressResponse {
 }
 
 export async function getAddress({ addressId }: GetAddressRequest) {
-  const response = await api.get<GetAddressResponse>(`/address/${addressId}`)
+  const response = await api.get<GetAddressResponse>(`/addresses/${addressId}`)
 
   return response.data
 }

@@ -27,7 +27,7 @@ export async function listRestaurants({
   name,
   tax,
 }: ListRestaurantsRequest) {
-  const response = await api.get<ListRestaurantsResponse>("/restaurant", {
+  const response = await api.get<ListRestaurantsResponse>("/restaurants", {
     params: {
       category: category === "all" ? undefined : category,
       deliveryTime: deliveryTime === "all" ? undefined : deliveryTime,

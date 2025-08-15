@@ -38,7 +38,11 @@ export function SignIn() {
 
   async function handleSignIn(data: SignInForm) {
     try {
-      await authenticate(data)
+      await authenticate({
+        email: data.email,
+        password: data.password,
+        role: "ADMIN",
+      })
 
       toast.success("Login efetuado com sucesso")
 

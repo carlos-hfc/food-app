@@ -9,7 +9,7 @@ export interface AddFavoriteResponse {
 }
 
 export async function addFavorite({ restaurantId }: AddFavoriteRequest) {
-  const response = await api.post<AddFavoriteResponse>("/favorite", {
+  const response = await api.post<AddFavoriteResponse>("/favorites", {
     restaurantId,
   })
 

@@ -43,7 +43,7 @@ export interface GetOrderResponse {
 }
 
 export async function getOrder({ orderId }: GetOrderRequest) {
-  const response = await api.get<GetOrderResponse>(`/order/${orderId}`)
+  const response = await api.get<GetOrderResponse>(`/orders/${orderId}`)
 
   return response.data
 }

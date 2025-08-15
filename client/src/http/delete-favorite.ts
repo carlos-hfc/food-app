@@ -5,5 +5,5 @@ export interface DeleteFavoriteRequest {
 }
 
 export async function deleteFavorite({ favoriteId }: DeleteFavoriteRequest) {
-  await api.delete(`/favorite/${favoriteId}`)
+  await api.delete(`/favorites/${favoriteId}`)
 }

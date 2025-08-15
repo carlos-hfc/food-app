@@ -17,7 +17,7 @@ export type ListFavoritesResponse = Array<{
 }>
 
 export async function listFavorites() {
-  const response = await api.get<ListFavoritesResponse>("/favorite")
+  const response = await api.get<ListFavoritesResponse>("/favorites")
 
   return response.data
 }

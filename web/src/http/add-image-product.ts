@@ -18,7 +18,7 @@ export async function addImageProduct({
   data.append("file", file)
 
   const response = await api.patch<AddImageProductResponse>(
-    `/product/${productId}/image`,
+    `/products/${productId}/image`,
     data,
   )
 

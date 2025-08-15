@@ -7,5 +7,5 @@ export interface SelectMainAddressRequest {
 export async function selectMainAddress({
   addressId,
 }: SelectMainAddressRequest) {
-  await api.patch(`/address/${addressId}/main`)
+  await api.patch(`/addresses/${addressId}/main`)
 }

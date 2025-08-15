@@ -11,7 +11,7 @@ export async function registerProduct({
   name,
   price,
 }: RegisterProductRequest) {
-  await api.post("/product", {
+  await api.post("/products", {
     description,
     name,
     price,

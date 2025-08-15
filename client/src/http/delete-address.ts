@@ -5,5 +5,5 @@ export interface DeleteAddressRequest {
 }
 
 export async function deleteAddress({ addressId }: DeleteAddressRequest) {
-  await api.delete(`/address/${addressId}`)
+  await api.delete(`/addresses/${addressId}`)
 }

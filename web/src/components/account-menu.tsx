@@ -3,7 +3,6 @@ import { BuildingIcon, ChevronDownIcon, LogOutIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
 import { getManagedRestaurant } from "@/http/get-managed-restaurant"
-import { getProfile } from "@/http/get-profile"
 import { signOut } from "@/http/sign-out"
 import { queryClient } from "@/lib/react-query"
 
@@ -22,11 +21,6 @@ import { Skeleton } from "./ui/skeleton"
 
 export function AccountMenu() {
   const navigate = useNavigate()
-
-  const { data: profile, isLoading: isLoadingProfile } = useQuery({
-    queryFn: getProfile,
-    queryKey: ["profile"],
-  })
 
   const { data: managedRestaurant, isLoading: isLoadingRestaurant } = useQuery({
     queryFn: getManagedRestaurant,
@@ -63,16 +57,16 @@ export function AccountMenu() {
           className="w-56"
         >
           <DropdownMenuLabel className="flex flex-col">
-            {isLoadingProfile ? (
+            {isLoadingRestaurant ? (
               <div className="space-y-1.5">
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-3 w-24" />
               </div>
             ) : (
               <>
-                <span>{profile?.name}</span>
+                <span>{managedRestaurant?.admin?.name}</span>
                 <span className="text-xs font-normal text-muted-foreground">
-                  {profile?.email}
+                  {managedRestaurant?.admin?.email}
                 </span>
               </>
             )}

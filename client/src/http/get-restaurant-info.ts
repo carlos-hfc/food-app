@@ -44,7 +44,7 @@ export async function getRestarauntInfo({
   restaurantId,
 }: GetRestarauntInfoRequest) {
   const response = await api.get<GetRestarauntInfoResponse>(
-    `/restaurant/${restaurantId}/info`,
+    `/restaurants/${restaurantId}/info`,
   )
 
   return response.data

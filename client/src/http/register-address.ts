@@ -25,7 +25,7 @@ export async function registerAddress({
   main,
   number,
 }: RegisterAddressRequest) {
-  const response = await api.post<RegisterAddressResponse>("/address", {
+  const response = await api.post<RegisterAddressResponse>("/addresses", {
     street,
     city,
     district,

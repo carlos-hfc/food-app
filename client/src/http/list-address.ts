@@ -13,7 +13,7 @@ export type ListAddressResponse = Array<{
 }>
 
 export async function listAddress() {
-  const response = await api.get<ListAddressResponse>("/address")
+  const response = await api.get<ListAddressResponse>("/addresses")
 
   return response.data
 }

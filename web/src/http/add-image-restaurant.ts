@@ -14,7 +14,7 @@ export async function addImageRestaurant({ file }: AddImageRestaurantRequest) {
   data.append("file", file)
 
   const response = await api.patch<AddImageRestaurantResponse>(
-    "/restaurant/image",
+    "/restaurants/image",
     data,
   )
 
