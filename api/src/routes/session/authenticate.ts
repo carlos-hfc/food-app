@@ -1,5 +1,6 @@
 import { compare } from "bcryptjs"
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
+import { Role } from "generated/prisma"
 import { z } from "zod"
 
 import { ClientError } from "@/errors/client-error"
@@ -13,6 +14,7 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
         body: z.object({
           email: z.string().email(),
           password: z.string().min(8),
+          role: z.string().toUpperCase().pipe(z.nativeEnum(Role)),
         }),
         response: {
           200: z.null(),
@@ -20,11 +22,12 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const { email, password } = request.body
+      const { email, password, role } = request.body
 
       const user = await prisma.user.findUnique({
         where: {
           email,
+          role,
         },
       })
 
