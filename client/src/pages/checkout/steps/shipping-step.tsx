@@ -41,7 +41,7 @@ export function ShippingStep<T extends FieldValues>({
             key={address.id}
             address={address}
             {...register(name, options)}
-            checked={watch(name) === address.id}
+            checked={watch(name) ? watch(name) === address.id : address.main}
             id={address.id}
             value={address.id}
           />
