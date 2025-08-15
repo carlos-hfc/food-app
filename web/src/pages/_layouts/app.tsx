@@ -16,13 +16,12 @@ export function AppLayout() {
           const status = error.response?.status
           const message = error.response?.data.message
 
-          if (status === 400 && message === "Invalid auth token") {
+          if (status === 401 && message === "Invalid auth token") {
             navigate("/sign-in", { replace: true })
           }
 
           throw error
         } else {
-          console.log(error.response)
           throw error
         }
       },

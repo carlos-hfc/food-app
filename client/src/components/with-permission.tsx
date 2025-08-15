@@ -16,9 +16,10 @@ export function withPermission<T extends object>(Component: ComponentType<T>) {
         response => response,
         error => {
           if (isAxiosError(error)) {
+            const status = error.response?.status
             const message = error.response?.data.message
 
-            if (message === "Invalid auth token") {
+            if (status === 401 && message === "Invalid auth token") {
               sessionStorage.removeItem("isLogged")
               navigate(redirectOnError, { replace: true })
             }
