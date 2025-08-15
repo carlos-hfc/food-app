@@ -7,8 +7,8 @@ import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const editProduct: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
-    "/product/:productId",
+  app.register(auth).put(
+    "/products/:productId",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

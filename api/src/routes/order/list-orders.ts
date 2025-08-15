@@ -18,7 +18,7 @@ interface Query {
 
 export const listOrders: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/order",
+    "/orders",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
@@ -79,10 +79,10 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
         where ${Prisma.join(search, " and ")}
         order by
           case o.status
-            when 'PENDING' then 1
-            when 'PREPARING' then 2
-            when 'ROUTING' then 3
-            when 'DELIVERED' then 4
+            when 'PENDING' then 4
+            when 'PREPARING' then 3
+            when 'ROUTING' then 2
+            when 'DELIVERED' then 1
             when 'CANCELED' then 0
           end desc, date desc
       `

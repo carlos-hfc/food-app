@@ -52,7 +52,6 @@ import { bestRestaurants } from "./routes/restaurant/best-restaurants"
 import { editRestaurant } from "./routes/restaurant/edit-restaurant"
 import { getInfoRestaurant } from "./routes/restaurant/get-info-restaurant"
 import { getManagedRestaurant } from "./routes/restaurant/get-managed-restaurant"
-import { getRestaurant } from "./routes/restaurant/get-restaurant"
 import { listRestaurants } from "./routes/restaurant/list-restaurants"
 import { registerRestaurant } from "./routes/restaurant/register-restaurant"
 import { viewMenu } from "./routes/restaurant/view-menu"
@@ -62,7 +61,7 @@ import { signOut } from "./routes/session/sign-out"
 import { editProfile } from "./routes/user/edit-profile"
 import { getProfile } from "./routes/user/get-profile"
 
-const app = fastify().withTypeProvider<ZodTypeProvider>()
+export const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
@@ -99,7 +98,6 @@ app.register(registerRestaurant)
 app.register(addImageOnRestaurant)
 app.register(listRestaurants)
 app.register(editRestaurant)
-app.register(getRestaurant)
 app.register(getInfoRestaurant)
 app.register(getManagedRestaurant)
 app.register(viewMenu)

@@ -10,7 +10,7 @@ import { convertHoursToMinutes } from "@/utils/convert-hours-to-minutes"
 
 export const registerRestaurant: FastifyPluginAsyncZod = async app => {
   app.post(
-    "/restaurant",
+    "/restaurants",
     {
       schema: {
         body: z.object({

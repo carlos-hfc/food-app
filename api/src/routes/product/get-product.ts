@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const getProduct: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/product/:productId",
+    "/products/:productId",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

@@ -18,6 +18,7 @@ interface Query {
   restaurantId: string
   name: string
   image: string | null
+  tax: string
   quantity: number
   productId: string
   productName: string
@@ -28,7 +29,7 @@ interface Query {
 
 export const myOrders: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/order/me",
+    "/orders/me",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
@@ -48,6 +49,7 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
                 id: z.string().uuid(),
                 name: z.string(),
                 image: z.string().nullable(),
+                tax: z.number(),
               }),
               products: z.array(
                 z.object({
@@ -79,6 +81,7 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
           r.id "restaurantId",
           r.name,
           r.image,
+          r.tax,
           oi.quantity,
           pr.id "productId",
           pr.name "productName",
@@ -120,6 +123,7 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
               id: item.restaurantId,
               name: item.name,
               image: item.image,
+              tax: Number(item.tax),
             },
             products: [],
           })

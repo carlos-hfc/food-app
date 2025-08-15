@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 
 export const viewMenu: FastifyPluginAsyncZod = async app => {
   app.get(
-    "/restaurant/:restaurantId/menu",
+    "/restaurants/:restaurantId/menu",
     {
       schema: {
         params: z.object({

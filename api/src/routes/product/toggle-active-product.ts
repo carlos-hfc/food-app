@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const toggleActiveProduct: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/product/:productId/active",
+    "/products/:productId/active",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

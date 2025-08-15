@@ -38,7 +38,7 @@ interface Query {
 
 export const getOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/order/:orderId",
+    "/orders/:orderId",
     {
       schema: {
         params: z.object({

@@ -42,7 +42,7 @@ interface QueryEvaluationByRate {
 
 export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
   app.get(
-    "/restaurant/:restaurantId/info",
+    "/restaurants/:restaurantId/info",
     {
       schema: {
         params: z.object({

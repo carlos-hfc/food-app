@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const deleteAddress: FastifyPluginAsyncZod = async app => {
   app.register(auth).delete(
-    "/address/:addressId",
+    "/addresses/:addressId",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

@@ -10,7 +10,7 @@ import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 
 export const approveOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/order/:orderId/approve",
+    "/orders/:orderId/approve",
     {
       schema: {
         params: z.object({

@@ -7,8 +7,8 @@ import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const editAddress: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
-    "/address/:addressId",
+  app.register(auth).put(
+    "/addresses/:addressId",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

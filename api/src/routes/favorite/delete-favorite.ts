@@ -7,7 +7,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const deleteFavorite: FastifyPluginAsyncZod = async app => {
   app.register(auth).delete(
-    "/favorite/:favoriteId",
+    "/favorites/:favoriteId",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

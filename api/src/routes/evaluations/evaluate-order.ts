@@ -9,14 +9,12 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const evaluateOrder: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
-    "/evaluations/:orderId",
+    "/evaluations",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
-        params: z.object({
-          orderId: z.string().uuid(),
-        }),
         body: z.object({
+          orderId: z.string().uuid(),
           rate: z.number().int().min(1),
           comment: z.string().optional(),
         }),
@@ -28,8 +26,7 @@ export const evaluateOrder: FastifyPluginAsyncZod = async app => {
     async (request, reply) => {
       const { id: clientId } = await request.getCurrentUser()
 
-      const { orderId } = request.params
-      const { rate, comment } = request.body
+      const { orderId, rate, comment } = request.body
 
       const order = await prisma.order.findUnique({
         where: {

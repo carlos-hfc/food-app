@@ -10,7 +10,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const addImageOnRestaurant: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/restaurant/image",
+    "/restaurants/image",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

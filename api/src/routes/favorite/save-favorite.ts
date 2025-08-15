@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const saveFavorite: FastifyPluginAsyncZod = async app => {
   app.register(auth).post(
-    "/favorite",
+    "/favorites",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

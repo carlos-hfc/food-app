@@ -8,7 +8,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const getAddress: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/address/:addressId",
+    "/addresses/:addressId",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

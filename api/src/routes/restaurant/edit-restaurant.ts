@@ -7,8 +7,8 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 import { convertHoursToMinutes } from "@/utils/convert-hours-to-minutes"
 
 export const editRestaurant: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
-    "/restaurant",
+  app.register(auth).put(
+    "/restaurants",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

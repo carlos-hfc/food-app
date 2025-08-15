@@ -21,7 +21,7 @@ interface Query {
 
 export const listRestaurants: FastifyPluginAsyncZod = async app => {
   app.get(
-    "/restaurant",
+    "/restaurants",
     {
       schema: {
         querystring: z.object({

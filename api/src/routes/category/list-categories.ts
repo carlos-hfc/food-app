@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 
 export const listCategories: FastifyPluginAsyncZod = async app => {
   app.get(
-    "/category",
+    "/categories",
     {
       schema: {
         querystring: z.object({

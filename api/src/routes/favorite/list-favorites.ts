@@ -24,7 +24,7 @@ interface Query {
 
 export const listFavorites: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/favorite",
+    "/favorites",
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {

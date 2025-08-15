@@ -10,7 +10,7 @@ import { verifyUserRole } from "@/middlewares/verify-user-role"
 
 export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
   app.register(auth).patch(
-    "/product/:productId/image",
+    "/products/:productId/image",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {

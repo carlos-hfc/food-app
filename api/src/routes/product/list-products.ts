@@ -17,7 +17,7 @@ interface Query {
 
 export const listProducts: FastifyPluginAsyncZod = async app => {
   app.register(auth).get(
-    "/product",
+    "/products",
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
