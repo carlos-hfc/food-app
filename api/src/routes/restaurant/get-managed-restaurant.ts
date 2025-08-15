@@ -21,6 +21,10 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
             deliveryTime: z.number(),
             tax: z.number(),
             phone: z.string(),
+            admin: z.object({
+              name: z.string(),
+              email: z.string().email(),
+            }),
             hours: z
               .object({
                 id: z.string().uuid(),
@@ -51,6 +55,12 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
           phone: true,
           hours: true,
           image: true,
+          admin: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
         },
       })
 
