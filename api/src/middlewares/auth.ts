@@ -19,6 +19,7 @@ export const auth = fastifyPlugin(async app => {
             email: true,
             phone: true,
             role: true,
+            createdAt: true,
             restaurant: {
               select: {
                 id: true,
@@ -36,7 +37,7 @@ export const auth = fastifyPlugin(async app => {
           restaurantId: user.restaurant?.id,
         }
       } catch (error) {
-        throw new ClientError("Invalid auth token")
+        throw new ClientError("Invalid auth token", 401)
       }
     }
 
@@ -44,7 +45,7 @@ export const auth = fastifyPlugin(async app => {
       const { restaurantId } = await request.getCurrentUser()
 
       if (!restaurantId) {
-        throw new ClientError("User is not a restaurant manager")
+        throw new ClientError("User is not a restaurant manager", 401)
       }
 
       return restaurantId

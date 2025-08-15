@@ -9,9 +9,9 @@ type FastifyErrorHandler = FastifyInstance["errorHandler"]
 
 export const errorHandler: FastifyErrorHandler = (error, _, reply) => {
   if (error instanceof ClientError) {
-    return reply.status(400).send({
+    return reply.status(error.statusCode).send({
       message: error.message,
-      statusCode: 400,
+      statusCode: error.statusCode,
     })
   }
 
