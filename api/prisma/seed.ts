@@ -276,7 +276,7 @@ async function main() {
       {
         adminId: admin1.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -284,7 +284,7 @@ async function main() {
       {
         adminId: admin2.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -292,7 +292,7 @@ async function main() {
       {
         adminId: admin3.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -300,7 +300,7 @@ async function main() {
       {
         adminId: admin4.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -308,7 +308,7 @@ async function main() {
       {
         adminId: admin5.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -316,7 +316,7 @@ async function main() {
       {
         adminId: admin6.id,
         categoryId: faker.helpers.arrayElement(categories.map(({ id }) => id)),
-        deliveryTime: faker.number.int({ min: 30, max: 120 }),
+        deliveryTime: faker.number.int({ min: 30, max: 90 }),
         tax: faker.number.int({ min: 0, max: 20 }),
         name: faker.company.name(),
         phone: faker.phone.number({ style: "international" }),
@@ -413,7 +413,7 @@ async function main() {
         OrderStatus.DELIVERED,
         OrderStatus.CANCELED,
       ])
-      const date = faker.date.recent({ days: 90 })
+      const date = faker.date.recent({ days: 30 })
 
       orders.push({
         id: orderId,
