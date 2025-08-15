@@ -29,12 +29,9 @@ export const registerClient: FastifyPluginAsyncZod = async app => {
     async (request, reply) => {
       const { email, name, password, phone } = request.body
 
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: {
-          email_phone: {
-            email,
-            phone,
-          },
+          OR: [{ email }, { phone }],
         },
       })
 

@@ -8,7 +8,7 @@ import { auth } from "@/middlewares/auth"
 import { PASSWORD_REGEX } from "@/utils/constants"
 
 export const editProfile: FastifyPluginAsyncZod = async app => {
-  app.register(auth).patch(
+  app.register(auth).put(
     "/profile",
     {
       schema: {
@@ -61,6 +61,16 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
 
       if (password) {
         hashedPassword = await hash(password, 10)
+      }
+
+      const userExists = await prisma.user.findFirst({
+        where: {
+          OR: [{ email }, { phone }],
+        },
+      })
+
+      if (userExists) {
+        throw new ClientError("User already exists")
       }
 
       await prisma.user.update({
