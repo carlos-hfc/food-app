@@ -3,7 +3,7 @@ import request from "supertest"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 import { app } from "@/server"
-import { makeClient } from "@/test/factories/make-client"
+import { makeUser } from "@/test/factories/make-user"
 
 describe("Register client [POST] /session/register", () => {
   beforeAll(async () => {
@@ -17,7 +17,7 @@ describe("Register client [POST] /session/register", () => {
   it("should be able to register a client", async () => {
     const response = await request(app.server)
       .post("/session/register")
-      .send(makeClient())
+      .send(makeUser())
 
     expect(response.status).toEqual(201)
   })
@@ -27,11 +27,11 @@ describe("Register client [POST] /session/register", () => {
 
     await request(app.server)
       .post("/session/register")
-      .send(makeClient({ email }))
+      .send(makeUser({ email }))
 
     const response = await request(app.server)
       .post("/session/register")
-      .send(makeClient({ email }))
+      .send(makeUser({ email }))
 
     expect(response.status).toEqual(400)
   })
@@ -41,11 +41,11 @@ describe("Register client [POST] /session/register", () => {
 
     await request(app.server)
       .post("/session/register")
-      .send(makeClient({ phone }))
+      .send(makeUser({ phone }))
 
     const response = await request(app.server)
       .post("/session/register")
-      .send(makeClient({ phone }))
+      .send(makeUser({ phone }))
 
     expect(response.status).toEqual(400)
   })

@@ -3,7 +3,7 @@ import request from "supertest"
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
 
 import { app } from "@/server"
-import { makeClient } from "@/test/factories/make-client"
+import { makeUser } from "@/test/factories/make-user"
 
 const email = faker.internet.email()
 
@@ -15,7 +15,7 @@ describe("Authenticate user [POST] /session/authenticate", () => {
   beforeEach(async () => {
     await request(app.server)
       .post("/session/register")
-      .send(makeClient({ email }))
+      .send(makeUser({ email }))
   })
 
   afterAll(async () => {

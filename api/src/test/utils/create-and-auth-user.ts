@@ -2,13 +2,13 @@ import { FastifyInstance } from "fastify"
 import { Prisma } from "generated/prisma"
 import request from "supertest"
 
-import { makeClient } from "../factories/make-client"
+import { makeUser } from "../factories/make-user"
 
 export async function createAndAuthUser(
   app: FastifyInstance,
   override: Partial<Prisma.UserCreateInput> = {},
 ) {
-  const user = makeClient(override)
+  const user = makeUser(override)
 
   await request(app.server).post("/session/register").send(user)
 
