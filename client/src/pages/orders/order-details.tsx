@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { InfoIcon, MapPinIcon, StarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 import z from "zod"
 
@@ -43,9 +44,11 @@ const evaluateOrderSchema = z.object({
 type EvaluateOrderSchema = z.infer<typeof evaluateOrderSchema>
 
 export function OrderDetails({ open, orderId }: OrderDetailsProps) {
+  const [searchParams] = useSearchParams()
+
   const { data: order } = useQuery({
-    queryKey: ["order", orderId],
-    queryFn: () => getOrder({ orderId }),
+    queryKey: ["order", searchParams.get("order") ?? orderId],
+    queryFn: () => getOrder({ orderId: searchParams.get("order") ?? orderId }),
     enabled: open,
   })
 
@@ -68,7 +71,7 @@ export function OrderDetails({ open, orderId }: OrderDetailsProps) {
     watch,
     reset,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<EvaluateOrderSchema>({
     resolver: zodResolver(evaluateOrderSchema),
   })
@@ -448,8 +451,6 @@ export function OrderDetails({ open, orderId }: OrderDetailsProps) {
                       </div>
                     </>
                   )}
-
-                  {JSON.stringify(errors)}
                 </form>
               )}
             </div>
