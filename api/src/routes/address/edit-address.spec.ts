@@ -52,7 +52,9 @@ describe("Edit address [PUT] /addresses/:addressId", () => {
     const response = await request(app.server)
       .put(`/addresses/${randomUUID()}`)
       .set("Cookie", token)
-      .send()
+      .send({
+        alias: "Novo endereco",
+      })
 
     expect(response.status).toEqual(400)
   })
