@@ -16,28 +16,30 @@ export const registerProduct: FastifyPluginAsyncZod = async app => {
           description: z.string(),
           price: z.number(),
           available: z.boolean().optional().default(true),
+          active: z.boolean().optional().default(true),
         }),
         response: {
-          201: z.null(),
+          201: z.object({ productId: z.string().uuid() }),
         },
       },
     },
     async (request, reply) => {
       const restaurantId = await request.getManagedRestaurantId()
 
-      const { available, description, name, price } = request.body
+      const { available, active, description, name, price } = request.body
 
-      await prisma.product.create({
+      const { id } = await prisma.product.create({
         data: {
           description,
           name,
           price,
-          available,
           restaurantId,
+          available,
+          active,
         },
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send({ productId: id })
     },
   )
 }
