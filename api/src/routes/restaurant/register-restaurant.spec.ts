@@ -22,6 +22,9 @@ describe("Register restaurant [POST] /restaurants", () => {
       .send(restaurant)
 
     expect(response.status).toEqual(201)
+    expect(response.body).toEqual({
+      restaurantId: expect.any(String),
+    })
   })
 
   it("should not be able to register a restaurant with existent e-mail", async () => {

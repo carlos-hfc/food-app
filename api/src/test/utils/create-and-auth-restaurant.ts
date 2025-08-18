@@ -12,7 +12,9 @@ export async function createAndAuthRestaurant(
 ) {
   const restaurant = await makeRestaurant(override)
 
-  await request(app.server).post("/restaurants").send(restaurant)
+  const restaurantResponse = await request(app.server)
+    .post("/restaurants")
+    .send(restaurant)
 
   const authResponse = await request(app.server)
     .post("/session/authenticate")
@@ -24,5 +26,5 @@ export async function createAndAuthRestaurant(
 
   const token = authResponse.get("Set-Cookie") as string[]
 
-  return { token }
+  return { token, restaurantId: restaurantResponse.body }
 }

@@ -3,6 +3,7 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
+import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { restaurantIsOpen } from "@/utils/check-restaurant-is-open"
 import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
@@ -116,6 +117,10 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
         where r.id = ${restaurantId}
         order by h.weekday asc
       `)
+
+      if (query.length <= 0) {
+        throw new ClientError("Restaurant not found")
+      }
 
       const { id, category, image, name, phone, tax, deliveryTime } = query[0]
 

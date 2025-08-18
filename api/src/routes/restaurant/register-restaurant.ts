@@ -35,7 +35,7 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           ),
         }),
         response: {
-          201: z.null(),
+          201: z.object({ restaurantId: z.string().uuid() }),
         },
       },
     },
@@ -73,7 +73,10 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
         }))
       })
 
-      await prisma.user.create({
+      const { restaurant } = await prisma.user.create({
+        include: {
+          restaurant: true,
+        },
         data: {
           email,
           name: managerName,
@@ -97,7 +100,7 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send({ restaurantId: restaurant!.id })
     },
   )
 }
