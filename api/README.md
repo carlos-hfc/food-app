@@ -14,12 +14,19 @@ Esta é a API do Food App, um sistema para gerenciamento de restaurantes, produt
 - Upload de imagens para produtos e restaurantes
 - Suporte a CORS e cookies
 
+## Requisitos
+
+- Node.js 20+
+- Docker e Docker Compose
+- npm/pnpm (ou outro gerenciador, dependendo do projeto)
+
 ## Tecnologias Utilizadas
-- [Fastify](https://www.fastify.io/) (framework web)
-- [Prisma](https://www.prisma.io/) (ORM)
+
+- [Fastify](https://www.fastify.io/)
+- [Prisma](https://www.prisma.io/)
 - [TypeScript](https://www.typescriptlang.org/)
-- [Vitest](https://vitest.dev/) (testes)
-- [Docker](https://www.docker.com/) (opcional, para ambiente de desenvolvimento)
+- [Vitest](https://vitest.dev/)
+- [Docker](https://www.docker.com/)
 
 ## Estrutura do Projeto
 ```
@@ -40,41 +47,53 @@ api/
 └── tsconfig.json       # Configuração TypeScript
 ```
 
-## Como Executar
+## Configuração
 
-1. **Instale as dependências:**
-```powershell
+1. Clone o repositório:
+```sh
+git clone https://github.com/carlos-hfc/food-app.git
+```
+
+2. Instale as dependências:
+```sh
+cd api
 npm install
 ```
-2. **Configure o banco de dados:**
-- Crie o arquivo `.env` com as variáveis de ambiente necessárias.
-  ```powershell
-  PORT=
-  DATABASE_URL=
-  JWT_SECRET=
-  NODE_ENV=
-  ```
-- Execute as migrações do Prisma:
-  ```powershell
-  npx prisma migrate dev
-  ```
-- (Opcional) Popule o banco com dados de exemplo:
-  ```powershell
-  npx prisma db seed
-  ```
-3. **Inicie o servidor:**
-```powershell
+
+3. Configure as variáveis ambiente:
+```sh
+PORT=
+DATABASE_URL=
+JWT_SECRET=
+NODE_ENV=
+```
+
+4. Rode o banco de dados com Docker:
+```sh
+docker-compose up -d
+```
+
+5. Execute as migrações do Prisma:
+```sh
+npm run prisma:migrate
+```
+
+6. Popule o banco com exemplos: (opcional)
+```sh
+npm run prisma:seed
+```
+
+## Executando o projeto
+
+1. Inicie o servidor de desenvolvimento:
+```sh
 npm run dev
 ```
-O servidor estará disponível em `http://localhost:3333` (ou porta definida em `.env`).
 
-## Testes
-Execute os testes com:
-```powershell
-npm run test
-```
+2. Acesse [http://localhost:3333](http://localhost:3333) no navegador (ou com a porta definida no `.env`)
 
 ## Endpoints Principais
+
 - `/restaurants` - Gerenciamento de restaurantes
 - `/products` - Gerenciamento de produtos
 - `/orders` - Gerenciamento de pedidos
@@ -82,5 +101,17 @@ npm run test
 - `/favorites` - Favoritos
 - `/metrics` - Métricas e relatórios
 
+## Scripts
+
+- `npm run dev`: Inicia o servidor de desenvolvimento
+- `npm run prisma:migrate`: Executa as migrações do Prisma
+- `npm run prisma:seed`: Popula o banco com dados fictícios
+- `npm run test`: Executa os testes
+
+## Contribuição
+
+Pull requests são bem-vindos! Para grandes mudanças, abra uma issue primeiro para discutir o que você gostaria de modificar.
+
 ## Licença
-Este projeto é distribuído sob a licença MIT.
+
+Este projeto está sob a licença MIT.

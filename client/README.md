@@ -1,69 +1,89 @@
-# React + TypeScript + Vite
+# Food App Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web para pedidos em restaurantes, desenvolvida com React, TypeScript e Vite.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Listagem dos melhores restaurantes
+- Busca de restaurantes por nome
+- Visualização de cardápio e informações detalhadas
+- Adição de restaurantes aos favoritos
+- Autenticação de usuários (login e cadastro)
+- Carrinho de compras e checkout
+- Avaliações e comentários de restaurantes
 
-## Expanding the ESLint configuration
+## Requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 20+
+- pnpm (ou outro gerenciador)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tecnologias Utilizadas
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Query](https://tanstack.com/query/latest)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estrutura do Projeto
+
+```
+client/
+├── public/                # Arquivos estáticos (imagens, ícones)
+├── src/
+│   ├── components/        # Componentes reutilizáveis (Header, Footer, etc)
+│   ├── contexts/          # Contextos React para estado global
+│   ├── hooks/             # Hooks customizados
+│   ├── http/              # Funções para requisições HTTP
+│   ├── lib/               # Utilitários e bibliotecas auxiliares
+│   ├── pages/             # Páginas principais (Home, Restaurante, Auth, etc)
+│   ├── reducers/          # Reducers para gerenciamento de estado
+│   ├── index.css          # Estilos globais
+│   ├── main.tsx           # Ponto de entrada da aplicação
+│   └── app.tsx            # Componente principal
+├── index.html             # HTML principal
+├── package.json           # Dependências e scripts
+├── vite.config.ts         # Configuração do Vite
+└── tsconfig*.json         # Configurações do TypeScript
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Configuração
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone o repositório:
+```sh
+git clone https://github.com/carlos-hfc/food-app.git
 ```
+
+2. Instale as dependências:
+```sh
+cd client
+pnpm install
+```
+
+3. Configure as variáveis ambiente:
+```sh
+VITE_API_URL=
+```
+
+## Executando o projeto
+
+1. Inicie o servidor de desenvolvimento:
+```sh
+pnpm dev
+```
+
+2. Acesse [http://localhost:5173](http://localhost:5173) no navegador.
+
+## Scripts
+
+- `pnpm dev` — Inicia o ambiente de desenvolvimento
+- `pnpm build` — Gera a versão de produção
+- `pnpm preview` — Visualiza o build localmente
+
+## Contribuição
+
+Pull requests são bem-vindos! Para grandes mudanças, abra uma issue primeiro para discutir o que você gostaria de modificar.
+
+## Licença
+
+Este projeto está sob a licença MIT.
