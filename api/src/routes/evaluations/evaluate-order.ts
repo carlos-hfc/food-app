@@ -19,7 +19,7 @@ export const evaluateOrder: FastifyPluginAsyncZod = async app => {
           comment: z.string().optional(),
         }),
         response: {
-          201: z.null(),
+          201: z.object({ evaluationId: z.string().uuid() }),
         },
       },
     },
@@ -43,7 +43,7 @@ export const evaluateOrder: FastifyPluginAsyncZod = async app => {
         throw new ClientError("Orders not delivered cannot be evaluated")
       }
 
-      await prisma.evaluation.create({
+      const { id } = await prisma.evaluation.create({
         data: {
           orderId,
           rate,
@@ -52,7 +52,7 @@ export const evaluateOrder: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send({ evaluationId: id })
     },
   )
 }

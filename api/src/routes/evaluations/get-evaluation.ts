@@ -2,6 +2,7 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { Prisma } from "generated/prisma"
 import { z } from "zod"
 
+import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 import { verifyUserRole } from "@/middlewares/verify-user-role"
@@ -62,29 +63,33 @@ export const getEvaluation: FastifyPluginAsyncZod = async app => {
       const { evaluationId } = request.params
 
       const query = await prisma.$queryRaw<Query[]>(Prisma.sql`
-          select 
-            e.id,
-            e.rate,
-            e.comment,
-            e."createdAt"::date,
-            u.name "customerName",
-            u.phone,
-            u.email,
-            o.total::money,
-            o.date::date,
-            r.tax::money,
-            pr.id "productId",
-            pr.name "productName",
-            oi.price,
-            oi.quantity
-          from evaluations e
-          join users u on u.id = e."clientId"
-          join orders o on o.id = e."orderId"
-          join restaurants r on r.id = o."restaurantId"
-          join "orderItems" oi on oi."orderId" = o.id
-          join products pr on pr.id = oi."productId"
-          where e.id = ${evaluationId} 
-        `)
+        select 
+          e.id,
+          e.rate,
+          e.comment,
+          e."createdAt"::date,
+          u.name "customerName",
+          u.phone,
+          u.email,
+          o.total::money,
+          o.date::date,
+          r.tax::money,
+          pr.id "productId",
+          pr.name "productName",
+          oi.price,
+          oi.quantity
+        from evaluations e
+        join users u on u.id = e."clientId"
+        join orders o on o.id = e."orderId"
+        join restaurants r on r.id = o."restaurantId"
+        join "orderItems" oi on oi."orderId" = o.id
+        join products pr on pr.id = oi."productId"
+        where e.id = ${evaluationId} 
+      `)
+
+      if (query.length <= 0) {
+        throw new ClientError("Evaluation not found")
+      }
 
       const {
         id,
