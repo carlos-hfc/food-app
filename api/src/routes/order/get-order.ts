@@ -2,6 +2,7 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { OrderStatus, PaymentMethod, Prisma } from "generated/prisma"
 import { z } from "zod"
 
+import { ClientError } from "@/errors/client-error"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/middlewares/auth"
 
@@ -130,6 +131,10 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
         left join evaluations e on e."orderId" = o.id
         where o.id = ${orderId}
       `)
+
+      if (query.length <= 0) {
+        throw new ClientError("Order not found")
+      }
 
       const {
         id,

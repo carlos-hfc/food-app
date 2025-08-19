@@ -5,8 +5,6 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { prisma } from "@/lib/prisma"
 import { app } from "@/server"
 
-const categoryName = faker.word.noun()
-
 describe("List categories [GET] /categories", () => {
   beforeAll(async () => {
     await app.ready()
@@ -17,6 +15,8 @@ describe("List categories [GET] /categories", () => {
   })
 
   it("should be able to list categories", async () => {
+    const categoryName = faker.word.noun()
+
     const category = await prisma.category.create({
       data: { name: categoryName },
     })
@@ -35,6 +35,8 @@ describe("List categories [GET] /categories", () => {
   })
 
   it("should be able to list categories filtering by name", async () => {
+    const categoryName = faker.word.noun()
+
     const response = await request(app.server)
       .get("/categories")
       .query({ name: categoryName })

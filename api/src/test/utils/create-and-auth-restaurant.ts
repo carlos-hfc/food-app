@@ -26,5 +26,5 @@ export async function createAndAuthRestaurant(
 
   const token = authResponse.get("Set-Cookie") as string[]
 
-  return { token, restaurantId: restaurantResponse.body }
+  return { token, restaurantId: restaurantResponse.body.restaurantId }
 }

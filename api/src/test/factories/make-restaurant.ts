@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import { convertMinutesToHours } from "@/utils/convert-minutes-to-hours"
 
 export interface MakeRestaurantParams {
+  id: string
   managerName: string
   restaurantName: string
   email: string
@@ -22,7 +23,7 @@ export interface MakeRestaurantParams {
 export async function makeRestaurant(
   override: Partial<MakeRestaurantParams> = {},
 ) {
-  const restaurantId = randomUUID()
+  const restaurantId = override.id ?? randomUUID()
 
   const category = await prisma.category.create({
     data: { name: faker.word.noun() },
@@ -47,7 +48,6 @@ export async function makeRestaurant(
   }
 
   return {
-    id: restaurantId,
     managerName: faker.person.fullName(),
     restaurantName: faker.company.name(),
     email: faker.internet.email(),
@@ -57,6 +57,7 @@ export async function makeRestaurant(
     tax: faker.number.int({ min: 0, max: 20 }),
     categoryId: category.id,
     ...override,
+    id: restaurantId,
     hours,
   }
 }

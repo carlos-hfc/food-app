@@ -126,10 +126,6 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
           },
         })
 
-        if (!orderItems) {
-          throw new ClientError("Order not found")
-        }
-
         const total =
           orderItems.reduce((acc, cur) => {
             acc += cur.quantity * cur.price.toNumber()
