@@ -6,7 +6,7 @@ export function RestaurantCardSkeleton() {
       {Array.from({ length: 3 })?.map((_, i) => (
         <Skeleton
           key={i}
-          className="h-32"
+          className="h-32 w-full"
         />
       ))}
     </div>

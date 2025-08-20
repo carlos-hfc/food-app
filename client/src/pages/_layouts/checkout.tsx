@@ -1,12 +1,18 @@
 import { HamburgerIcon } from "lucide-react"
 import { Outlet, ScrollRestoration } from "react-router"
 
-import { AppHeader } from "@/components/app-header"
+import { AccountMenu } from "@/components/account-menu"
 
 export function CheckoutLayout() {
   return (
     <main className="flex h-dvh flex-col">
-      <AppHeader />
+      <header className="py-3 border-b bg-background shadow-sm z-2">
+        <div className="flex items-center justify-between gap-4 container max-w-6xl px-4 lg:px-8">
+          <HamburgerIcon className="size-8 lg:size-10 text-primary shrink-0" />
+
+          <AccountMenu />
+        </div>
+      </header>
 
       <ScrollRestoration />
 

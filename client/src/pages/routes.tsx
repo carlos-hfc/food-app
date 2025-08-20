@@ -15,6 +15,7 @@ import { HomePage } from "./home/home"
 import { Orders } from "./orders/orders"
 import { Restaurant } from "./restaurant/restaurant"
 import { Restaurants } from "./restaurants/restaurants"
+import { Search } from "./search/search"
 
 const AddressPage = withPermission(Address)
 const CheckoutPage = withPermission(Checkout)
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "/pedidos",
         element: <OrderPage />,
+      },
+      {
+        path: "/busca",
+        element: <Search />,
       },
     ],
   },
