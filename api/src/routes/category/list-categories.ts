@@ -8,16 +8,20 @@ export const listCategories: FastifyPluginAsyncZod = async app => {
     "/categories",
     {
       schema: {
+        tags: ["categories"],
+        summary: "List all categories",
         querystring: z.object({
           name: z.string().optional(),
         }),
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              name: z.string(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                id: z.string().uuid(),
+                name: z.string(),
+              }),
+            )
+            .describe("OK"),
         },
       },
     },

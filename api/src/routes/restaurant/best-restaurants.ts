@@ -16,15 +16,19 @@ export const bestRestaurants: FastifyPluginAsyncZod = async app => {
     "/best-restaurants",
     {
       schema: {
+        tags: ["restaurants"],
+        summary: "List the best restaurants",
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              name: z.string(),
-              image: z.string().nullable(),
-              category: z.string(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                id: z.string().uuid(),
+                name: z.string(),
+                image: z.string().nullable(),
+                category: z.string(),
+              }),
+            )
+            .describe("OK"),
         },
       },
     },

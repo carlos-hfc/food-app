@@ -33,35 +33,51 @@ export const myOrders: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["orders"],
+        summary: "List all orders of the user",
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              status: z.string().pipe(z.nativeEnum(OrderStatus)),
-              payment: z.string().pipe(z.nativeEnum(PaymentMethod)),
-              date: z.date(),
-              preparedAt: z.date().nullable(),
-              routedAt: z.date().nullable(),
-              deliveredAt: z.date().nullable(),
-              canceledAt: z.date().nullable(),
-              rate: z.number().nullable(),
-              restaurant: z.object({
+          200: z
+            .array(
+              z.object({
                 id: z.string().uuid(),
-                name: z.string(),
-                image: z.string().nullable(),
-                tax: z.number(),
-              }),
-              products: z.array(
-                z.object({
+                status: z.string().pipe(z.nativeEnum(OrderStatus)),
+                payment: z.string().pipe(z.nativeEnum(PaymentMethod)),
+                date: z.date(),
+                preparedAt: z.date().nullable(),
+                routedAt: z.date().nullable(),
+                deliveredAt: z.date().nullable(),
+                canceledAt: z.date().nullable(),
+                rate: z.number().nullable(),
+                restaurant: z.object({
                   id: z.string().uuid(),
-                  quantity: z.number(),
                   name: z.string(),
                   image: z.string().nullable(),
-                  price: z.number(),
+                  tax: z.number(),
                 }),
-              ),
-            }),
-          ),
+                products: z.array(
+                  z.object({
+                    id: z.string().uuid(),
+                    quantity: z.number(),
+                    name: z.string(),
+                    image: z.string().nullable(),
+                    price: z.number(),
+                  }),
+                ),
+              }),
+            )
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

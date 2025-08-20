@@ -12,6 +12,8 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
     "/profile",
     {
       schema: {
+        tags: ["profile"],
+        summary: "Update logged user profile",
         body: z
           .object({
             name: z.string().optional(),
@@ -32,7 +34,19 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
             path: ["confirmPassword"],
           }),
         response: {
-          200: z.null(),
+          204: z.null().describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },
@@ -85,7 +99,7 @@ export const editProfile: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.send()
+      return reply.status(204).send()
     },
   )
 }

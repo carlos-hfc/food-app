@@ -13,6 +13,8 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["restaurants"],
+        summary: "Update a restaurant",
         body: z.object({
           name: z.string().optional(),
           phone: z.string().optional(),
@@ -31,7 +33,19 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
             .optional(),
         }),
         response: {
-          200: z.null(),
+          204: z.null().describe("No content"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },
@@ -105,7 +119,7 @@ export const editRestaurant: FastifyPluginAsyncZod = async app => {
         )
       }
 
-      return reply.status(200).send()
+      return reply.status(204).send()
     },
   )
 }

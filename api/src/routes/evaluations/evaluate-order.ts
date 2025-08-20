@@ -13,13 +13,29 @@ export const evaluateOrder: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["evaluations"],
+        summary: "Evaluate an order",
         body: z.object({
           orderId: z.string().uuid(),
-          rate: z.number().int().min(1),
+          rate: z.number().int().min(1).max(5),
           comment: z.string().optional(),
         }),
         response: {
-          201: z.object({ evaluationId: z.string().uuid() }),
+          201: z
+            .object({ evaluationId: z.string().uuid() })
+            .describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

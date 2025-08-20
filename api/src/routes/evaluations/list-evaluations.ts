@@ -21,6 +21,8 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["evaluations"],
+        summary: "List all evaluations of the restaurant",
         querystring: z.object({
           pageIndex: z.coerce.number().default(0),
           rate: z.coerce.number().optional(),
@@ -31,22 +33,36 @@ export const listEvaluations: FastifyPluginAsyncZod = async app => {
             .optional(),
         }),
         response: {
-          200: z.object({
-            evaluations: z.array(
-              z.object({
-                id: z.string().uuid(),
-                customerName: z.string(),
-                rate: z.number(),
-                comment: z.string().nullable(),
-                createdAt: z.date(),
+          200: z
+            .object({
+              evaluations: z.array(
+                z.object({
+                  id: z.string().uuid(),
+                  customerName: z.string(),
+                  rate: z.number(),
+                  comment: z.string().nullable(),
+                  createdAt: z.date(),
+                }),
+              ),
+              meta: z.object({
+                totalCount: z.number(),
+                pageIndex: z.number(),
+                perPage: z.number(),
               }),
-            ),
-            meta: z.object({
-              totalCount: z.number(),
-              pageIndex: z.number(),
-              perPage: z.number(),
-            }),
-          }),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

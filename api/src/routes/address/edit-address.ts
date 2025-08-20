@@ -12,6 +12,8 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["addresses"],
+        summary: "Update an address",
         params: z.object({
           addressId: z.string().uuid(),
         }),
@@ -26,7 +28,19 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
           main: z.boolean().optional(),
         }),
         response: {
-          200: z.null(),
+          204: z.null().describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },
@@ -65,7 +79,7 @@ export const editAddress: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.send()
+      return reply.status(204).send()
     },
   )
 }

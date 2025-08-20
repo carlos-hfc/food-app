@@ -13,29 +13,45 @@ export const getManagedRestaurant: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["restaurants"],
+        summary: "Get managed restaurant",
         response: {
-          200: z.object({
-            id: z.string().uuid(),
-            name: z.string(),
-            categoryId: z.string().uuid(),
-            deliveryTime: z.number(),
-            tax: z.number(),
-            phone: z.string(),
-            admin: z.object({
+          200: z
+            .object({
+              id: z.string().uuid(),
               name: z.string(),
-              email: z.string().email(),
-            }),
-            hours: z
-              .object({
-                id: z.string().uuid(),
-                weekday: z.number(),
-                openedAt: z.string(),
-                closedAt: z.string(),
-                open: z.boolean(),
-              })
-              .array(),
-            image: z.string().nullable(),
-          }),
+              categoryId: z.string().uuid(),
+              deliveryTime: z.number(),
+              tax: z.number(),
+              phone: z.string(),
+              admin: z.object({
+                name: z.string(),
+                email: z.string().email(),
+              }),
+              hours: z
+                .object({
+                  id: z.string().uuid(),
+                  weekday: z.number(),
+                  openedAt: z.string(),
+                  closedAt: z.string(),
+                  open: z.boolean(),
+                })
+                .array(),
+              image: z.string().nullable(),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

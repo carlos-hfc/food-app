@@ -28,24 +28,40 @@ export const listFavorites: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["favorites"],
+        summary: "List all favorites of the user",
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              restaurantId: z.string().uuid(),
-              restaurantName: z.string(),
-              tax: z.number(),
-              deliveryTime: z.number(),
-              image: z.string().nullable(),
-              category: z.string(),
-              weekday: z.number(),
-              open: z.boolean(),
-              openedAt: z.string(),
-              closedAt: z.string(),
-              isOpen: z.boolean(),
-              openingAt: z.string().optional(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                id: z.string().uuid(),
+                restaurantId: z.string().uuid(),
+                restaurantName: z.string(),
+                tax: z.number(),
+                deliveryTime: z.number(),
+                image: z.string().nullable(),
+                category: z.string(),
+                weekday: z.number(),
+                open: z.boolean(),
+                openedAt: z.string(),
+                closedAt: z.string(),
+                isOpen: z.boolean(),
+                openingAt: z.string().optional(),
+              }),
+            )
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

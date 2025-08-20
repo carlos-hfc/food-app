@@ -27,17 +27,33 @@ export const getDailyReceiptInPeriod: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["metrics"],
+        summary: "List daily receipt for period",
         querystring: z.object({
           from: z.string().optional(),
           to: z.string().optional(),
         }),
         response: {
-          200: z.array(
-            z.object({
-              date: z.string(),
-              receipt: z.number(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                date: z.string(),
+                receipt: z.number(),
+              }),
+            )
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

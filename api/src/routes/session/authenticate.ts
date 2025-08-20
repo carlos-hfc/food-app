@@ -11,13 +11,21 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
     "/session/authenticate",
     {
       schema: {
+        tags: ["sessions"],
+        summary: "Authenticate user",
         body: z.object({
           email: z.string().email(),
           password: z.string().min(8),
           role: z.string().toUpperCase().pipe(z.nativeEnum(Role)),
         }),
         response: {
-          200: z.null(),
+          200: z.null().describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
         },
       },
     },
@@ -60,7 +68,7 @@ export const authenticate: FastifyPluginAsyncZod = async app => {
           secure: true,
           sameSite: true,
         })
-        .status(200)
+        .status(204)
         .send()
     },
   )

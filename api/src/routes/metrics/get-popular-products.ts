@@ -17,13 +17,29 @@ export const getPopularProducts: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["metrics"],
+        summary: "List popular products",
         response: {
-          200: z.array(
-            z.object({
-              product: z.string(),
-              amount: z.number(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                product: z.string(),
+                amount: z.number(),
+              }),
+            )
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

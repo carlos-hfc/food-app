@@ -18,11 +18,27 @@ export const getMonthOrdersAmount: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["metrics"],
+        summary: "List the monthly amount of orders",
         response: {
-          200: z.object({
-            amount: z.number(),
-            diffFromLastMonth: z.number(),
-          }),
+          200: z
+            .object({
+              amount: z.number(),
+              diffFromLastMonth: z.number(),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

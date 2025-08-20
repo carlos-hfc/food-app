@@ -46,51 +46,61 @@ export const getInfoRestaurant: FastifyPluginAsyncZod = async app => {
     "/restaurants/:restaurantId/info",
     {
       schema: {
+        tags: ["restaurants"],
+        summary: "Get restaurant information",
         params: z.object({
           restaurantId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            restaurant: z.object({
-              id: z.string().uuid(),
-              image: z.string().nullable(),
-              name: z.string(),
-              phone: z.string(),
-              category: z.string(),
-              tax: z.number(),
-              deliveryTime: z.number(),
-              isOpen: z.boolean(),
-              openingAt: z.string().optional(),
-              hours: z.array(
+          200: z
+            .object({
+              restaurant: z.object({
+                id: z.string().uuid(),
+                image: z.string().nullable(),
+                name: z.string(),
+                phone: z.string(),
+                category: z.string(),
+                tax: z.number(),
+                deliveryTime: z.number(),
+                isOpen: z.boolean(),
+                openingAt: z.string().optional(),
+                hours: z.array(
+                  z.object({
+                    hourId: z.string().uuid(),
+                    weekday: z.number(),
+                    openedAt: z.string(),
+                    closedAt: z.string(),
+                    open: z.boolean(),
+                  }),
+                ),
+              }),
+              rates: z.array(
                 z.object({
-                  hourId: z.string().uuid(),
-                  weekday: z.number(),
-                  openedAt: z.string(),
-                  closedAt: z.string(),
-                  open: z.boolean(),
+                  id: z.string().uuid(),
+                  client: z.string(),
+                  rate: z.number(),
+                  comment: z.string().nullable(),
+                  createdAt: z.date(),
                 }),
               ),
-            }),
-            rates: z.array(
-              z.object({
-                id: z.string().uuid(),
-                client: z.string(),
-                rate: z.number(),
-                comment: z.string().nullable(),
-                createdAt: z.date(),
+              rateResume: z.object({
+                totalCount: z.number(),
+                average: z.number(),
               }),
-            ),
-            rateResume: z.object({
-              totalCount: z.number(),
-              average: z.number(),
-            }),
-            evaluationByRate: z.array(
-              z.object({
-                count: z.number(),
-                rate: z.number(),
-              }),
-            ),
-          }),
+              evaluationByRate: z.array(
+                z.object({
+                  count: z.number(),
+                  rate: z.number(),
+                }),
+              ),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
         },
       },
     },

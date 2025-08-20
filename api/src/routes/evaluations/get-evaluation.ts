@@ -30,32 +30,48 @@ export const getEvaluation: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["evaluations"],
+        summary: "Get an order",
         params: z.object({
           evaluationId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            id: z.string().uuid(),
-            rate: z.number(),
-            comment: z.string().nullable(),
-            createdAt: z.date(),
-            date: z.date(),
-            total: z.number(),
-            tax: z.number(),
-            customer: z.object({
-              name: z.string(),
-              email: z.string().email(),
-              phone: z.string(),
-            }),
-            products: z.array(
-              z.object({
-                id: z.string().uuid(),
+          200: z
+            .object({
+              id: z.string().uuid(),
+              rate: z.number(),
+              comment: z.string().nullable(),
+              createdAt: z.date(),
+              date: z.date(),
+              total: z.number(),
+              tax: z.number(),
+              customer: z.object({
                 name: z.string(),
-                price: z.number(),
-                quantity: z.number(),
+                email: z.string().email(),
+                phone: z.string(),
               }),
-            ),
-          }),
+              products: z.array(
+                z.object({
+                  id: z.string().uuid(),
+                  name: z.string(),
+                  price: z.number(),
+                  quantity: z.number(),
+                }),
+              ),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

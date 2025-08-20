@@ -11,6 +11,8 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["addresses"],
+        summary: "Register an address",
         body: z.object({
           zipCode: z.string(),
           street: z.string(),
@@ -22,9 +24,23 @@ export const registerAddress: FastifyPluginAsyncZod = async app => {
           main: z.boolean().optional(),
         }),
         response: {
-          201: z.object({
-            addressId: z.string().uuid(),
-          }),
+          201: z
+            .object({
+              addressId: z.string().uuid(),
+            })
+            .describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

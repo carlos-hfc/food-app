@@ -42,50 +42,69 @@ export const getOrder: FastifyPluginAsyncZod = async app => {
     "/orders/:orderId",
     {
       schema: {
+        tags: ["orders"],
+        summary: "Get an order",
         params: z.object({
           orderId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            id: z.string().uuid(),
-            date: z.date(),
-            preparedAt: z.date().nullable(),
-            routedAt: z.date().nullable(),
-            deliveredAt: z.date().nullable(),
-            canceledAt: z.date().nullable(),
-            payment: z.string().toUpperCase().pipe(z.nativeEnum(PaymentMethod)),
-            status: z.string().toUpperCase().pipe(z.nativeEnum(OrderStatus)),
-            total: z.number(),
-            rate: z.number().nullable(),
-            client: z.object({
-              name: z.string(),
-              email: z.string().email(),
-              phone: z.string(),
-            }),
-            address: z.object({
-              street: z.string(),
-              number: z.number(),
-              district: z.string(),
-              city: z.string(),
-              state: z.string(),
-            }),
-            restaurant: z.object({
+          200: z
+            .object({
               id: z.string().uuid(),
-              name: z.string(),
-              image: z.string().nullable(),
-              deliveryTime: z.number(),
-              tax: z.number(),
-            }),
-            products: z.array(
-              z.object({
+              date: z.date(),
+              preparedAt: z.date().nullable(),
+              routedAt: z.date().nullable(),
+              deliveredAt: z.date().nullable(),
+              canceledAt: z.date().nullable(),
+              payment: z
+                .string()
+                .toUpperCase()
+                .pipe(z.nativeEnum(PaymentMethod)),
+              status: z.string().toUpperCase().pipe(z.nativeEnum(OrderStatus)),
+              total: z.number(),
+              rate: z.number().nullable(),
+              client: z.object({
+                name: z.string(),
+                email: z.string().email(),
+                phone: z.string(),
+              }),
+              address: z.object({
+                street: z.string(),
+                number: z.number(),
+                district: z.string(),
+                city: z.string(),
+                state: z.string(),
+              }),
+              restaurant: z.object({
                 id: z.string().uuid(),
                 name: z.string(),
-                price: z.number(),
-                quantity: z.number(),
                 image: z.string().nullable(),
+                deliveryTime: z.number(),
+                tax: z.number(),
               }),
-            ),
-          }),
+              products: z.array(
+                z.object({
+                  id: z.string().uuid(),
+                  name: z.string(),
+                  price: z.number(),
+                  quantity: z.number(),
+                  image: z.string().nullable(),
+                }),
+              ),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

@@ -1,15 +1,15 @@
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import { z } from "zod"
 
-import { auth } from "@/middlewares/auth"
-
 export const signOut: FastifyPluginAsyncZod = async app => {
-  app.register(auth).post(
+  app.post(
     "/session/sign-out",
     {
       schema: {
+        tags: ["sessions"],
+        summary: "Sign out user",
         response: {
-          200: z.null(),
+          200: z.null().describe("OK"),
         },
       },
     },

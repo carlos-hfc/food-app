@@ -12,13 +12,29 @@ export const saveFavorite: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["favorites"],
+        summary: "Save a restaurant as favorite",
         body: z.object({
           restaurantId: z.string().uuid(),
         }),
         response: {
-          201: z.object({
-            favoriteId: z.string().uuid(),
-          }),
+          201: z
+            .object({
+              favoriteId: z.string().uuid(),
+            })
+            .describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

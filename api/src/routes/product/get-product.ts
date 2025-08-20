@@ -12,17 +12,33 @@ export const getProduct: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["products"],
+        summary: "Get a product",
         params: z.object({
           productId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            id: z.string().uuid(),
-            name: z.string(),
-            description: z.string(),
-            price: z.number(),
-            image: z.string().nullable(),
-          }),
+          200: z
+            .object({
+              id: z.string().uuid(),
+              name: z.string(),
+              description: z.string(),
+              price: z.number(),
+              image: z.string().nullable(),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

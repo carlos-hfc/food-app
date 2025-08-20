@@ -13,6 +13,8 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
     "/restaurants",
     {
       schema: {
+        tags: ["restaurants"],
+        summary: "Register a restaurant",
         body: z.object({
           managerName: z.string(),
           restaurantName: z.string(),
@@ -35,7 +37,15 @@ export const registerRestaurant: FastifyPluginAsyncZod = async app => {
           ),
         }),
         response: {
-          201: z.object({ restaurantId: z.string().uuid() }),
+          201: z
+            .object({ restaurantId: z.string().uuid() })
+            .describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
         },
       },
     },

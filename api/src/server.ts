@@ -5,8 +5,11 @@ import fastifyCors from "@fastify/cors"
 import fastifyJwt from "@fastify/jwt"
 import fastifyMultipart from "@fastify/multipart"
 import fastifyStatic from "@fastify/static"
+import fastifySwagger from "@fastify/swagger"
+import fastifyApiReference from "@scalar/fastify-api-reference"
 import fastify from "fastify"
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
@@ -63,6 +66,23 @@ import { getProfile } from "./routes/user/get-profile"
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>()
 
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "Food App",
+      version: "1.0.0",
+    },
+  },
+  transform: jsonSchemaTransform,
+})
+
+app.register(fastifyApiReference, {
+  routePrefix: "/docs",
+  configuration: {
+    theme: "kepler",
+  },
+})
+
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
@@ -94,11 +114,11 @@ app.register(registerClient)
 app.register(authenticate)
 app.register(signOut)
 
-app.register(registerRestaurant)
-app.register(addImageOnRestaurant)
 app.register(listRestaurants)
-app.register(editRestaurant)
 app.register(getInfoRestaurant)
+app.register(registerRestaurant)
+app.register(editRestaurant)
+app.register(addImageOnRestaurant)
 app.register(getManagedRestaurant)
 app.register(viewMenu)
 app.register(bestRestaurants)
@@ -108,29 +128,29 @@ app.register(listCategories)
 app.register(getProfile)
 app.register(editProfile)
 
-app.register(registerAddress)
 app.register(listAddress)
-app.register(editAddress)
-app.register(deleteAddress)
-app.register(selectMainAddress)
 app.register(getAddress)
+app.register(registerAddress)
+app.register(editAddress)
+app.register(selectMainAddress)
+app.register(deleteAddress)
 
-app.register(saveFavorite)
 app.register(listFavorites)
+app.register(saveFavorite)
 app.register(deleteFavorite)
 
-app.register(registerProduct)
-app.register(addImageOnProduct)
-app.register(editProduct)
 app.register(listProducts)
 app.register(getProduct)
+app.register(registerProduct)
+app.register(editProduct)
+app.register(addImageOnProduct)
 app.register(toggleAvailableProduct)
 app.register(toggleActiveProduct)
 
-app.register(createOrder)
+app.register(listOrders)
 app.register(getOrder)
 app.register(myOrders)
-app.register(listOrders)
+app.register(createOrder)
 app.register(approveOrder)
 app.register(dispatchOrder)
 app.register(deliverOrder)

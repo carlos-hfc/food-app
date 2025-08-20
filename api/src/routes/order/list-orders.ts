@@ -22,6 +22,8 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["orders"],
+        summary: "List all orders of the restaurant",
         querystring: z.object({
           pageIndex: z.coerce.number().default(0),
           status: z
@@ -36,23 +38,37 @@ export const listOrders: FastifyPluginAsyncZod = async app => {
             .optional(),
         }),
         response: {
-          200: z.object({
-            orders: z.array(
-              z.object({
-                id: z.string().uuid(),
-                date: z.date(),
-                payment: z.nativeEnum(PaymentMethod),
-                status: z.nativeEnum(OrderStatus),
-                total: z.number(),
-                customerName: z.string(),
+          200: z
+            .object({
+              orders: z.array(
+                z.object({
+                  id: z.string().uuid(),
+                  date: z.date(),
+                  payment: z.nativeEnum(PaymentMethod),
+                  status: z.nativeEnum(OrderStatus),
+                  total: z.number(),
+                  customerName: z.string(),
+                }),
+              ),
+              meta: z.object({
+                totalCount: z.number(),
+                pageIndex: z.number(),
+                perPage: z.number(),
               }),
-            ),
-            meta: z.object({
-              totalCount: z.number(),
-              pageIndex: z.number(),
-              perPage: z.number(),
-            }),
-          }),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

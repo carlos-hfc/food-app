@@ -12,11 +12,25 @@ export const selectMainAddress: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["addresses"],
+        summary: "Select an address as main address",
         params: z.object({
           addressId: z.string().uuid(),
         }),
         response: {
-          204: z.null(),
+          204: z.null().describe("No content"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

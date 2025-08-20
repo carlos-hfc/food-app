@@ -21,6 +21,8 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["products"],
+        summary: "List all products",
         querystring: z.object({
           pageIndex: z.coerce.number().default(0),
           available: z
@@ -35,22 +37,36 @@ export const listProducts: FastifyPluginAsyncZod = async app => {
             .optional(),
         }),
         response: {
-          200: z.object({
-            products: z.array(
-              z.object({
-                id: z.string().uuid(),
-                name: z.string(),
-                price: z.number(),
-                available: z.boolean(),
-                active: z.boolean(),
+          200: z
+            .object({
+              products: z.array(
+                z.object({
+                  id: z.string().uuid(),
+                  name: z.string(),
+                  price: z.number(),
+                  available: z.boolean(),
+                  active: z.boolean(),
+                }),
+              ),
+              meta: z.object({
+                totalCount: z.number(),
+                pageIndex: z.number(),
+                perPage: z.number(),
               }),
-            ),
-            meta: z.object({
-              totalCount: z.number(),
-              pageIndex: z.number(),
-              perPage: z.number(),
-            }),
-          }),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

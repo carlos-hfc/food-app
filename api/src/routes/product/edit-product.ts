@@ -12,6 +12,8 @@ export const editProduct: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["products"],
+        summary: "Update a product",
         body: z.object({
           name: z.string().optional(),
           description: z.string().optional(),
@@ -21,7 +23,19 @@ export const editProduct: FastifyPluginAsyncZod = async app => {
           productId: z.string().uuid(),
         }),
         response: {
-          200: z.null(),
+          204: z.null().describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },
@@ -53,7 +67,7 @@ export const editProduct: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.send()
+      return reply.status(204).send()
     },
   )
 }

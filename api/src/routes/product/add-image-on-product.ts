@@ -14,13 +14,29 @@ export const addImageOnProduct: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("ADMIN")],
       schema: {
+        tags: ["products"],
+        summary: "Add image on product",
         params: z.object({
           productId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            image: z.string().url(),
-          }),
+          200: z
+            .object({
+              image: z.string().url(),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

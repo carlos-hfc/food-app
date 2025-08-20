@@ -24,6 +24,8 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
     "/restaurants",
     {
       schema: {
+        tags: ["restaurants"],
+        summary: "List all restaurants",
         querystring: z.object({
           name: z.string().optional(),
           category: z.string().optional(),
@@ -32,19 +34,21 @@ export const listRestaurants: FastifyPluginAsyncZod = async app => {
           rate: z.coerce.number().optional(),
         }),
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              name: z.string(),
-              tax: z.number(),
-              deliveryTime: z.number(),
-              image: z.string().nullable(),
-              category: z.string(),
-              rate: z.number(),
-              isOpen: z.boolean(),
-              openingAt: z.string().optional(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                id: z.string().uuid(),
+                name: z.string(),
+                tax: z.number(),
+                deliveryTime: z.number(),
+                image: z.string().nullable(),
+                category: z.string(),
+                rate: z.number(),
+                isOpen: z.boolean(),
+                openingAt: z.string().optional(),
+              }),
+            )
+            .describe("OK"),
         },
       },
     },

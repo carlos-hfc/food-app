@@ -12,21 +12,37 @@ export const getAddress: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["addresses"],
+        summary: "Get an address",
         params: z.object({
           addressId: z.string().uuid(),
         }),
         response: {
-          200: z.object({
-            id: z.string().uuid(),
-            zipCode: z.string(),
-            street: z.string(),
-            number: z.number(),
-            district: z.string(),
-            city: z.string(),
-            state: z.string(),
-            alias: z.string().nullable(),
-            main: z.boolean(),
-          }),
+          200: z
+            .object({
+              id: z.string().uuid(),
+              zipCode: z.string(),
+              street: z.string(),
+              number: z.number(),
+              district: z.string(),
+              city: z.string(),
+              state: z.string(),
+              alias: z.string().nullable(),
+              main: z.boolean(),
+            })
+            .describe("OK"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

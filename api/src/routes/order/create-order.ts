@@ -15,6 +15,8 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
     {
       preHandler: [verifyUserRole("CLIENT")],
       schema: {
+        tags: ["orders"],
+        summary: "Create an order",
         body: z.object({
           restaurantId: z.string().uuid(),
           addressId: z.string().uuid(),
@@ -29,10 +31,24 @@ export const createOrder: FastifyPluginAsyncZod = async app => {
             .nonempty(),
         }),
         response: {
-          201: z.object({
-            orderId: z.string().uuid(),
-            total: z.number(),
-          }),
+          201: z
+            .object({
+              orderId: z.string().uuid(),
+              total: z.number(),
+            })
+            .describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
+          401: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Unauthorized"),
         },
       },
     },

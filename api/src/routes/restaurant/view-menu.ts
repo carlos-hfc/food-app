@@ -8,20 +8,24 @@ export const viewMenu: FastifyPluginAsyncZod = async app => {
     "/restaurants/:restaurantId/menu",
     {
       schema: {
+        tags: ["restaurants"],
+        summary: "List restaurant menu",
         params: z.object({
           restaurantId: z.string().uuid(),
         }),
         response: {
-          200: z.array(
-            z.object({
-              id: z.string().uuid(),
-              restaurantId: z.string().uuid(),
-              name: z.string(),
-              description: z.string(),
-              price: z.number(),
-              image: z.string().nullable(),
-            }),
-          ),
+          200: z
+            .array(
+              z.object({
+                id: z.string().uuid(),
+                restaurantId: z.string().uuid(),
+                name: z.string(),
+                description: z.string(),
+                price: z.number(),
+                image: z.string().nullable(),
+              }),
+            )
+            .describe("OK"),
         },
       },
     },

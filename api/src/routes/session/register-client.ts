@@ -12,6 +12,8 @@ export const registerClient: FastifyPluginAsyncZod = async app => {
     "/session/register",
     {
       schema: {
+        tags: ["sessions"],
+        summary: "Register a client",
         body: z.object({
           email: z.string().email(),
           password: z.string().refine(value => PASSWORD_REGEX.test(value), {
@@ -22,7 +24,13 @@ export const registerClient: FastifyPluginAsyncZod = async app => {
           phone: z.string(),
         }),
         response: {
-          201: z.null(),
+          201: z.object({ userId: z.string().uuid() }).describe("Created"),
+          400: z
+            .object({
+              statusCode: z.number(),
+              message: z.string(),
+            })
+            .describe("Bad Request"),
         },
       },
     },
@@ -41,7 +49,7 @@ export const registerClient: FastifyPluginAsyncZod = async app => {
 
       const hashedPassword = await hash(password, 10)
 
-      await prisma.user.create({
+      const { id } = await prisma.user.create({
         data: {
           email,
           name,
@@ -51,7 +59,7 @@ export const registerClient: FastifyPluginAsyncZod = async app => {
         },
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send({ userId: id })
     },
   )
 }
